@@ -29,8 +29,8 @@
 #include "nvs_flash.h"
 
 /*Set the SSID and Password via "make menuconfig"*/
-#define DEFAULT_SSID "your_SSID_here" // CONFIG_WIFI_SSID
-#define DEFAULT_PWD "your_password_here" // CONFIG_WIFI_PASSWORD
+#define DEFAULT_SSID "InfostradaWiFi@404040402Deb1a2c" // CONFIG_WIFI_SSID
+#define DEFAULT_PWD "muorimale" // CONFIG_WIFI_PASSWORD
 
 #if CONFIG_WIFI_ALL_CHANNEL_SCAN
 #define DEFAULT_SCAN_METHOD WIFI_ALL_CHANNEL_SCAN
@@ -100,8 +100,8 @@ static void wifi_scan(void)
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = DEFAULT_SSID
-            .password = DEFAULT_PWD
+            .ssid = DEFAULT_SSID,
+            .password = DEFAULT_PWD,
             .scan_method = DEFAULT_SCAN_METHOD,
             .sort_method = DEFAULT_SORT_METHOD,
             .threshold.rssi = DEFAULT_RSSI,

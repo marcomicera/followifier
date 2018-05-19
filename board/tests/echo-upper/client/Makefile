@@ -3,7 +3,7 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := echo-upper
+PROJECT_NAME := echo-upper-client
 
 include $(IDF_PATH)/make/project.mk
 
