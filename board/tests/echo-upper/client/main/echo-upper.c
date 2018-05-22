@@ -53,8 +53,8 @@
  * Wi-Fi info, to be set via:
  * 'make menuconfig' -> "Component config" ->
  */
-#define WIFI_SSID 			"ssid"
-#define WIFI_PASSWORD	 	"password"
+#define WIFI_SSID 			"Koko"
+#define WIFI_PASSWORD	 	"marcofatropposesso"
 
 /**
  * ESP32 info
@@ -64,7 +64,7 @@
 /**
  * Server info
  */
-#define SERVER_ADDRESS	 	"server ip"
+#define SERVER_ADDRESS	 	"192.168.137.1"
 #define SERVER_PORT	 		9991
 
 /**
@@ -80,7 +80,7 @@ int tcp_socket;
 /**
  * Message to be sent
  */
-static const char* test_string = "This is a test string\0";
+static const char* test_string = "This is a test string\n\0";
 
 /**
  * Debugging
@@ -136,6 +136,11 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
 			// Connecting to the server as soon as it gets an IP address
 			tcp_ipv4_connect(SERVER_ADDRESS, SERVER_PORT);
 
+			// Sending a test string to the server
+			if(send(tcp_socket, (void*)test_string, strlen(test_string) + 1, 0) == -1) {
+				ESP_LOGI(TAG, "send() error: %s", strerror(errno));
+			}
+
 			break;
 		case SYSTEM_EVENT_STA_DISCONNECTED:
 			ESP_LOGI(TAG, "SYSTEM_EVENT_STA_DISCONNECTED");
@@ -155,13 +160,20 @@ static void wifi_connect(void) {
 	tcpip_adapter_init();
 	ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
 
-	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT()
-	;
+	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-	wifi_config_t wifi_config = { .sta = { .ssid = WIFI_SSID, .password =
-	WIFI_PASSWORD, .scan_method = DEFAULT_SCAN_METHOD, .sort_method =
-	DEFAULT_SORT_METHOD, .threshold.rssi = DEFAULT_RSSI, .threshold.authmode =
-			DEFAULT_AUTHMODE, }, };
+
+	wifi_config_t wifi_config = {
+		.sta = {
+			.ssid = WIFI_SSID,
+			.password = WIFI_PASSWORD,
+			.scan_method = DEFAULT_SCAN_METHOD,
+			.sort_method = DEFAULT_SORT_METHOD,
+			.threshold.rssi = DEFAULT_RSSI,
+			.threshold.authmode = DEFAULT_AUTHMODE,
+		},
+	};
+
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
 	ESP_ERROR_CHECK(esp_wifi_start());
