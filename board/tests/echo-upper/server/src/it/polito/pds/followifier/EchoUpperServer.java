@@ -78,6 +78,10 @@ public class EchoUpperServer {
 			while(true) {
 				// Accepting a client's request
 				Socket connectionSocket = serverSocket.accept();
+				System.out.println(
+					"A new connection has been accepted from " 
+					+ connectionSocket.getRemoteSocketAddress()
+				);
 				
 				// Creating a request handler thread
 				Thread requestHandler = new Thread() {
@@ -105,6 +109,7 @@ public class EchoUpperServer {
 			// Input and output streams for this connection
 			InputStream inputToServer = connectionSocket.getInputStream();
 			OutputStream outputFromServer = connectionSocket.getOutputStream();
+			System.out.println("Streams created for " + connectionSocket.getRemoteSocketAddress());
 	
 			// New scanner for reading lines
 			try (Scanner scanner = new Scanner(inputToServer, "UTF-8")) {
@@ -112,6 +117,7 @@ public class EchoUpperServer {
 	
 				// Displaying a welcome messages
 				serverPrintOut.println(WELCOME_MESSAGE);
+				System.out.println("Replied with a welcome message to " + connectionSocket.getRemoteSocketAddress());
 				
 				// Replying until the end connection keyword is received
 				boolean run = true;
@@ -119,8 +125,19 @@ public class EchoUpperServer {
 					// Retrieving a new string line
 					String line = scanner.nextLine();
 					
+					// Computing the response
+					String response = toggleString(line);
+					
+					// Displaying info on this server
+					System.out.println(
+						"New line received from " 
+						+ connectionSocket.getRemoteSocketAddress() 
+						+ ": " + line + "; "
+						+ "replied with: " + response
+					);
+					
 					// Replying with the toggled-case version
-					serverPrintOut.println(SERVER_NAME + " replied: " + toggleString(line));
+					serverPrintOut.println(SERVER_NAME + " replied: " + response);
 	
 					// Checking whether the end connection keyword has been received
 					if (line.toLowerCase().trim().equalsIgnoreCase(END_CONNECTION_KEYWORD))

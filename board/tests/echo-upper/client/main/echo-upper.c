@@ -1,36 +1,19 @@
-/* Scan Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
-
-/*
-    This example shows how to use the All Channel Scan or Fast Scan to connect
-    to a Wi-Fi network.
-
-    In the Fast Scan mode, the scan will stop as soon as the first network matching
-    the SSID is found. In this mode, an application can set threshold for the
-    authentication mode and the Signal strength. Networks that do not meet the
-    threshold requirements will be ignored.
-
-    In the All Channel Scan mode, the scan will end only after all the channels
-    are scanned, and connection will start with the best network. The networks
-    can be sorted based on Authentication Mode or Signal Strength. The priority
-    for the Authentication mode is:  WPA2 > WPA > WEP > Open
-*/
+#include <stdio.h>
+#include <string.h> // strlen
+#include <errno.h>
 #include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
+#include "freertos/task.h"
 #include "esp_wifi.h"
-#include "esp_log.h"
 #include "esp_event_loop.h"
+#include "freertos/event_groups.h"
+#include "esp_system.h"
+#include "esp_log.h"
+#include "lwip/err.h"
+#include "lwip/sockets.h"
+#include "lwip/sys.h"
+#include "lwip/netdb.h"
+#include "lwip/dns.h"
 #include "nvs_flash.h"
-
-/*Set the SSID and Password via "make menuconfig"*/
-#define DEFAULT_SSID "InfostradaWiFi@404040402Deb1a2c" // CONFIG_WIFI_SSID
-#define DEFAULT_PWD "muorimale" // CONFIG_WIFI_PASSWORD
 
 #if CONFIG_WIFI_ALL_CHANNEL_SCAN
 #define DEFAULT_SCAN_METHOD WIFI_ALL_CHANNEL_SCAN
@@ -66,62 +49,136 @@
 #define DEFAULT_AUTHMODE WIFI_AUTH_OPEN
 #endif /*CONFIG_FAST_SCAN_THRESHOLD*/
 
-static const char *TAG = "scan";
+/**
+ * Wi-Fi info, to be set via:
+ * 'make menuconfig' -> "Component config" ->
+ */
+#define WIFI_SSID 			"ssid"
+#define WIFI_PASSWORD	 	"password"
 
-static esp_err_t event_handler(void *ctx, system_event_t *event)
-{
-    switch (event->event_id) {
-        case SYSTEM_EVENT_STA_START:
-            ESP_LOGI(TAG, "SYSTEM_EVENT_STA_START");
-            ESP_ERROR_CHECK(esp_wifi_connect());
-            break;
-        case SYSTEM_EVENT_STA_GOT_IP:
-            ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP");
-            ESP_LOGI(TAG, "Got IP: %s\n",
-                     ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
-            break;
-        case SYSTEM_EVENT_STA_DISCONNECTED:
-            ESP_LOGI(TAG, "SYSTEM_EVENT_STA_DISCONNECTED");
-            ESP_ERROR_CHECK(esp_wifi_connect());
-            break;
-        default:
-            break;
-    }
-    return ESP_OK;
+/**
+ * ESP32 info
+ */
+#define	BOARD_PORT			4545
+
+/**
+ * Server info
+ */
+#define SERVER_ADDRESS	 	"server ip"
+#define SERVER_PORT	 		9991
+
+/**
+ * Server address data structure
+ */
+struct sockaddr_in server_address;
+
+/**
+ * TCP sockets towards the server
+ */
+int tcp_socket;
+
+/**
+ * Message to be sent
+ */
+static const char* test_string = "This is a test string\0";
+
+/**
+ * Debugging
+ */
+static const char* TAG = "echo-upper-client";
+
+/**
+ * It creates a TCP/IPv4 socket  with the specified
+ * address and port and connects to it.
+ */
+void tcp_ipv4_connect(const char* address, int port) {
+	// Creating TCP socket
+	if ((tcp_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+		ESP_LOGI(TAG, "socket() error_ %s", strerror(errno));
+		exit(1);
+	}
+
+	// Server address structure
+	memset(&server_address, 0, sizeof(server_address));
+	server_address.sin_family = AF_INET; // IPv4
+	server_address.sin_port = htons(port);
+	if (inet_pton(AF_INET, address, &server_address.sin_addr) == 0) {
+		ESP_LOGI(TAG, "inet_pton() error: %s", strerror(errno));
+		exit(1);
+	}
+
+	// Connecting to the server
+	if (connect(tcp_socket, (struct sockaddr*) &server_address,
+			sizeof(server_address)) == -1) {
+		ESP_LOGI(TAG, "connect() error: %s", strerror(errno));
+		exit(1);
+	}
+	ESP_LOGI(TAG, "Connected to %s:%d successfully!",
+			address, port);
 }
 
-/* Initialize Wi-Fi as sta and set scan method */
-static void wifi_scan(void)
-{
-    tcpip_adapter_init();
-    ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
+/**
+ * Event handler
+ */
+static esp_err_t event_handler(void *ctx, system_event_t *event) {
+	ESP_LOGI(TAG, "New event: %d", event->event_id);
 
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    wifi_config_t wifi_config = {
-        .sta = {
-            .ssid = DEFAULT_SSID,
-            .password = DEFAULT_PWD,
-            .scan_method = DEFAULT_SCAN_METHOD,
-            .sort_method = DEFAULT_SORT_METHOD,
-            .threshold.rssi = DEFAULT_RSSI,
-            .threshold.authmode = DEFAULT_AUTHMODE,
-        },
-    };
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
-    ESP_ERROR_CHECK(esp_wifi_start());
+	switch (event->event_id) {
+		case SYSTEM_EVENT_STA_START:
+			ESP_LOGI(TAG, "SYSTEM_EVENT_STA_START");
+			ESP_ERROR_CHECK(esp_wifi_connect());
+			break;
+		case SYSTEM_EVENT_STA_GOT_IP:
+			ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP");
+			ESP_LOGI(TAG, "Got IP: %s\n",
+					ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+
+			// Connecting to the server as soon as it gets an IP address
+			tcp_ipv4_connect(SERVER_ADDRESS, SERVER_PORT);
+
+			break;
+		case SYSTEM_EVENT_STA_DISCONNECTED:
+			ESP_LOGI(TAG, "SYSTEM_EVENT_STA_DISCONNECTED");
+			ESP_ERROR_CHECK(esp_wifi_connect());
+			break;
+		default:
+			break;
+	}
+	return ESP_OK;
 }
 
-void app_main()
-{
-    // Initialize NVS
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES) {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        ret = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK( ret );
+/**
+ * It connects to the Wi-Fi network, setting the
+ * ESP32 board as a station mode (sta)
+ */
+static void wifi_connect(void) {
+	tcpip_adapter_init();
+	ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
 
-    wifi_scan();
+	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT()
+	;
+	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+	wifi_config_t wifi_config = { .sta = { .ssid = WIFI_SSID, .password =
+	WIFI_PASSWORD, .scan_method = DEFAULT_SCAN_METHOD, .sort_method =
+	DEFAULT_SORT_METHOD, .threshold.rssi = DEFAULT_RSSI, .threshold.authmode =
+			DEFAULT_AUTHMODE, }, };
+	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+	ESP_ERROR_CHECK(esp_wifi_start());
+}
+
+/**
+ * This program's entry point
+ */
+void app_main() {
+	// Initialize NVS
+	esp_err_t ret = nvs_flash_init();
+	if (ret == ESP_ERR_NVS_NO_FREE_PAGES) {
+		ESP_ERROR_CHECK(nvs_flash_erase());
+		ret = nvs_flash_init();
+	}
+	ESP_ERROR_CHECK(ret);
+
+	// Connecting to Wi-Fi
+	wifi_connect();
 }

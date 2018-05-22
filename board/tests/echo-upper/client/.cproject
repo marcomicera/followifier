@@ -14,17 +14,38 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration buildProperties="" id="cdt.managedbuild.toolchain.gnu.cygwin.base.1011159030" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.cygwin.base.1011159030" name="Default" optionalBuildProperties="" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.cygwin.base.1011159030.1190776843" name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base.1064583366" name="Cygwin GCC" superClass="cdt.managedbuild.toolchain.gnu.cygwin.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.Cygwin_PE" id="cdt.managedbuild.target.gnu.platform.cygwin.base.400713525" name="Debug Platform" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.cygwin.base"/>
-							<builder id="cdt.managedbuild.target.gnu.builder.cygwin.base.1400912537" managedBuildOn="false" name="Gnu Make Builder.Default" superClass="cdt.managedbuild.target.gnu.builder.cygwin.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.cygwin.base.450282629" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base"/>
+							<builder arguments="${IDF_PATH}/tools/windows/eclipse_make.py" command="python" id="cdt.managedbuild.target.gnu.builder.cygwin.base.1400912537" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.cygwin.base"/>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.cygwin.base.450282629" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.683042330" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.cygwin.base.1606110308" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.cygwin.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base.1234741429" name="Cygwin C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.794037301" name="Cygwin C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base.1234741429" name="Cygwin C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.561379926" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.794037301" name="Cygwin C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
+								<option id="gnu.c.compiler.option.include.paths.949620309" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;X:\OneDrive\Ingegneria\Turin\Programmazione_di_sistema\Progetto\esp-idf-v3.0\components\esp32\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;X:\OneDrive\Ingegneria\Turin\Programmazione_di_sistema\Progetto\esp-idf-v3.0\components\nvs_flash\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;X:\OneDrive\Ingegneria\Turin\Programmazione_di_sistema\Progetto\esp-idf-v3.0\components\freertos\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;X:\OneDrive\Ingegneria\Turin\Programmazione_di_sistema\Progetto\esp-idf-v3.0\components\driver\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;X:\OneDrive\Ingegneria\Turin\Programmazione_di_sistema\Progetto\esp-idf-v3.0\components\log\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;X:\OneDrive\Ingegneria\Turin\Programmazione_di_sistema\Progetto\esp-idf-v3.0\components\lwip\include\lwip&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;X:\OneDrive\Ingegneria\Turin\Programmazione_di_sistema\Progetto\esp-idf-v3.0\components\tcpip_adapter\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;X:\OneDrive\Ingegneria\Turin\Programmazione_di_sistema\Progetto\esp-idf-v3.0\components\lwip\include\lwip\lwip&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.580725148" superClass="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"/>
+							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.cygwin.base.887666432" name="Cygwin C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base.1959759234" name="Cygwin C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base.1959759234" name="Cygwin C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1541577166" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
 						</toolChain>
 					</folderInfo>
 				</configuration>
@@ -32,17 +53,28 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cygwin.base.1534365624;cdt.managedbuild.toolchain.gnu.cygwin.base.1534365624.601526938;cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base.34832980;cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1604554762">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cygwin.base.1534365624;cdt.managedbuild.toolchain.gnu.cygwin.base.1534365624.601526938;cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.1025317744;cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.1164638295">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="echo-upper-client.null.868727034" name="echo-upper-client"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Default">
+			<resource resourceType="PROJECT" workspacePath="/echo-upper-client"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cygwin.base.1534365624;cdt.managedbuild.toolchain.gnu.cygwin.base.1534365624.601526938;cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.1025317744;cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.1164638295">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cygwin.base.1011159030;cdt.managedbuild.toolchain.gnu.cygwin.base.1011159030.1190776843;cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base.1234741429;cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.561379926">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cygwin.base.1011159030;cdt.managedbuild.toolchain.gnu.cygwin.base.1011159030.1190776843;cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.794037301;cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.580725148">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cygwin.base.1534365624;cdt.managedbuild.toolchain.gnu.cygwin.base.1534365624.601526938;cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base.34832980;cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1604554762">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
 </cproject>
