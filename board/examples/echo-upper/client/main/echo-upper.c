@@ -14,6 +14,7 @@
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
 #include "nvs_flash.h"
+#include "esp_log.h"
 
 #if CONFIG_WIFI_ALL_CHANNEL_SCAN
 #define DEFAULT_SCAN_METHOD WIFI_ALL_CHANNEL_SCAN
@@ -53,8 +54,8 @@
  * Wi-Fi info, to be set via:
  * 'make menuconfig' -> "Component config" ->
  */
-#define WIFI_SSID 			"Koko"
-#define WIFI_PASSWORD	 	"marcofatropposesso"
+#define WIFI_SSID 			"Erasmus Student Network"
+#define WIFI_PASSWORD	 	"omgmarcoishavingwaytoomuchsexcantbelievethis"
 
 /**
  * ESP32 info
@@ -64,7 +65,7 @@
 /**
  * Server info
  */
-#define SERVER_ADDRESS	 	"192.168.137.1"
+#define SERVER_ADDRESS	 	"192.168.56.1"
 #define SERVER_PORT	 		9991
 
 /**

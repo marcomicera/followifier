@@ -31,5 +31,10 @@ Software that will be running on ESP32 boards (constantly receiving Probe Reques
 ![ESP32 board's configuration UI](https://docs.espressif.com/projects/esp-idf/en/latest/_images/project-configuration.png)
 5. Select `Serial flasher config` → `Default serial port`
 6. Configure the serial port to which the ESP32 board is connected to (e.g., "`COM3`")
-7. `make flash` to compile
-8. `make monitor` to launch the application
+7. Save and exit
+8. `make flash -j 4` to compile
+9. `make monitor` to launch the application
+
+###### Flash and launch the app
+1. `make app-flash monitor -j 4`
+	*  It will automatically rebuild the app if it needs to

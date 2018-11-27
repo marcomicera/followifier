@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
@@ -47,19 +48,14 @@ public class EchoUpperServer {
 	public static void main(String[] args) {
 		// This server's listening port number
 		int server_port;
-		
+				
 		// Arguments number and format checking
-		if(args.length != 1 || !isInteger(args[0])) {
-			System.out.println("Using default port number " + DEFAULT_SERVER_PORT + "...");
-			
+		if(args.length != 1 || !isInteger(args[0]))
 			// Using the default server port number
 			server_port = DEFAULT_SERVER_PORT;
-		}
 		else
 			// Using the server port number specified by the user as argument
 			server_port = Integer.parseInt(args[0]);
-		
-		System.out.println(SERVER_NAME + " started.");
 		
 		// Starting the server
 		startServer(server_port);
@@ -73,7 +69,9 @@ public class EchoUpperServer {
 	 */
 	public static void startServer(int port) {
 		// Creating a server socket
-		try (ServerSocket serverSocket = new ServerSocket(DEFAULT_SERVER_PORT, 7)) {
+		try (ServerSocket serverSocket = new ServerSocket(port, 7, InetAddress.getLocalHost())) {
+			System.out.println(SERVER_NAME + " started, " + serverSocket);
+			
 			// Cyclic server
 			while(true) {
 				// Accepting a client's request
