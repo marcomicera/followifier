@@ -5,26 +5,26 @@ namespace device_filtering
 {
     class Test
     {
-        private static int size = 4;
+        private const int SIZE = 4;
+        private const int PACKET_SIZE = 10;
 
         public static void Main(string[] args)
         {
             Random rnd = new Random();
-            List<Packet>[] list = new List<Packet>[size];
+            List<Packet>[] list = new List<Packet>[SIZE];
             string chars = "ABCDEFGHIJK";
 
-            for (int i=0; i<size; i++){
+            for (int i=0; i<list.Length; i++){
                 list[i] = new List<Packet>();
             }
 
-            for (int i=0; i<size; i++) {
-                int packet_size = 10;
-                for (int j = 0; j < packet_size; j++) {
-                    string MAC;
+            for (int i=0; i<list.Length; i++) {
+                for (int j = 0; j < PACKET_SIZE; j++) {
+                    string hash;
                     do {
-                        MAC = Convert.ToString(chars[rnd.Next(0, chars.Length)]);
-                    } while (list[i].Exists(x => x.getMAC().Equals(MAC.ToUpper())));
-                    list[i].Add(new Packet(MAC, "", DateTime.Now, "", 0)) ;
+                        hash = Convert.ToString(chars[rnd.Next(0, chars.Length)]);
+                    } while (list[i].Exists(x => x.getHash().Equals(hash)));
+                    list[i].Add(new Packet("", "", DateTime.Now, hash, 0)) ;
                 }
             }
 
