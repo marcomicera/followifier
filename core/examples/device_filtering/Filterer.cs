@@ -12,10 +12,10 @@ namespace device_filtering
         }
 
         //check if device is in room
-        public bool checkDevice(string MAC){
+        public bool checkDevice(string hash){
             foreach (List<Packet> packets in packets)
             {
-                if (!packets.Exists(p => p.getMAC().Equals(MAC.ToUpper())))
+                if (!packets.Exists(p => p.getHash().Equals(hash)))
                     return false;
             }
             return true;
@@ -27,7 +27,7 @@ namespace device_filtering
             long n = 0;
             foreach(Packet packet in packets[0])
             {
-                if (checkDevice(packet.getMAC()))
+                if (checkDevice(packet.getHash()))
                     n++;
             }
             return n;
