@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -68,8 +69,15 @@ public class EchoUpperServer {
 	 * @param port	this server's listening port number.
 	 */
 	public static void startServer(int port) {
+		try {
+			System.out.println("localhost: " + InetAddress.getLocalHost());
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		// Creating a server socket
-		try (ServerSocket serverSocket = new ServerSocket(port, 7, InetAddress.getLocalHost())) {
+		try (ServerSocket serverSocket = new ServerSocket(port, 7)) {
 			System.out.println(SERVER_NAME + " started, " + serverSocket);
 			
 			// Cyclic server

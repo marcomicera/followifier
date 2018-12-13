@@ -54,8 +54,8 @@
  * Wi-Fi info, to be set via:
  * 'make menuconfig' -> "Component config" ->
  */
-#define WIFI_SSID 			"Erasmus Student Network"
-#define WIFI_PASSWORD	 	"omgmarcoishavingwaytoomuchsexcantbelievethis"
+#define WIFI_SSID 			"Wi-Fi SSID"
+#define WIFI_PASSWORD	 	"Wi-Fi password"
 
 /**
  * ESP32 info
@@ -65,7 +65,7 @@
 /**
  * Server info
  */
-#define SERVER_ADDRESS	 	"192.168.56.1"
+#define SERVER_ADDRESS	 	"192.168.1.3"
 #define SERVER_PORT	 		9991
 
 /**
