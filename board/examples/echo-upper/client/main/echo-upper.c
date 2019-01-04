@@ -54,8 +54,8 @@
  * Wi-Fi info, to be set via:
  * 'make menuconfig' -> "Component config" ->
  */
-#define WIFI_SSID 			"Wi-Fi SSID"
-#define WIFI_PASSWORD	 	"Wi-Fi password"
+#define WIFI_SSID 			"Sgt Pepper's Wi-Fi"
+#define WIFI_PASSWORD	 	"y^?8_&E@e)4x<9/B"
 
 /**
  * ESP32 info
@@ -65,7 +65,7 @@
 /**
  * Server info
  */
-#define SERVER_ADDRESS	 	"192.168.1.3"
+#define SERVER_ADDRESS	 	"192.168.1.11"
 #define SERVER_PORT	 		9991
 
 /**

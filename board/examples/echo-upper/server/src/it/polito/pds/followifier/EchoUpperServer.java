@@ -18,9 +18,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.SocketException;
+import java.util.Enumeration;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -29,13 +31,13 @@ public class EchoUpperServer {
 	 * Server info.
 	 */
 	private static final String SERVER_NAME = "EchoUpperServer";
-	private static final int DEFAULT_SERVER_PORT = 9991; 
+	private static final int DEFAULT_SERVER_PORT = 9991;
 
 	/**
 	 * Keyword to be sent in order to close the connection with the server.
 	 */
 	private static final String END_CONNECTION_KEYWORD = "quit";
-	
+
 	/**
 	 * Message displayed upon starting this server.
 	 */
@@ -44,51 +46,51 @@ public class EchoUpperServer {
 
 	/**
 	 * Main method
-	 * @param arg	this server's listening port number
+	 * 
+	 * @param arg this server's listening port number
+	 * @throws NoSiteLocalAddressException if it was not possible to start a server
+	 *                                     on this machine.
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NoSiteLocalAddressException {
 		// This server's listening port number
 		int server_port;
-				
+
 		// Arguments number and format checking
-		if(args.length != 1 || !isInteger(args[0]))
+		if (args.length != 1 || !isInteger(args[0]))
 			// Using the default server port number
 			server_port = DEFAULT_SERVER_PORT;
 		else
 			// Using the server port number specified by the user as argument
 			server_port = Integer.parseInt(args[0]);
-		
+
 		// Starting the server
 		startServer(server_port);
-		
+
 		System.out.println(SERVER_NAME + " shutted down.");
 	}
 
 	/**
 	 * It starts the server on a specified port.
-	 * @param port	this server's listening port number.
+	 * 
+	 * @param port this server's listening port number.
+	 * @throws NoSiteLocalAddressException if it was not possible to start a server
+	 *                                     on this machine.
 	 */
-	public static void startServer(int port) {
-		try {
-			System.out.println("localhost: " + InetAddress.getLocalHost());
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+	private static void startServer(int port) throws NoSiteLocalAddressException {
+		// Retrieving the site-local address
+		InetAddress siteLocalAddress = getSiteLocalAddress();
+
 		// Creating a server socket
-		try (ServerSocket serverSocket = new ServerSocket(port, 7)) {
+		try (ServerSocket serverSocket = new ServerSocket(port, 7, siteLocalAddress)) {
 			System.out.println(SERVER_NAME + " started, " + serverSocket);
-			
+
 			// Cyclic server
-			while(true) {
+			while (true) {
 				// Accepting a client's request
 				Socket connectionSocket = serverSocket.accept();
 				System.out.println(
-					"A new connection has been accepted from " 
-					+ connectionSocket.getRemoteSocketAddress()
-				);
-				
+						"A new connection has been accepted from " + connectionSocket.getRemoteSocketAddress());
+
 				// Creating a request handler thread
 				Thread requestHandler = new Thread() {
 					@Override
@@ -105,10 +107,11 @@ public class EchoUpperServer {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * It handles a client's request by responding with case-toggled strings.
-	 * @param connectionSocket		the socket by which the handler can reply.
+	 * 
+	 * @param connectionSocket the socket by which the handler can reply.
 	 */
 	private static void handleRequest(Socket connectionSocket) {
 		try {
@@ -116,35 +119,31 @@ public class EchoUpperServer {
 			InputStream inputToServer = connectionSocket.getInputStream();
 			OutputStream outputFromServer = connectionSocket.getOutputStream();
 			System.out.println("Streams created for " + connectionSocket.getRemoteSocketAddress());
-	
+
 			// New scanner for reading lines
 			try (Scanner scanner = new Scanner(inputToServer, "UTF-8")) {
 				PrintWriter serverPrintOut = new PrintWriter(new OutputStreamWriter(outputFromServer, "UTF-8"), true);
-	
+
 				// Displaying a welcome messages
 				serverPrintOut.println(WELCOME_MESSAGE);
 				System.out.println("Replied with a welcome message to " + connectionSocket.getRemoteSocketAddress());
-				
+
 				// Replying until the end connection keyword is received
 				boolean run = true;
 				while (run && scanner.hasNextLine()) {
 					// Retrieving a new string line
 					String line = scanner.nextLine();
-					
+
 					// Computing the response
 					String response = toggleString(line);
-					
+
 					// Displaying info on this server
-					System.out.println(
-						"New line received from " 
-						+ connectionSocket.getRemoteSocketAddress() 
-						+ ": " + line + "; "
-						+ "replied with: " + response
-					);
-					
+					System.out.println("New line received from " + connectionSocket.getRemoteSocketAddress() + ": "
+							+ line + "; " + "replied with: " + response);
+
 					// Replying with the toggled-case version
 					serverPrintOut.println(SERVER_NAME + " replied: " + response);
-	
+
 					// Checking whether the end connection keyword has been received
 					if (line.toLowerCase().trim().equalsIgnoreCase(END_CONNECTION_KEYWORD))
 						run = false;
@@ -157,8 +156,9 @@ public class EchoUpperServer {
 
 	/**
 	 * Given a string, it returns its case-toggled version.
-	 * @param sentence	the string to be toggled.
-	 * @return			the case-toggled version.
+	 * 
+	 * @param sentence the string to be toggled.
+	 * @return the case-toggled version.
 	 */
 	private static String toggleString(String sentence) {
 		return sentence.chars().mapToObj(c -> {
@@ -170,24 +170,53 @@ public class EchoUpperServer {
 			return String.valueOf((char) c);
 		}).collect(Collectors.joining());
 	}
-	
+
+	/**
+	 * Returns the first site-local address of this machine.
+	 * 
+	 * @return the first site-local address.
+	 * @throws NoSiteLocalAddressException if there is no site-local address on this
+	 *                                     machine.
+	 */
+	private static InetAddress getSiteLocalAddress() throws NoSiteLocalAddressException {
+		Enumeration<NetworkInterface> network_interfaces;
+		try {
+			network_interfaces = NetworkInterface.getNetworkInterfaces();
+		} catch (SocketException e) {
+			throw new NoSiteLocalAddressException();
+		}
+
+		while (network_interfaces.hasMoreElements()) {
+			NetworkInterface network_interface = (NetworkInterface) network_interfaces.nextElement();
+			Enumeration<InetAddress> interface_addresses = network_interface.getInetAddresses();
+
+			while (interface_addresses.hasMoreElements()) {
+				InetAddress interface_address = (InetAddress) interface_addresses.nextElement();
+				if (interface_address.isSiteLocalAddress() == true)
+					return interface_address;
+			}
+		}
+
+		throw new NoSiteLocalAddressException();
+	}
+
 	/**
 	 * It checks whether a string represents an integer or not.
-	 * @param string	string to be checked.
-	 * @return			true when the string represents an integner.
-	 * 					false otherwise.
+	 * 
+	 * @param string string to be checked.
+	 * @return true when the string represents an integner. false otherwise.
 	 */
 	private static boolean isInteger(String string) {
-	    try { 
-	    	// Trying to parse this string into an integer
-	        Integer.parseInt(string); 
-	    } catch(NumberFormatException e) { 
-	        return false; 
-	    } catch(NullPointerException e) {
-	        return false;
-	    }
+		try {
+			// Trying to parse this string into an integer
+			Integer.parseInt(string);
+		} catch (NumberFormatException e) {
+			return false;
+		} catch (NullPointerException e) {
+			return false;
+		}
 
-	    // No exceptions thrown: this string represents an integer 
-	    return true;
+		// No exceptions thrown: this string represents an integer
+		return true;
 	}
 }
