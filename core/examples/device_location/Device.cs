@@ -15,8 +15,8 @@ namespace device_location {
         this.current = 0;
     }
 
-    public bool CalculateLocation(Station[] esp, double[] signal) {
-        if (esp.Length == signal.Length && esp.Length > 1) {
+    public bool CalculateLocation(Board[] esp, double[] signalPowerPerBoard) {
+        if (esp.Length == signalPowerPerBoard.Length && esp.Length > 1) {
             Point newP = new Point(0,0);
 
             List<Point> listPoints = new List<Point>();
@@ -29,10 +29,10 @@ namespace device_location {
                         double d = Math.Sqrt(Math.Pow((esp[i].GetX() - esp[j].GetX()), 2) +
                             Math.Pow((esp[i].GetY() - esp[j].GetY()), 2));
                         //l = r1^2-r2^2 + d^2 / 2d
-                        double l = (Math.Pow(signal[i], 2) - Math.Pow(signal[j], 2) + Math.Pow(d, 2)) / (2 * d);
+                        double l = (Math.Pow(signalPowerPerBoard[i], 2) - Math.Pow(signalPowerPerBoard[j], 2) + Math.Pow(d, 2)) / (2 * d);
 
                         //h = sqrt(r1^2 - l^2)
-                        double h = Math.Sqrt(Math.Pow(signal[i], 2) - Math.Pow(l, 2));
+                        double h = Math.Sqrt(Math.Pow(signalPowerPerBoard[i], 2) - Math.Pow(l, 2));
 
                         //x = l(x2 - x1) / d + -h(y2 - y1) / d + x1
                         double x = (l * (esp[j].GetX() - esp[i].GetX())) / d + (h * (esp[j].GetY() - esp[i].GetY())) / d + esp[i].GetX();
@@ -40,7 +40,7 @@ namespace device_location {
                         double y = (l * (esp[j].GetY() - esp[i].GetY())) / d - (h * (esp[j].GetX() - esp[i].GetX())) / d + esp[i].GetY();
                         
 
-                        if (CheckPoint(Math.Round(x), Math.Round(y), esp, signal)) {
+                        if (CheckPoint(Math.Round(x), Math.Round(y), esp, signalPowerPerBoard)) {
                             if (!listPoints.Contains(new Point(Math.Round(x), Math.Round(y))))
                                 listPoints.Add(new Point(Math.Round(x), Math.Round(y)));
                         }
@@ -51,7 +51,7 @@ namespace device_location {
                         y = (l * (esp[j].GetY() - esp[i].GetY())) / d + (h * (esp[j].GetX() - esp[i].GetX())) / d + esp[i].GetY();
 
 
-                        if (CheckPoint(Math.Round(x), Math.Round(y), esp, signal)) {
+                        if (CheckPoint(Math.Round(x), Math.Round(y), esp, signalPowerPerBoard)) {
                             if (!listPoints.Contains(new Point(Math.Round(x), Math.Round(y))))
                                 listPoints.Add(new Point(Math.Round(x), Math.Round(y)));
                         }
@@ -80,7 +80,7 @@ namespace device_location {
             }
         }
 
-        private bool CheckPoint(double x, double y, Station[] esp, double[] signal) {
+        private bool CheckPoint(double x, double y, Board[] esp, double[] signal) {
             for (int i = 0; i < esp.Length; i++) {
                     if ((Math.Pow(x - esp[i].GetX(), 2) + Math.Pow(y - esp[i].GetY(), 2) - Math.Pow(signal[i], 2)) > 0)
                     return false;

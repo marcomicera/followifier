@@ -5,13 +5,13 @@ using System.Collections.Generic;
 namespace device_location {
     public class Test {
         public static void Main(string[] args) {
-            Station[] listStation = new Station[Constants.SIZE];
+            Board[] listStation = new Board[Constants.SIZE];
             Device d = new Device("A");
 
             for (int i=0; i<Constants.TIME_SLOTS+1; i++) {
-                listStation[0] = new Station(1, i, 0);
-                listStation[1] = new Station(2, i+2, 0);
-                listStation[2] = new Station(3, i+1, -1);
+                listStation[0] = new Board(1, i, 0);
+                listStation[1] = new Board(2, i+2, 0);
+                listStation[2] = new Board(3, i+1, -1);
 
                 double[] listDistances = new double[Constants.SIZE];
                 listDistances[0] = 1;

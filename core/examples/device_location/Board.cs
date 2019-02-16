@@ -1,12 +1,12 @@
 ﻿using System;
 
 namespace device_location {
-    public class Station {
+    public class Board {
         readonly int id;
         double x;
         double y;
 
-        public Station(int id, double x, double y) {
+        public Board(int id, double x, double y) {
             this.id = id;
             this.x = x;
             this.y = y;
