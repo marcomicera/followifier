@@ -7,7 +7,7 @@ Software that will be running on ESP32 boards (constantly receiving Probe Reques
 ### [Manufacturer documentation](https://esp-idf.readthedocs.io/en/latest/get-started/index.html)
 1. [Install a C/C++ toolchain](https://esp-idf.readthedocs.io/en/latest/get-started/index.html#setup-toolchain)
 2. [Clone the ESP-IDF repo](https://github.com/espressif/esp-idf)
-	*  `git clone https://github.com/espressif/esp-idf.git`
+	*  `git clone git@github.com:espressif/esp-idf.git`
 3.  New environment variable `IDF_PATH` pointing at the ESP-IDF directory
 4. `python -m pip install --user -r $IDF_PATH/requirements.txt` to install the Python packages required by ESP-IDF
 
@@ -15,7 +15,7 @@ Software that will be running on ESP32 boards (constantly receiving Probe Reques
 ##### Linux
 1. If the board is not recognized by the O.S., install [these drivers](https://www.silabs.com/documents/login/software/Linux_3.x.x_4.x.x_VCP_Driver_Source.zip) following the instructions in `CP210x_VCP_Linux_4.x_Release_Notes.txt`
 2. Give the current user read and write access the serial port over USB with `sudo usermod -a -G dialout $USER`
-3. Run `/dev/tty*` twice, first with the board/dongle unplugged, then with plugged in. The port which appears the second time is the one you need
+3. Run `ls /dev/tty*` twice, first with the board/dongle unplugged, then with plugged in. The port which appears the second time is the one you need
 
 ##### Windows
 1. Install [this zip file](https://www.silabs.com/documents/public/software/CP210x_Universal_Windows_Driver.zip)
