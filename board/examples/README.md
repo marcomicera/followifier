@@ -76,7 +76,7 @@ a given timeout is reached, or the maximum length threshold has been crossed.
 The serialization of the metadata can be handled by the `json` component of our ESP-IDF operating system.
 
 Each JSON message could be so defined:
-
+```json
 {
 	"timestamp": <timestamp>,
 	"packet_list": {
@@ -92,7 +92,7 @@ Each JSON message could be so defined:
 		...
 	}
 }
-
+```
 ## Synchronization
 
 Synchronization of slave-server clocks will be handled by means of an SNTP interaction with a server.
