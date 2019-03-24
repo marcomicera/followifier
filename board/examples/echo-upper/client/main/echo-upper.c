@@ -54,8 +54,8 @@
  * Wi-Fi info, to be set via:
  * 'make menuconfig' -> "Component config" ->
  */
-#define WIFI_SSID 			"Connectify-WHAT"
-#define WIFI_PASSWORD	 	"PeteCTF{NOTSOFAST}"
+#define WIFI_SSID 			"Sgt Pepper's Wi-Fi"
+#define WIFI_PASSWORD	 	"y^?8_&E@e)4x<9/B"
 
 /**
  * ESP32 info
@@ -65,8 +65,8 @@
 /**
  * Server info
  */
-#define SERVER_ADDRESS	 	"192.168.151.1"
-#define SERVER_PORT	 		8080
+#define SERVER_ADDRESS	 	"192.168.1.11"
+#define SERVER_PORT	 		9991
 
 /**
  * Server address data structure
