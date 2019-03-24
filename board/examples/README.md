@@ -81,9 +81,9 @@ Each JSON message could be so defined:
 	"timestamp": <timestamp>,
 	"packet_list": {
 		"packet_1": {
-			"transm_addr": <hex_string>
-			"bssid": <hex_string>
-			"timestamp": <hex_string>
+			"transm_addr": "<hex_string>",
+			"bssid": "<hex_string>",
+			"timestamp": "<hex_string>",
 			...
 			...
 		},
