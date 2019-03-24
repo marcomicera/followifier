@@ -51,6 +51,7 @@ static void wifi_sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t 
 
 static int wifi_sniffer_is_probe(unsigned short fctl);
 void
+
 app_main(void)
 {
 	int channel = 1;
@@ -93,7 +94,6 @@ wifi_sniffer_init(void)
 void
 wifi_sniffer_set_channel(uint8_t channel)
 {
-
 	esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
 }
 
@@ -131,6 +131,14 @@ int wifi_sniffer_is_probe(unsigned short fctl) {
 	return ((fctl & SUBTYPE_MASK) == PROBE_REQUEST || (fctl & SUBTYPE_MASK) == PROBE_RESPONSE);
 }
 
+/* The packet handler here has to print information from PROBE REQUESTS and RESPONSE.
+/* For each packet, we print:
+/* Sender MAC
+/* SSID - if not broadcast
+/* timestamp
+/* packet hash
+/* Signal power
+*/
 void
 wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 {
@@ -139,12 +147,17 @@ wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 	Extending this to dump PROBE REQUEST frames, with metadata
 	*/
 
+
 	if (type != WIFI_PKT_MGMT)
 		return;
 
+	// Converts buffer to the correct struct definition
 	const wifi_promiscuous_pkt_t *ppkt = (wifi_promiscuous_pkt_t *)buff;
+	
+	// Extracts Payload and Header with our user-defined representation 
 	const wifi_ieee80211_packet_t *ipkt = (wifi_ieee80211_packet_t *)ppkt->payload;
 	const wifi_ieee80211_mac_hdr_t *hdr = &ipkt->hdr;
+
 
 	if (DEBUG) {
 		printf("Masked:unmasked frame control of packet has value %04x:%04x\n",
@@ -152,17 +165,13 @@ wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 	}
 
 	if (wifi_sniffer_is_probe((unsigned short)hdr->frame_ctrl)) {
-		printf("PACKET TYPE=%s, CHAN=%02d, RSSI=%02d,"
-			" RecADDR=%02x:%02x:%02x:%02x:%02x:%02x,"
-			" TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x,"
-			" BSSID=%02x:%02x:%02x:%02x:%02x:%02x\n"
-			" TIMESTAMP=%10d\n",
+		printf("PACKET TYPE=%s | CHAN=%02d | RSSI=%02d \n"
+			"TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x |"
+			" BSSID=%02x:%02x:%02x:%02x:%02x:%02x \n"
+			"TIMESTAMP=%10d\n",
 			wifi_sniffer_packet_subtype2str((wifi_ieee80211_mac_hdr_t *)hdr),
 			ppkt->rx_ctrl.channel,
 			ppkt->rx_ctrl.rssi,
-			// ADDR 1
-			hdr->addr1[0],hdr->addr1[1],hdr->addr1[2],
-			hdr->addr1[3],hdr->addr1[4],hdr->addr1[5],
 			// ADDR2
 			hdr->addr2[0],hdr->addr2[1],hdr->addr2[2],
 			hdr->addr2[3],hdr->addr2[4],hdr->addr2[5],

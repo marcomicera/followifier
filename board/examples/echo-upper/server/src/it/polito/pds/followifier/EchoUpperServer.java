@@ -69,7 +69,7 @@ public class EchoUpperServer {
 	 */
 	public static void startServer(int port) {
 		// Creating a server socket
-		try (ServerSocket serverSocket = new ServerSocket(port, 7, InetAddress.getLocalHost())) {
+		try (ServerSocket serverSocket = new ServerSocket(port, 7, InetAddress.getByName("192.168.151.1"))) {
 			System.out.println(SERVER_NAME + " started, " + serverSocket);
 			
 			// Cyclic server
