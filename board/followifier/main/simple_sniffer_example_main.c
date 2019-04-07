@@ -26,6 +26,7 @@
 #include "sdmmc_cmd.h"
 #include "cmd_decl.h"
 #include "sdkconfig.h"
+#include "hash.pb-c.h"
 
 #if CONFIG_STORE_HISTORY
 #define HISTORY_MOUNT_POINT "/data"
@@ -245,6 +246,10 @@ void app_main(void)
      * This can be customized, made dynamic, etc.
      */
     const char *prompt = LOG_COLOR_I "esp32> " LOG_RESET_COLOR;
+
+    HelloRequest test = HELLO_REQUEST__INIT;
+    test.name = "This is a test string";
+    printf("%s\n", test.name);
 
     printf("\n =======================================================\n");
     printf(" |       Steps to sniffer WiFi packets                 |\n");

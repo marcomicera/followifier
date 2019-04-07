@@ -1,0 +1,5 @@
+syntax = "proto2";
+
+message HelloRequest {
+  required string name = 1;
+}

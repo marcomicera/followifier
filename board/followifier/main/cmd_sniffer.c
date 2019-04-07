@@ -20,6 +20,7 @@
 #include "cmd_sniffer.h"
 #include "pcap.h"
 #include "sdkconfig.h"
+#include "hash.pb-c.h"
 
 #define SNIFFER_DEFAULT_FILE_NAME "esp-sniffer"
 #define SNIFFER_FILE_NAME_MAX_LEN CONFIG_PCAP_FILE_NAME_MAX_LEN
