@@ -1,3 +1,59 @@
+### ESP-IDF .gitignore
+
+board/**/cmake-build-debug/
+
+.config
+*.o
+*.pyc
+
+# gtags
+GTAGS
+GRTAGS
+GPATH
+
+# emacs
+.dir-locals.el
+
+# emacs temp file suffixes
+*~
+.#*
+\#*#
+
+# eclipse setting
+.settings
+
+# MacOS directory files
+.DS_Store
+
+# Example project files
+board/**/sdkconfig
+board/**/sdkconfig.old
+board/**/build
+
+TEST_LOGS
+
+# AWS IoT Examples require device-specific certs/keys
+board/**/protocols/aws_iot/*/main/certs/*.pem.*
+
+# gcov coverage reports
+*.gcda
+*.gcno
+coverage.info
+coverage_report/
+
+test_multi_heap_host
+
+# VS Code Settings
+.vscode/
+
+# Results for the checking of the Python coding style
+flake8_output.txt
+
+# ESP-IDF library
+build
+
+
+
 ### Default .gitignore
 
 ## Ignore Visual Studio temporary files, build results, and
@@ -264,6 +320,7 @@ __pycache__/
 /board/examples/wifi-dump/build
 
 
+
 ### Python .gitignore
 
 # Byte-compiled / optimized / DLL files
@@ -383,6 +440,7 @@ dmypy.json
 .pyre/
 
 
+
 ### Java.gitignore
 
 # Compiled class file
@@ -408,6 +466,7 @@ dmypy.json
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
 
 
 ### C.gitignore
@@ -466,8 +525,8 @@ Mkfile.old
 dkms.conf
 
 
-### Eclipse.gitignore
 
+### Eclipse.gitignore
 
 .metadata
 bin/
@@ -524,6 +583,7 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+
 
 
 ### VisualStudio.gitignore
