@@ -248,7 +248,7 @@ void app_main(void)
     const char *prompt = LOG_COLOR_I "esp32> " LOG_RESET_COLOR;
 
     HelloRequest test = HELLO_REQUEST__INIT;
-    test.name = "This is a test string";
+    test.name = "Hello, ESP2! This has been compiled from the terminal.";
     printf("%s\n", test.name);
 
     printf("\n =======================================================\n");

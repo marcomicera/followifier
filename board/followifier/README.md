@@ -1,7 +1,3 @@
-# Simple Sniffer Example
-
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
-
 ## Overview
 
 This example demonstrates basic usage of WiFi sniffer mode by saving packets into SD card with pcap format. We can send pcap file to host via JTAG interface as well.
@@ -11,11 +7,6 @@ For more information about pcap, please go to [wikipedia](https://en.wikipedia.o
 This example is based on console component. For more information about console, please refer to [console guide](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/console.html).
 
 ## How to use example
-
-### Hardware Required
-
-To run this example, you should have one ESP32 dev board integrated with a SD card slot (e.g [ESP-WROVER-KIT](https://docs.espressif.com/projects/esp-idf/en/latest/hw-reference/modules-and-boards.html#esp-wrover-kit-v4-1)) or just connect [ESP32-DevKitC](https://docs.espressif.com/projects/esp-idf/en/latest/hw-reference/modules-and-boards.html#esp32-devkitc-v4) to a SD card breakout board. 
-If you want to send packets to host, make sure to connect ESP32 to some kind of [JTAG adapter](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/jtag-debugging/index.html#jtag-debugging-selecting-jtag-adapter).
 
 ### Configure the project
 
@@ -33,10 +24,10 @@ Enter `make menuconfig` if you are using GNU Make based build system or enter `i
 
 ### Build and Flash
 
-Enter `make -j4 flash monitor` if you are using GNU Make based build system or enter `idf.py build flash monitor` if you' are using CMake based build system.
+Simply run `./run.sh`. \
+**`cmake` has to be install in your system**, and must be on your `PATH`.
 
-(To exit the serial monitor, type ``Ctrl-]``.)
-
+To exit the serial monitor, type ``Ctrl-]``. \
 See the [Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) for full steps to configure and use ESP-IDF to build projects.
 
 ## Example Output
