@@ -17,6 +17,11 @@ Software that will be running on ESP32 boards (constantly receiving Probe Reques
 2. Give the current user read and write access the serial port over USB with `sudo usermod -a -G dialout $USER`
 3. Run `ls /dev/tty*` twice, first with the board/dongle unplugged, then with plugged in. The port which appears the second time is the one you need
 
+#### Mac OS
+1. Install [these drivers](https://www.silabs.com/documents/public/software/Mac_OSX_VCP_Driver.zip)
+2. `System Preferences` -> `Security & Privacy` -> `Allow apps downloaded from:` -> App Store and identified developer
+3. Run `ls /dev/cu*/` twice, first with the board/dongle unplugged, then with plugged in. The port which appears the second time is the one you need
+
 ##### Windows
 1. Install [this zip file](https://www.silabs.com/documents/public/software/CP210x_Universal_Windows_Driver.zip)
 2. Connect the ESP32 to the computer
