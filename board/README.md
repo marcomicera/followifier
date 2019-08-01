@@ -7,14 +7,16 @@ Software that will be running on ESP32 boards (constantly receiving Probe Reques
 ### [Manufacturer documentation](https://esp-idf.readthedocs.io/en/latest/get-started/index.html)
 1. [Install a C/C++ toolchain](https://esp-idf.readthedocs.io/en/latest/get-started/index.html#setup-toolchain)
 2. [Clone the ESP-IDF repo](https://github.com/espressif/esp-idf)
-	*  `git clone git@github.com:espressif/esp-idf.git`
+	*  `git clone --recursive git@github.com:espressif/esp-idf.git`
 3.  New environment variable `IDF_PATH` pointing at the ESP-IDF directory
 4. `python -m pip install --user -r $IDF_PATH/requirements.txt` to install the Python packages required by ESP-IDF
+5. Run `./installsh && . ./export.sh` in the `esp-idf` directory
 
 ### Connect the board
 ##### Linux
 1. If the board is not recognized by the O.S., install [these drivers](https://www.silabs.com/documents/login/software/Linux_3.x.x_4.x.x_VCP_Driver_Source.zip) following the instructions in `CP210x_VCP_Linux_4.x_Release_Notes.txt`
 2. Give the current user read and write access the serial port over USB with `sudo usermod -a -G dialout $USER`
+3. Log out and lock back in
 3. Run `ls /dev/tty*` twice, first with the board/dongle unplugged, then with plugged in. The port which appears the second time is the one you need
 
 #### Mac OS
@@ -37,14 +39,5 @@ Software that will be running on ESP32 boards (constantly receiving Probe Reques
 1. Open a Unix shell (`Win + R` → `mingw32` on Windows)
 2. `cd $IDF_PATH` to navigate to the ESP-IDF project root
 3. `cd examples/get-started/hello_world/` to navigate to the hello world example
-4. `make menuconfig` to launch the ESP32 board's configuration UI.
-![ESP32 board's configuration UI](https://docs.espressif.com/projects/esp-idf/en/latest/_images/project-configuration.png)
-5. Select `Serial flasher config` → `Default serial port`
-6. Configure the serial port to which the ESP32 board is connected to (e.g., "`COM3`" on Windows or "`/dev/ttyUSB0`" on Linux)
-7. Save and exit
-8. `make flash -j 4` to compile
-9. `make monitor` to launch the application
-
-###### Flash and launch the app
-1. `make app-flash monitor -j 4`
-	* It will automatically rebuild the app if it needs to
+4. Build and run the project with `idf.py -p PORT flash monitor`, where `PORT` indicates the serial port to which the ESP32 board is connected to (e.g., "`COM3`" on Windows or "`/dev/ttyUSB0`" on Linux)
+5. To exit IDF monitor use the shortcut `Ctrl+]`
