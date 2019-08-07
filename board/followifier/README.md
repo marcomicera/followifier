@@ -8,9 +8,14 @@ This example is based on console component. For more information about console, 
 
 ## How to use example
 
+### Hardware Required
+
+To run this example, you should have one ESP32 dev board integrated with a SD card slot (e.g [ESP-WROVER-KIT](https://docs.espressif.com/projects/esp-idf/en/latest/hw-reference/modules-and-boards.html#esp-wrover-kit-v4-1)) or just connect [ESP32-DevKitC](https://docs.espressif.com/projects/esp-idf/en/latest/hw-reference/modules-and-boards.html#esp32-devkitc-v4) to a SD card breakout board. 
+If you want to send packets to host, make sure to connect ESP32 to some kind of [JTAG adapter](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/jtag-debugging/index.html#jtag-debugging-selecting-jtag-adapter).
+
 ### Configure the project
 
-Enter `make menuconfig` if you are using GNU Make based build system or enter `idf.py menuconfig` if you are using CMake based build system. Then go into `Example Configuration` menu.
+Open the project configuration menu (`idf.py menuconfig`). Then go into `Example Configuration` menu.
 
 - Check `Store command history in flash` if you want to save command history into flash (recommend).
 - Select where to save the pcap file in `Select destination to store pcap file` menu item.
@@ -24,10 +29,14 @@ Enter `make menuconfig` if you are using GNU Make based build system or enter `i
 
 ### Build and Flash
 
-Simply run `./run.sh`. \
-**`cmake` has to be install in your system**, and must be on your `PATH`.
+```
+idf.py -p PORT flash monitor
+```
 
-To exit the serial monitor, type ``Ctrl-]``. \
+(Replace PORT with name of the serial port.)
+
+(To exit the serial monitor, type ``Ctrl-]``.)
+
 See the [Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) for full steps to configure and use ESP-IDF to build projects.
 
 ## Example Output
@@ -105,7 +114,7 @@ I (248800) example: Card unmounted
 
 ### Steps for sending packets to host via JTAG interface
 1. Select `JTAG (App Trace)` as the destination of pcap files.
-2. Build & Flash with `idf.py build flash` or `make flash`.
+2. Build & Flash with `idf.py -p PORT flash`
 3. Connect JTAG, run OpenOCD (for more information about how-to please refer to [JTAG Debugging](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/jtag-debugging/index.html)).
 4. Telnet to localhost with 4444 port: `telnet localhost 4444`.
 5. In the telnet session, run command like `esp32 apptrace start file://sniffer-esp32.pcap 1 -1 20` (more information about this command, please refer to [apptrace command](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/app_trace.html#openocd-application-level-tracing-commands)).
