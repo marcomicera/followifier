@@ -1,4 +1,4 @@
-/* cmd_sniffer example — declarations of command registration functions.
+/* cmd_sniffer example — declarations of command r = {0};egistration functions.
 
    This example code is in the Public Domain (or CC0 licensed, at your option.)
 
@@ -34,7 +34,17 @@ typedef enum {
     SNIFFER_WLAN_FILTER_MAX
 } sniffer_wlan_filter_t;
 
-void register_sniffer(void);
+typedef struct {
+    bool is_running;
+    sniffer_intf_t interf;
+    uint32_t channel;
+    uint32_t filter;
+    TaskHandle_t task;
+    QueueHandle_t work_queue;
+    SemaphoreHandle_t sem_task_over;
+} sniffer_runtime_t;
+
+esp_err_t sniffer_start(sniffer_runtime_t*);
 
 #ifdef __cplusplus
 }

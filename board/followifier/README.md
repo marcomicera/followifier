@@ -68,7 +68,7 @@ The `sniffer` command support some important options as follow:
 ### Mount SD Card
 
 ```bash
- =======================================================
+ -=====================================================-
  |       Steps to sniffer WiFi packets                 |
  |                                                     |
  |  1. Enter 'help' to check all commands' usage       |
@@ -76,7 +76,7 @@ The `sniffer` command support some important options as follow:
  |  3. Enter 'sniffer' to start capture packets        |
  |  4. Enter 'unmount <device>' to unmount filesystem  |
  |                                                     |
- =======================================================
+ -=====================================================-
 
 esp32> mount sd
 I (158912) example: Initializing SD card
