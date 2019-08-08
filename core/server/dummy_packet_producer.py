@@ -70,15 +70,19 @@ def main():
             default=1)
     parser.add_argument('--protobuf', action='store_true', help='Enable this switch for protocol buffer serialization (default JSON)',
             default=False)
+    parser.add_argument('--out_file', action='store', help='Define optionally out file to save batches.')
     args = parser.parse_args()
 
     # UDP would probably be more suited
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((args.ip, args.port))
-    
+    if args.out_file:
+        f = open(args.out_file, 'wb')
     while True:
-        batch = produce_protobuf_batch(args.batch_size) if args.protobuf else produce_json_batch(args.batch_size).encode()
-        s.send(batch.SerializeToString())
+        batch = produce_protobuf_batch(args.batch_size).SerializeToString() if args.protobuf else produce_json_batch(args.batch_size).encode()
+        if args.out_file:
+            f.write(batch)
+        s.send(batch)
         time.sleep(args.batch_rate) 
         
 if __name__ == '__main__':
