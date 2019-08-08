@@ -1,7 +1,7 @@
+import message_pb2
 import argparse
 import datetime
 import json
-#import protobuf
 import random
 import socket
 import string
@@ -28,11 +28,11 @@ def gen_random_rsi():
     return random.randrange(-90, 0)
 
 class DummyPacket(object):
-    def __init__(self, mac_address=None, ssid=None, timestamp=None, pkt_hash=None, rsi=None):
-        self.mac_address = mac_address or gen_random_mac()
+    def __init__(self, mac=None, ssid=None, timestamp=None, frame_hash=None, rsi=None):
+        self.mac = mac or gen_random_mac()
         self.ssid = ssid or gen_random_ssid()
         self.timestamp = timestamp or gen_random_timestamp()
-        self.pkt_hash = pkt_hash or gen_random_hash()
+        self.frame_hash = frame_hash or gen_random_hash()
         self.rsi = rsi or gen_random_rsi()
 
 def timer(func):
@@ -47,7 +47,19 @@ def timer(func):
 @timer
 def produce_json_batch(batch_size):
     return json.dumps([DummyPacket().__dict__ for _ in range(batch_size)])
-    
+
+@timer
+def produce_protobuf_batch(batch_size):
+    batch = message_pb2.Batch() 
+    for _ in range(batch_size):
+        fill_message(batch.messages.add())
+    return batch
+
+def fill_message(message):
+    p = DummyPacket()
+    for k, v in p.__dict__.items():
+        setattr(message, k, v)
+ 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('ip', action='store', help="server IP")
@@ -56,6 +68,8 @@ def main():
             default=100)
     parser.add_argument('--batch_rate', action='store', type=int, help='period in seconds between subsequent batches',
             default=1)
+    parser.add_argument('--protobuf', action='store_true', help='Enable this switch for protocol buffer serialization (default JSON)',
+            default=False)
     args = parser.parse_args()
 
     # UDP would probably be more suited
@@ -63,8 +77,8 @@ def main():
     s.connect((args.ip, args.port))
     
     while True:
-        packets_json = produce_json_batch(args.batch_size)
-        s.send(packets_json.encode())
+        batch = produce_protobuf_batch(args.batch_size) if args.protobuf else produce_json_batch(args.batch_size).encode()
+        s.send(batch.SerializeToString())
         time.sleep(args.batch_rate) 
         
 if __name__ == '__main__':
