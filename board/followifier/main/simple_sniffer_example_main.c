@@ -129,6 +129,6 @@ void app_main(void) {
 
     snf_rt.interf = SNIFFER_INTF_WLAN;
     snf_rt.channel = SNIFFER_DEFAULT_CHANNEL;
-    snf_rt.filter += WIFI_PROMIS_FILTER_MASK_MGMT;
+    snf_rt.filter = WIFI_PROMIS_FILTER_MASK_MGMT;
     sniffer_start(&snf_rt);
 }

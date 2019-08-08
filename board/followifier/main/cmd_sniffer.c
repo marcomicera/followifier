@@ -29,6 +29,10 @@
 #define SNIFFER_PROCESS_APPTRACE_TIMEOUT_US (100)
 #define SNIFFER_APPTRACE_RETRY  (10)
 
+#define PROBE_REQUEST    0x0040
+#define PROBE_RESPONSE    0x0050
+#define SUBTYPE_MASK 0x00F0
+
 static const char *SNIFFER_TAG = "followifier";
 #define SNIFFER_CHECK(a, str, goto_tag, ...)                                              \
     do                                                                                    \
@@ -41,9 +45,19 @@ static const char *SNIFFER_TAG = "followifier";
     } while (0)
 
 typedef struct {
-    char *filter_name;
-    uint32_t filter_val;
-} wlan_filter_table_t;
+    unsigned frame_ctrl:16;
+    unsigned duration_id:16;
+    uint8_t addr1[6]; /* receiver address */
+    uint8_t addr2[6]; /* sender address */
+    uint8_t addr3[6]; /* filtering address */
+    unsigned sequence_ctrl:16;
+    uint8_t addr4[6]; /* optional */
+} wifi_ieee80211_mac_hdr_t;
+
+typedef struct {
+    wifi_ieee80211_mac_hdr_t hdr;
+    uint8_t payload[0]; /* network data ended with 4 bytes csum (CRC32) */
+} wifi_ieee80211_packet_t;
 
 typedef struct {
     void *payload;
@@ -90,6 +104,72 @@ static void wifi_sniffer_cb(void *recv_buf, wifi_promiscuous_pkt_type_t type) {
         } else {
             ESP_LOGE(SNIFFER_TAG, "No enough memory for promiscuous packet");
         }
+    }
+}
+
+const char *wifi_sniffer_packet_subtype2str(wifi_ieee80211_mac_hdr_t *header) {
+    // Masking the frame control to only examine Subtype fields, bits [12:9]
+    // i.e 0000 1111 0000 0000
+    // PROBE_REQUEST -> 1000
+    // PROBE_RESPONSE -> 1001
+    switch (header->frame_ctrl & SUBTYPE_MASK) {
+        case PROBE_REQUEST:
+            return "PROBE_REQUEST";
+        case PROBE_RESPONSE:
+            return "PROBE_RESPONSE";
+        default:
+            return "NOTIMPL";
+    }
+}
+
+int wifi_sniffer_is_probe(unsigned short fctl) {
+    return ((fctl & SUBTYPE_MASK) == PROBE_REQUEST || (fctl & SUBTYPE_MASK) == PROBE_RESPONSE);
+}
+
+/**
+ * The packet handler here has to print information from PROBE REQUESTS and RESPONSE.
+ * For each packet, we print:
+ * - Sender MAC
+ * - SSID - if not broadcast
+ * - timestamp
+ * - packet hash
+ * - Signal power
+ *
+ * @param buff
+ * @param type
+ */
+void wifi_sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
+
+    // Not necessary after calling `esp_wifi_set_promiscuous_filter()`
+    if (type != WIFI_PKT_MGMT)
+        return;
+
+    // Converts buffer to the correct struct definition
+    const wifi_promiscuous_pkt_t *ppkt = (wifi_promiscuous_pkt_t *) buff;
+
+    // Extracts Payload and Header with our user-defined representation
+    const wifi_ieee80211_packet_t *ipkt = (wifi_ieee80211_packet_t *) ppkt->payload;
+    const wifi_ieee80211_mac_hdr_t *hdr = &ipkt->hdr;
+
+    ESP_LOGD(SNIFFER_TAG, "Masked:unmasked frame control of packet has value %04x:%04x\n",
+             (hdr->frame_ctrl & SUBTYPE_MASK), hdr->frame_ctrl);
+
+    if (wifi_sniffer_is_probe((unsigned short) hdr->frame_ctrl)) {
+        ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d | RSSI=%02d \n"
+                              "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x |"
+                              " BSSID=%02x:%02x:%02x:%02x:%02x:%02x \n"
+                              "TIMESTAMP=%10d\n",
+                 wifi_sniffer_packet_subtype2str((wifi_ieee80211_mac_hdr_t *) hdr),
+                 ppkt->rx_ctrl.channel,
+                 ppkt->rx_ctrl.rssi,
+        // ADDR2
+                 hdr->addr2[0], hdr->addr2[1], hdr->addr2[2],
+                 hdr->addr2[3], hdr->addr2[4], hdr->addr2[5],
+        // ADDR3
+                 hdr->addr3[0], hdr->addr3[1], hdr->addr3[2],
+                 hdr->addr3[3], hdr->addr3[4], hdr->addr3[5],
+                 ppkt->rx_ctrl.timestamp
+        );
     }
 }
 
@@ -173,7 +253,7 @@ esp_err_t sniffer_start(sniffer_runtime_t *sniffer) {
             /* Start WiFi Promicuous Mode */
             wifi_filter.filter_mask = sniffer->filter;
             esp_wifi_set_promiscuous_filter(&wifi_filter);
-            esp_wifi_set_promiscuous_rx_cb(wifi_sniffer_cb);
+            esp_wifi_set_promiscuous_rx_cb(wifi_sniffer_packet_handler);
             SNIFFER_CHECK(esp_wifi_set_promiscuous(true) == ESP_OK, "start wifi promiscuous failed", err_start);
             esp_wifi_set_channel(sniffer->channel, WIFI_SECOND_CHAN_NONE);
             ESP_LOGI(SNIFFER_TAG, "start WiFi promiscuous ok");
