@@ -16,6 +16,8 @@ export class ChartComponent implements OnInit {
 
   private ctx: CanvasRenderingContext2D;
   private data: TestModel[];
+  private imageWidth = 10;
+  private imageHeight = 20;
 
   constructor(private dataService: DataService) {
   }
@@ -37,15 +39,15 @@ export class ChartComponent implements OnInit {
     const image = new Image();
     image.onload = () => {
       // to center coordinates
-      this.ctx.drawImage(image, x - 8, y - 10, 16, 20);
-    }
+      this.ctx.drawImage(image, x - (this.imageWidth / 2), y - (this.imageHeight / 2), this.imageWidth, this.imageHeight);
+    };
     image.src = 'assets/img/phone.png';
   }
 
   public click(event): void {
     this.data.forEach(value => {
-      if (event.offsetX >= value.x - 8 && event.offsetX <= value.x + 8 &&
-        event.offsetY >= value.y - 8 && event.offsetY <= value.y + 8){
+      if (event.offsetX >= value.x - (this.imageWidth / 2) && event.offsetX <= value.x + (this.imageWidth / 2) &&
+        event.offsetY >= value.y - (this.imageHeight / 2) && event.offsetY <= value.y + (this.imageHeight / 2)) {
         alert('Clicked ' + value.name);
       }
     });
