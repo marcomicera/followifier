@@ -1,1 +1,6 @@
-<canvas #canvas width="1000" height="600" (click) = "click($event)" ></canvas>
+<div class="wrap">
+  <canvas #canvas (click)="click($event)"></canvas>
+  <div #popup id="info" (clickOutside)="closePopup($event)">
+    <p *ngIf="info">NAME : {{info.name}}</p>
+  </div>
+</div>
