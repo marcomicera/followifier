@@ -30,12 +30,12 @@ struct  _Followifier__ESP32Message
   char *mac;
   char *ssid;
   int64_t timestamp;
-  char *frame_hash;
+  int64_t frame_hash;
   int32_t rsi;
 };
 #define FOLLOWIFIER__ESP32_MESSAGE__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&followifier__esp32_message__descriptor) \
-    , NULL, NULL, 0, NULL, 0 }
+    , NULL, NULL, 0, 0, 0 }
 
 
 struct  _Followifier__Batch

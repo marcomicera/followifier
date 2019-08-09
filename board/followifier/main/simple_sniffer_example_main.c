@@ -27,6 +27,7 @@
 #include "cmd_decl.h"
 #include "sdkconfig.h"
 #include "message.pb-c.h"
+#include "flusher.h"
 
 #define SNIFFER_DEFAULT_CHANNEL (1)
 
@@ -115,6 +116,9 @@ void app_main(void) {
     /* Register commands */
     esp_console_register_help_command();
     register_system();
+
+    /* Initialize the message flusher */
+    initialize_flusher();
 
     /* Figure out if the terminal supports escape sequences */
     int probe_status = linenoiseProbe();

@@ -8,10 +8,11 @@
 */
 #pragma once
 
+#include <sys/socket.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 /**
  * @brief Supported Sniffer Interface
  *

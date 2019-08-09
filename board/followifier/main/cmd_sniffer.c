@@ -20,6 +20,7 @@
 #include "cmd_sniffer.h"
 #include "sdkconfig.h"
 #include "message.pb-c.h"
+#include "flusher.h"
 
 #define SNIFFER_DEFAULT_FILE_NAME "esp-sniffer"
 #define SNIFFER_FILE_NAME_MAX_LEN CONFIG_SNIFFER_PCAP_FILE_NAME_MAX_LEN
@@ -182,17 +183,23 @@ void wifi_sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         void *serialized_data;      // Buffer to store serialized data
         unsigned message_length;    // Length of serialized data
 
-        message.frame_hash = hash((unsigned char *) ppkt);
-        // message.mac = ... // TODO src MAC addr
+        unsigned long hash_value = hash((unsigned char *) ppkt);
+        ESP_LOGI(SNIFFER_TAG, "Packet hash is: %lu.", hash_value);
+        message.frame_hash = hash_value;
+        message.mac = malloc(sizeof(char) * (3 + 1));
+        sprintf(message.mac, "mac"); // TODO MAC
+        ESP_LOGD(SNIFFER_TAG, "Packet RSSI is: %d.", ppkt->rx_ctrl.rssi);
         message.rsi = ppkt->rx_ctrl.rssi;
-        // message.ssid = .. // TODO SSID
+        message.ssid = malloc(sizeof(char) * (4 + 1));
+        sprintf(message.ssid, "ssid"); // TODO SSID
         message.timestamp = ppkt->rx_ctrl.timestamp;
 
         message_length = followifier__esp32_message__get_packed_size(&message);
         serialized_data = malloc(message_length);
         followifier__esp32_message__pack(&message, serialized_data);
 
-        // TODO send it to a socket
+        // Store this message
+        store_message(serialized_data, message_length);
     }
 }
 
@@ -247,19 +254,11 @@ static esp_err_t sniffer_stop(sniffer_runtime_t *sniffer) {
     return ESP_FAIL;
 }
 
-#if CONFIG_SNIFFER_PCAP_DESTINATION_JTAG
-static int trace_writefun(void *cookie, const char *buf, int len)
-{
-    return esp_apptrace_write(ESP_APPTRACE_DEST_TRAX, buf, len, SNIFFER_PROCESS_APPTRACE_TIMEOUT_US) == ESP_OK ? len : -1;
-}
-
-static int trace_closefun(void *cookie)
-{
-    return esp_apptrace_flush(ESP_APPTRACE_DEST_TRAX, ESP_APPTRACE_TMO_INFINITE) == ESP_OK ? 0 : -1;
-}
-#endif
-
 esp_err_t sniffer_start(sniffer_runtime_t *sniffer) {
+
+    // Enabling debug logging
+    esp_log_level_set(SNIFFER_TAG, ESP_LOG_VERBOSE);
+
     wifi_promiscuous_filter_t wifi_filter;
 
     sniffer->is_running = true;
@@ -273,7 +272,7 @@ esp_err_t sniffer_start(sniffer_runtime_t *sniffer) {
 
     switch (sniffer->interf) {
         case SNIFFER_INTF_WLAN:
-            /* Start WiFi Promicuous Mode */
+            /* Start WiFi Promiscuous Mode */
             wifi_filter.filter_mask = sniffer->filter;
             esp_wifi_set_promiscuous_filter(&wifi_filter);
             esp_wifi_set_promiscuous_rx_cb(wifi_sniffer_packet_handler);

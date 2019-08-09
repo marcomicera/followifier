@@ -6,7 +6,7 @@ message ESP32Message {
     required string mac = 1;
     required string ssid = 2;
     required int64 timestamp = 3;
-    required string frame_hash = 4;
+    required int64 frame_hash = 4;
     required int32 rsi = 5;
 }
 
