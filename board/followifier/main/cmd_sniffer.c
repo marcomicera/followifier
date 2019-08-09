@@ -19,7 +19,7 @@
 #include "esp_app_trace.h"
 #include "cmd_sniffer.h"
 #include "sdkconfig.h"
-// #include "hash.pb-c.h"
+#include "message.pb-c.h"
 
 #define SNIFFER_DEFAULT_FILE_NAME "esp-sniffer"
 #define SNIFFER_FILE_NAME_MAX_LEN CONFIG_SNIFFER_PCAP_FILE_NAME_MAX_LEN
@@ -68,17 +68,29 @@ typedef struct {
 
 static sniffer_runtime_t snf_rt = {0};
 
+/**
+ * djb2 hash function by Dan Bernstein.
+ * https://stackoverflow.com/questions/7666509/hash-function-for-string
+ *
+ * @param str
+ * @return
+ */
+unsigned long hash(unsigned char *str) {
+    unsigned long hash = 5381;
+    int c;
 
-static uint32_t hash_func(const char *str, uint32_t max_num) {
-    uint32_t ret = 0;
-    char *p = (char *) str;
-    while (*p) {
-        ret += *p;
-        p++;
-    }
-    return ret % max_num;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; // hash * 33 + c
+
+    return hash;
 }
 
+/**
+ * Old packet handler used by espressif's example.
+ *
+ * @param recv_buf
+ * @param type
+ */
 static void wifi_sniffer_cb(void *recv_buf, wifi_promiscuous_pkt_type_t type) {
     sniffer_packet_info_t packet_info;
     wifi_promiscuous_pkt_t *sniffer = (wifi_promiscuous_pkt_t *) recv_buf;
@@ -86,7 +98,6 @@ static void wifi_sniffer_cb(void *recv_buf, wifi_promiscuous_pkt_type_t type) {
     packet_info.seconds = sniffer->rx_ctrl.timestamp / 1000000U;
     packet_info.microseconds = sniffer->rx_ctrl.timestamp % 1000000U;
     packet_info.length = sniffer->rx_ctrl.sig_len;
-    ESP_LOGI(SNIFFER_TAG, "mgmt packet: %s: ", sniffer->payload); // TODO print packet info here?
     /* For now, the sniffer only dumps the length of the MISC type frame */
     if (type != WIFI_PKT_MISC && !sniffer->rx_ctrl.rx_state) {
         packet_info.length -= SNIFFER_PAYLOAD_FCS_LEN;
@@ -107,11 +118,13 @@ static void wifi_sniffer_cb(void *recv_buf, wifi_promiscuous_pkt_type_t type) {
     }
 }
 
+/**
+ * Masks the frame control to only examine Subtype fields, bits [12:9].
+ *
+ * @param header    packet header to be examined.
+ * @return          a string representation of the packet header type.
+ */
 const char *wifi_sniffer_packet_subtype2str(wifi_ieee80211_mac_hdr_t *header) {
-    // Masking the frame control to only examine Subtype fields, bits [12:9]
-    // i.e 0000 1111 0000 0000
-    // PROBE_REQUEST -> 1000
-    // PROBE_RESPONSE -> 1001
     switch (header->frame_ctrl & SUBTYPE_MASK) {
         case PROBE_REQUEST:
             return "PROBE_REQUEST";
@@ -127,13 +140,7 @@ int wifi_sniffer_is_probe(unsigned short fctl) {
 }
 
 /**
- * The packet handler here has to print information from PROBE REQUESTS and RESPONSE.
- * For each packet, we print:
- * - Sender MAC
- * - SSID - if not broadcast
- * - timestamp
- * - packet hash
- * - Signal power
+ * Handling PROBE_REQUEST Wi-Fi management packets.
  *
  * @param buff
  * @param type
@@ -170,6 +177,22 @@ void wifi_sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
                  hdr->addr3[3], hdr->addr3[4], hdr->addr3[5],
                  ppkt->rx_ctrl.timestamp
         );
+
+        Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
+        void *serialized_data;      // Buffer to store serialized data
+        unsigned message_length;    // Length of serialized data
+
+        message.frame_hash = hash((unsigned char *) ppkt);
+        // message.mac = ... // TODO src MAC addr
+        message.rsi = ppkt->rx_ctrl.rssi;
+        // message.ssid = .. // TODO SSID
+        message.timestamp = ppkt->rx_ctrl.timestamp;
+
+        message_length = followifier__esp32_message__get_packed_size(&message);
+        serialized_data = malloc(message_length);
+        followifier__esp32_message__pack(&message, serialized_data);
+
+        // TODO send it to a socket
     }
 }
 

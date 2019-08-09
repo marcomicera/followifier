@@ -26,7 +26,7 @@
 #include "sdmmc_cmd.h"
 #include "cmd_decl.h"
 #include "sdkconfig.h"
-// #include "hash.pb-c.h"
+#include "message.pb-c.h"
 
 #define SNIFFER_DEFAULT_CHANNEL (1)
 
