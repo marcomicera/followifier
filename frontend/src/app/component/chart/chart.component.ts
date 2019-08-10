@@ -75,6 +75,7 @@ export class ChartComponent implements OnInit {
       this.popup.nativeElement.style.left = 0 + 'px';
       this.popup.nativeElement.style.visibility = 'hidden';
       this.open = undefined;
+      this.info = undefined;
     }
   }
 }
