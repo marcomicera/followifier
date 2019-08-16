@@ -1,16 +1,17 @@
-import {Component, ElementRef, HostBinding, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostBinding, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Chart} from 'chart.js';
 import {log} from 'util';
 import {DataService} from '../../service/data/data.service';
 import {TestModel} from '../../model/testModel';
 import {any} from 'codelyzer/util/function';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.scss']
 })
-export class ChartComponent implements OnInit {
+export class ChartComponent implements OnInit, OnDestroy {
 
   @ViewChild('canvas', {static: true})
   canvas: ElementRef<HTMLCanvasElement>;
@@ -21,8 +22,8 @@ export class ChartComponent implements OnInit {
   private ctx: CanvasRenderingContext2D;
   private imageWidth = 10;
   private imageHeight = 20;
-  private data = []
-
+  private data = [];
+  private subscription = undefined;
 
   interval = undefined;
 
@@ -40,7 +41,7 @@ export class ChartComponent implements OnInit {
     this.canvas.nativeElement.height = 600;
     this.canvas.nativeElement.width = 800;
 
-    this.dataService.data$
+    this.subscription = this.dataService.data$
       .subscribe(
         data => {
           this.data = data;
@@ -56,6 +57,10 @@ export class ChartComponent implements OnInit {
 
   }
 
+   ngOnDestroy() {
+     this.subscription.unsubscribe();
+     clearInterval(this.interval);
+  }
 
   private draw(x, y): void {
     const image = new Image();

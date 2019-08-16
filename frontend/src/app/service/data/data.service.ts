@@ -11,7 +11,7 @@ export class DataService {
 
   public data$: BehaviorSubject<TestModel[]> = new BehaviorSubject([]);
 
-  updateData(){
+  updateData() {
     const list = [];
     for (let i = 0; i < 10; i++) {
       list.push(Builder(TestModel)
