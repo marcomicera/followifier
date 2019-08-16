@@ -3,6 +3,7 @@ import {Chart} from 'chart.js';
 import {log} from 'util';
 import {DataService} from '../../service/data/data.service';
 import {TestModel} from '../../model/testModel';
+import {any} from 'codelyzer/util/function';
 
 @Component({
   selector: 'app-chart',
@@ -18,9 +19,12 @@ export class ChartComponent implements OnInit {
   popup: ElementRef<HTMLDivElement>;
 
   private ctx: CanvasRenderingContext2D;
-  private data: TestModel[];
   private imageWidth = 10;
   private imageHeight = 20;
+  private data = []
+
+
+  interval = undefined;
 
   info: TestModel;
   open = undefined;
@@ -35,13 +39,21 @@ export class ChartComponent implements OnInit {
     // this.canvas.nativeElement.width = window.innerWidth * 70 / 100;
     this.canvas.nativeElement.height = 600;
     this.canvas.nativeElement.width = 800;
-    this.dataService.dailyForecast()
+
+    this.dataService.data$
       .subscribe(
         data => {
           this.data = data;
-        }, () => null, () => {
-          this.data.forEach(d => this.draw(d.x, d.y));
+          this.ctx.clearRect(0, 0, 800, 600);
+          this.closePopup(null);
+          data.forEach(d => this.draw(d.x, d.y));
         });
+
+    this.refreshData();
+    this.interval = setInterval(() => {
+      this.refreshData();
+    }, 5000);
+
   }
 
 
@@ -69,8 +81,12 @@ export class ChartComponent implements OnInit {
     });
   }
 
+  refreshData() {
+    this.dataService.updateData();
+  }
+
   public closePopup(event): void {
-    if ( this.open !== undefined && this.open !== event) {
+    if (this.open !== undefined && this.open !== event) {
       this.popup.nativeElement.style.top = 0 + 'px';
       this.popup.nativeElement.style.left = 0 + 'px';
       this.popup.nativeElement.style.visibility = 'hidden';

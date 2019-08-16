@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {TestModel} from '../../model/testModel';
 import {Builder} from 'builder-pattern';
 
@@ -9,7 +9,9 @@ import {Builder} from 'builder-pattern';
 
 export class DataService {
 
-  dailyForecast(): Observable<TestModel[]> {
+  public data$: BehaviorSubject<TestModel[]> = new BehaviorSubject([]);
+
+  updateData(){
     const list = [];
     for (let i = 0; i < 10; i++) {
       list.push(Builder(TestModel)
@@ -18,7 +20,7 @@ export class DataService {
         .y(Math.floor(Math.random() * (600 - 0 + 1)))
         .build());
     }
-    return of(list);
+    this.data$.next(list);
   }
 
 }
