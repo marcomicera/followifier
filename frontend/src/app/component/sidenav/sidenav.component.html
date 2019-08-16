@@ -10,9 +10,8 @@
 
       <a *ngFor="let item of menuRoutes"
          mat-list-item
-         (click)="navigationSidenav.close()"
-         [routerLink]="[item.route]"
-         routerLinkActive="list-item-active">
+         (click)="sidenav.close()"
+         [routerLink]="[item.route]">
         {{item.title}}
       </a>
 

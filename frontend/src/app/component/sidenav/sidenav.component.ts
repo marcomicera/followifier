@@ -17,7 +17,7 @@ export class SidenavComponent implements OnInit {
 
   menuRoutes: ROUTE[] = [
     {
-      route: '',
+      route: 'home',
       title: 'Home',
     }, {
       route: 'stats',
