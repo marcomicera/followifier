@@ -82,7 +82,9 @@ def main():
         batch = produce_protobuf_batch(args.batch_size).SerializeToString() if args.protobuf else produce_json_batch(args.batch_size).encode()
         if args.out_file:
             f.write(batch)
+        print(len(batch))
         s.send(batch)
+        s.send(b"\n\r\n\r")
         time.sleep(args.batch_rate) 
         
 if __name__ == '__main__':
