@@ -3,7 +3,7 @@
 board/**/cmake-build-debug/
 core/server/batch.txt
 core/server/test_server
-
+core/server/batch_saved
 .config
 *.o
 *.pyc
