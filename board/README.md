@@ -2,6 +2,13 @@
 
 Software that will be running on ESP32 boards (constantly receiving Probe Request frames).
 
+## Software
+- [Main `followifier` board firmware](followifier)
+- Some examples
+  - [`echo-upper` example](echo-upper)
+  - [A simple sniffer example](simple-sniffer)
+  - [Wi-Fi frames logger](wifi-dump)
+
 ## Setup
 
 ### [Manufacturer documentation](https://esp-idf.readthedocs.io/en/latest/get-started/index.html)
