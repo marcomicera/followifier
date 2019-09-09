@@ -46,6 +46,7 @@ typedef struct {
 } sniffer_runtime_t;
 
 esp_err_t sniffer_start(sniffer_runtime_t*);
+esp_err_t sniffer_stop(sniffer_runtime_t*);
 
 #ifdef __cplusplus
 }

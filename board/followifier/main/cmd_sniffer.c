@@ -12,23 +12,17 @@
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 #include <sys/unistd.h>
-#include <sys/fcntl.h>
 #include "esp_log.h"
 #include "esp_wifi.h"
 #include "esp_console.h"
-#include "esp_app_trace.h"
 #include "cmd_sniffer.h"
 #include "sdkconfig.h"
 #include "message.pb-c.h"
 #include "flusher.h"
 
-#define SNIFFER_DEFAULT_FILE_NAME "esp-sniffer"
-#define SNIFFER_FILE_NAME_MAX_LEN CONFIG_SNIFFER_PCAP_FILE_NAME_MAX_LEN
 #define SNIFFER_DEFAULT_CHANNEL (1)
 #define SNIFFER_PAYLOAD_FCS_LEN (4)
 #define SNIFFER_PROCESS_PACKET_TIMEOUT_MS (100)
-#define SNIFFER_PROCESS_APPTRACE_TIMEOUT_US (100)
-#define SNIFFER_APPTRACE_RETRY  (10)
 
 #define PROBE_REQUEST    0x0040
 #define PROBE_RESPONSE    0x0050
@@ -163,32 +157,38 @@ void wifi_sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
              (hdr->frame_ctrl & SUBTYPE_MASK), hdr->frame_ctrl);
 
     if (wifi_sniffer_is_probe((unsigned short) hdr->frame_ctrl)) {
+
+        unsigned long hash_value = hash((unsigned char *) ppkt);
+
         ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d | RSSI=%02d \n"
                               "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x |"
                               " BSSID=%02x:%02x:%02x:%02x:%02x:%02x \n"
-                              "TIMESTAMP=%10d\n",
+                              "TIMESTAMP=%10d | hash=%lu | RSSI=%d\n",
                  wifi_sniffer_packet_subtype2str((wifi_ieee80211_mac_hdr_t *) hdr),
                  ppkt->rx_ctrl.channel,
                  ppkt->rx_ctrl.rssi,
-        // ADDR2
+
+                 // Source MAC address
                  hdr->addr2[0], hdr->addr2[1], hdr->addr2[2],
                  hdr->addr2[3], hdr->addr2[4], hdr->addr2[5],
-        // ADDR3
+
+                 // BSSID
                  hdr->addr3[0], hdr->addr3[1], hdr->addr3[2],
                  hdr->addr3[3], hdr->addr3[4], hdr->addr3[5],
-                 ppkt->rx_ctrl.timestamp
+
+                 // Other info
+                 ppkt->rx_ctrl.timestamp,
+                 hash_value,
+                 ppkt->rx_ctrl.rssi
         );
 
         Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
         void *serialized_data;      // Buffer to store serialized data
         unsigned message_length;    // Length of serialized data
 
-        unsigned long hash_value = hash((unsigned char *) ppkt);
-        ESP_LOGI(SNIFFER_TAG, "Packet hash is: %lu.", hash_value);
         message.frame_hash = hash_value;
         message.mac = malloc(sizeof(char) * (3 + 1));
         sprintf(message.mac, "mac"); // TODO MAC
-        ESP_LOGD(SNIFFER_TAG, "Packet RSSI is: %d.", ppkt->rx_ctrl.rssi);
         message.rsi = ppkt->rx_ctrl.rssi;
         message.ssid = malloc(sizeof(char) * (4 + 1));
         sprintf(message.ssid, "ssid"); // TODO SSID
@@ -220,7 +220,7 @@ static void sniffer_task(void *parameters) {
     vTaskDelete(NULL);
 }
 
-static esp_err_t sniffer_stop(sniffer_runtime_t *sniffer) {
+esp_err_t sniffer_stop(sniffer_runtime_t *sniffer) {
     SNIFFER_CHECK(sniffer->is_running, "sniffer is already stopped", err);
 
     switch (sniffer->interf) {

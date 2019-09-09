@@ -28,6 +28,7 @@
 #include "sdkconfig.h"
 #include "message.pb-c.h"
 #include "flusher.h"
+#include "util.h"
 
 #define SNIFFER_DEFAULT_CHANNEL (1)
 
@@ -38,9 +39,59 @@ typedef struct {
     uint32_t microseconds;
 } sniffer_packet_info_t;
 
-static sniffer_runtime_t snf_rt = {0};
+static sniffer_runtime_t sniffer_runtime = {0};
+
+/**
+ * Board event handler
+ */
+static esp_err_t event_handler(void *ctx, system_event_t *event) {
+
+    switch (event->event_id) {
+
+        // Board started
+        case SYSTEM_EVENT_STA_START:
+
+            // Connecting it to the Wi-Fi network
+            ESP_LOGI(TAG, "Board has started. Connecting it to %s...", WIFI_SSID);
+            ESP_ERROR_CHECK(esp_wifi_connect());
+            ESP_LOGI(TAG, "...board connected to %s.", WIFI_SSID);
+            break;
+
+        // Board got IP from connected AP
+        case SYSTEM_EVENT_STA_GOT_IP:
+
+            // Printing it
+            ESP_LOGI(TAG, "Got IP: %s\n", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+            hasGotIp = true;
+            break;
+
+        // Board got disconnected from AP
+        case SYSTEM_EVENT_STA_DISCONNECTED:
+
+            hasGotIp = false;
+            ESP_LOGI(TAG, "Board got disconnected. Connecting it again to %s...", WIFI_SSID);
+            ESP_ERROR_CHECK(esp_wifi_connect());
+            ESP_LOGI(TAG, "...board connected to %s.", WIFI_SSID);
+            break;
+
+        // Board stops
+        case SYSTEM_EVENT_STA_STOP:
+
+            hasGotIp = false;
+
+            // Stop sniffing packets
+            ESP_ERROR_CHECK(sniffer_stop(&sniffer_runtime));
+            break;
+
+        default:
+            break;
+    }
+
+    return ESP_OK;
+}
 
 static void initialize_nvs(void) {
+
     esp_err_t err = nvs_flash_init();
     if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
@@ -49,90 +100,54 @@ static void initialize_nvs(void) {
     ESP_ERROR_CHECK(err);
 }
 
-/* Initialize wifi with tcp/ip adapter */
 static void initialize_wifi(void) {
+
+    hasGotIp = false;
     tcpip_adapter_init();
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_NULL));
-}
 
-/* Initialize console component */
-static void initialize_console(void) {
-    /* Disable buffering on stdin */
-    setvbuf(stdin, NULL, _IONBF, 0);
+    wifi_init_config_t wifi_init_config = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&wifi_init_config));
 
-    /* Minicom, screen, idf_monitor send CR when ENTER key is pressed */
-    esp_vfs_dev_uart_set_rx_line_endings(ESP_LINE_ENDINGS_CR);
-    /* Move the caret to the beginning of the next line on '\n' */
-    esp_vfs_dev_uart_set_tx_line_endings(ESP_LINE_ENDINGS_CRLF);
-
-    /* Install UART driver for interrupt-driven reads and writes */
-    ESP_ERROR_CHECK(uart_driver_install(CONFIG_ESP_CONSOLE_UART_NUM,
-                                        256, 0, 0, NULL, 0));
-
-    /* Tell VFS to use UART driver */
-    esp_vfs_dev_uart_use_driver(CONFIG_ESP_CONSOLE_UART_NUM);
-
-    /* Initialize the console */
-    esp_console_config_t console_config = {
-            .max_cmdline_args = 8,
-            .max_cmdline_length = 256,
+    wifi_config_t wifi_config = {
+            .sta = {
+                    .ssid = WIFI_SSID,
+                    .password = WIFI_PASSWORD,
+                    .scan_method = DEFAULT_SCAN_METHOD,
+                    .sort_method = DEFAULT_SORT_METHOD,
+                    .threshold.rssi = DEFAULT_RSSI,
+                    .threshold.authmode = DEFAULT_AUTHMODE,
+            },
     };
-    ESP_ERROR_CHECK(esp_console_init(&console_config));
-
-    /* Configure linenoise line completion library */
-    /* Enable multiline editing. If not set, long commands will scroll within
-     * single line.
-     */
-    linenoiseSetMultiLine(1);
-
-    /* Tell linenoise where to get command completions and hints */
-    linenoiseSetCompletionCallback(&esp_console_get_completion);
-    linenoiseSetHintsCallback((linenoiseHintsCallback *) &esp_console_get_hint);
-
-    /* Set command history size */
-    linenoiseHistorySetMaxLen(100);
+    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_start());
 }
 
+/**
+ * Initializing board components
+ */
+void init() {
+
+    // Event loop handler
+    ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
+
+    // Initialize the default NVS partition
+    initialize_nvs();
+
+    // Initialize board's Wi-Fi module
+    initialize_wifi();
+}
+
+/* Entry point */
 void app_main(void) {
 
-    /* Initialize NVS */
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        ret = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(ret);
+    // Initialize board
+    init();
 
-    /* Initialize WiFi */
-    initialize_wifi();
-
-    /* Initialize Console component */
-    initialize_console();
-
-    /* Register commands */
-    esp_console_register_help_command();
-    register_system();
-
-    /* Initialize the message flusher */
-    initialize_flusher();
-
-    /* Figure out if the terminal supports escape sequences */
-    int probe_status = linenoiseProbe();
-    if (probe_status) {
-        /* zero indicates success */
-        printf("\n"
-               "Your terminal application does not support escape sequences.\n"
-               "Line editing and history features are disabled.\n"
-               "On Windows, try using Putty instead.\n");
-        linenoiseSetDumbMode(1);
-    }
-
-    snf_rt.interf = SNIFFER_INTF_WLAN;
-    snf_rt.channel = SNIFFER_DEFAULT_CHANNEL;
-    snf_rt.filter = WIFI_PROMIS_FILTER_MASK_MGMT;
-    sniffer_start(&snf_rt);
+    // Start sniffing packets
+    sniffer_runtime.interf = SNIFFER_INTF_WLAN;
+    sniffer_runtime.channel = SNIFFER_DEFAULT_CHANNEL;
+    sniffer_runtime.filter = WIFI_PROMIS_FILTER_MASK_MGMT;
+    ESP_ERROR_CHECK(sniffer_start(&sniffer_runtime));
 }
