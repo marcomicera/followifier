@@ -10,7 +10,7 @@ Communication test between ESP32 boards (client) and a central PC (server).
   * Incoming TCP connections: `sudo iptables -A INPUT -p tcp --dport <port_number> -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT`
   * Outgoing TCP connections: `sudo iptables -A OUTPUT -p tcp --sport <port_number> -m conntrack --ctstate ESTABLISHED -j ACCEPT`
 5. Set the proper serial port to which the ESP32 board is connected to via the `cd ../client && make menuconfig` command, as shown in the [Compile and run an hello world example](../../README.md) section
-6. Flash and launch the board application: `make app-flash monitor -j 4`
+6. Build and run the application with `idf.py -p PORT flash monitor`, where `PORT` indicates the serial port to which the ESP32 board is connected to (e.g., "`COM3`" on Windows or "`/dev/ttyUSB0`" on Linux)
 7. You can stop the board application with the `Ctrl + ]` key combo
 
 ## Result

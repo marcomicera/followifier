@@ -10,7 +10,7 @@ static const char *TAG = "followifier"; // TODO use ESP_LOGE(TAG, ...) in this f
 #define MUST_NOT_HAPPEN(condition, string_error, ...) {\
     if ((condition)) {\
         fprintf(stderr, string_error, ##__VA_ARGS__);\
-        fprintf(stderr, ": %s.\n", strerror(errno));\
+        fprintf(stderr, " (error %d): %s.\n", errno, strerror(errno));\
         exit(EXIT_FAILURE);\
     }\
 }

@@ -15,7 +15,7 @@
 #include "esp_log.h"
 #include "esp_wifi.h"
 #include "esp_console.h"
-#include "cmd_sniffer.h"
+#include "sniffer.h"
 #include "sdkconfig.h"
 #include "message.pb-c.h"
 #include "flusher.h"
@@ -199,7 +199,7 @@ void wifi_sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         followifier__esp32_message__pack(&message, serialized_data);
 
         // Store this message
-        store_message(serialized_data, message_length);
+        store_message(serialized_data, message_length, snf_rt);
     }
 }
 
