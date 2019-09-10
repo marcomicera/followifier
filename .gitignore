@@ -317,7 +317,6 @@ paket-files/
 
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
-/board/examples/wifi-dump/build
 
 
 
@@ -517,6 +516,7 @@ dkms.conf
 
 ### Eclipse.gitignore
 
+.project
 .metadata
 bin/
 tmp/
