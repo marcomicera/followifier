@@ -26,6 +26,8 @@ void store_message(void *serialized_data, unsigned message_length, sniffer_runti
         // Better check it twice
         if (items == FLUSH_THRESHOLD) {
             flush(sniffer);
+            ESP_LOGW(TAG, "Last packet has not been sent to the server.");
+            return;
         }
 
         // Storing the message into the buffer
@@ -94,4 +96,3 @@ void flush(sniffer_runtime_t sniffer) {
     close(tcp_socket);
     ESP_LOGI(TAG, "...socket towards %s:%d closed.", SERVER_ADDRESS, SERVER_PORT);
 }
-

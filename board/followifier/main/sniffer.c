@@ -235,7 +235,7 @@ esp_err_t sniffer_stop(sniffer_runtime_t *sniffer) {
     ESP_LOGI(SNIFFER_TAG, "stop WiFi promiscuous ok");
 
     /* stop sniffer local task */
-    sniffer->is_running = false;
+    sniffer->is_running = false; ESP_LOGI(SNIFFER_TAG, "Sniffer stopped.");
     /* wait for task over */
     xSemaphoreTake(sniffer->sem_task_over, portMAX_DELAY);
     vSemaphoreDelete(sniffer->sem_task_over);
@@ -261,7 +261,7 @@ esp_err_t sniffer_start(sniffer_runtime_t *sniffer) {
 
     wifi_promiscuous_filter_t wifi_filter;
 
-    sniffer->is_running = true;
+    sniffer->is_running = true; ESP_LOGI(SNIFFER_TAG, "Sniffer started.");
     sniffer->work_queue = xQueueCreate(CONFIG_SNIFFER_WORK_QUEUE_LEN, sizeof(sniffer_packet_info_t));
     SNIFFER_CHECK(sniffer->work_queue, "create work queue failed", err_queue);
     sniffer->sem_task_over = xSemaphoreCreateBinary();
@@ -294,7 +294,7 @@ esp_err_t sniffer_start(sniffer_runtime_t *sniffer) {
     vQueueDelete(sniffer->work_queue);
     sniffer->work_queue = NULL;
     err_queue:
-    sniffer->is_running = false;
+    sniffer->is_running = false; ESP_LOGI(SNIFFER_TAG, "Sniffer stopped.");
 
     return ESP_FAIL;
 }
