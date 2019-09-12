@@ -20,9 +20,9 @@
 #include "message.pb-c.h"
 #include "flusher.h"
 #include "util/misc.h"
+#include "wifi.h"
 
 #define SNIFFER_DEFAULT_CHANNEL (1)
-#define SNIFFER_PAYLOAD_FCS_LEN (4) // TODO use this
 #define SNIFFER_PROCESS_PACKET_TIMEOUT_MS (100)
 
 #define PROBE_REQUEST    0x0040
@@ -185,12 +185,17 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         uint8_t *serialized_data;      // Buffer to store serialized data
         unsigned message_length;    // Length of serialized data
 
+        // Forming the MAC source address string
+        char macString[18];
+        snprintf(macString, sizeof(macString), "%02x:%02x:%02x:%02x:%02x:%02x",
+                 hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], hdr->addr2[3], hdr->addr2[4], hdr->addr2[5]);
+
         message.frame_hash = hash_value;
-        message.mac = malloc(sizeof(char) * (3 + 1));
-        sprintf(message.mac, "mac"); // TODO MAC
+        message.mac = malloc(sizeof(macString));
+        sprintf(message.mac, "%s", macString);
         message.rsi = ppkt->rx_ctrl.rssi;
-        message.ssid = malloc(sizeof(char) * (4 + 1));
-        sprintf(message.ssid, "ssid"); // TODO SSID
+        message.ssid = malloc(sizeof(WIFI_SSID));
+        sprintf(message.ssid, WIFI_SSID);
         message.timestamp = ppkt->rx_ctrl.timestamp;
 
         message_length = followifier__esp32_message__get_packed_size(&message);
