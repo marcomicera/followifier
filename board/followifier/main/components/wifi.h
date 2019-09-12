@@ -9,13 +9,14 @@
 
 /**
  * Wi-Fi info
- *
+ */
+/*
  * TODO
  *  Read "Establishing Wi-Fi or Ethernet Connection" section in
  *  esp-idf/examples/protocols/README.md for more information about this function.
  */
-#define WIFI_SSID "Sgt Pepper" // FIXME
-#define WIFI_PASSWORD "Rez7_0L22&!43a+8"  // FIXME
+#define WIFI_SSID "Wi-Fi SSID" // FIXME
+#define WIFI_PASSWORD "Wi-Fi password"  // FIXME
 #define DEFAULT_SCAN_METHOD WIFI_FAST_SCAN
 #define DEFAULT_SORT_METHOD WIFI_CONNECT_AP_BY_SIGNAL
 #define DEFAULT_RSSI -127
