@@ -13,6 +13,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define SNIFFER_DEFAULT_CHANNEL (1)
+
+extern const char *SNIFFER_TAG;
+
 /**
  * @brief Supported Sniffer Interface
  *
@@ -45,8 +50,24 @@ typedef struct {
     SemaphoreHandle_t sem_task_over;
 } sniffer_runtime_t;
 
-esp_err_t sniffer_start(sniffer_runtime_t*);
-esp_err_t sniffer_stop(sniffer_runtime_t*);
+/**
+ * Initializes and configures the sniffer component.
+ */
+void init_sniffer();
+
+/**
+ * Starts the sniffer component.
+ *
+ * @return `ESP_OK` in case of success, something else otherwise.
+ */
+esp_err_t start_sniffer();
+
+/**
+ * Stops the sniffer component.
+ *
+ * @return `ESP_OK` in case of success, something else otherwise.
+ */
+esp_err_t stop_sniffer(void);
 
 #ifdef __cplusplus
 }

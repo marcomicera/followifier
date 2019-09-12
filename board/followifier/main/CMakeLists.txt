@@ -1,5 +1,8 @@
 idf_component_register(SRCS "followifier.c"
-        "sniffer.c"
+        "components/sniffer.c"
         "message.pb-c.c"
-        "flusher.c"
+        "components/flusher.c"
+        "components/wifi.c"
+        "components/nvs.c"
+        "util/misc.c"
         INCLUDE_DIRS ".")

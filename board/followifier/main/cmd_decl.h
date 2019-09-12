@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 #include "cmd_system.h"
-#include "sniffer.h"
+#include "components/sniffer.h"
 
 #ifdef __cplusplus
 }
