@@ -22,7 +22,7 @@ export class SidenavComponent implements OnInit {
     }, {
       route: 'stats',
       title: 'Stats',
-    },{
+    }, {
       route: 'chart',
       title: 'Chart'
     }
