@@ -183,7 +183,7 @@ void wifi_sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         );
 
         Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
-        void *serialized_data;      // Buffer to store serialized data
+        uint8_t *serialized_data;      // Buffer to store serialized data
         unsigned message_length;    // Length of serialized data
 
         message.frame_hash = hash_value;

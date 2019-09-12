@@ -11,14 +11,14 @@
 #include "util.h"
 
 // Buffer
-void *buffer[FLUSH_THRESHOLD];
+uint8_t *buffer[FLUSH_THRESHOLD];
 unsigned short items = 0;
 
 void flush();
 
 void flushAsNewTask();
 
-void store_message(void *serialized_data, unsigned message_length, sniffer_runtime_t sniffer) {
+void store_message(uint8_t *serialized_data, unsigned message_length, sniffer_runtime_t sniffer) {
 
     // Checking whether the board has an IP address or not
     if (hasGotIp) {
@@ -51,6 +51,12 @@ void flushAsNewTask() {
  * @param sniffer sniffer to be temporarily interrupted.
  */
 void flush(sniffer_runtime_t sniffer) {
+
+    // Printing info
+    ESP_LOGI(TAG, "Time to flush the message buffer. Sending %d messages...", FLUSH_THRESHOLD);
+    for (unsigned short i = 0; i < FLUSH_THRESHOLD; ++i) {
+        ESP_LOGI(TAG, "Message %d: length %d", i, sizeof(buffer[i]));
+    }
 
     // Server info
     int tcp_socket;
