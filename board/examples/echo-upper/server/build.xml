@@ -48,7 +48,43 @@
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
 		<antcall target="build" />
 	</target>
-	<target name="EchoUpperServer">
+	<target name="free-ports">
+		<echo>Allowing inbound TCP connections on port ${port}...</echo>
+		<exec executable="sudo">
+			<arg value="iptables"/>
+			<arg value="-A"/>
+			<arg value="INPUT"/>
+			<arg value="-p"/>
+			<arg value="tcp"/>
+			<arg value="--dport"/>
+			<arg value="${port}"/>
+			<arg value="-m"/>
+			<arg value="conntrack"/>
+			<arg value="--ctstate"/>
+			<arg value="NEW,ESTABLISHED"/>
+			<arg value="-j"/>
+			<arg value="ACCEPT"/>
+		</exec>
+		<echo>...done.</echo>
+		<echo>Allowing outbound TCP connections on port ${port}...</echo>
+		<exec executable="sudo">
+			<arg value="iptables"/>
+			<arg value="-A"/>
+			<arg value="OUTPUT"/>
+			<arg value="-p"/>
+			<arg value="tcp"/>
+			<arg value="--sport"/>
+			<arg value="${port}"/>
+			<arg value="-m"/>
+			<arg value="conntrack"/>
+			<arg value="--ctstate"/>
+			<arg value="ESTABLISHED"/>
+			<arg value="-j"/>
+			<arg value="ACCEPT"/>
+		</exec>
+		<echo>...done.</echo>
+	</target>
+	<target name="EchoUpperServer" depends="free-ports">
 		<java classname="it.polito.pds.followifier.EchoUpperServer" failonerror="true" fork="yes">
 			<arg value="${port}"/>
 			<classpath refid="echo-upper-server.classpath" />
