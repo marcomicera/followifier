@@ -1,7 +1,7 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <fstream>
-#include "message.pb.h"
+#include "../gen/message.pb.h"
 
 using namespace boost::asio;
 using ip::tcp;
