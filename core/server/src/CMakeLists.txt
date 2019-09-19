@@ -24,7 +24,7 @@ endif (CMAKE_USE_PTHREADS_INIT)
 
 # Protobuf
 set(PROTO_FILE_DIR "../../common")
-set(PROTO_EXEC "../../bin/protoc")
+set(PROTO_EXEC "protoc")
 set(PROTO_FILE_NAME "message.proto")
 set(GEN_DIR "gen")
 #set(SRC_DIR "src")

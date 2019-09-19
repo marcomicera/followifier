@@ -2,7 +2,7 @@
 
 PROTO_FILE_DIR=../../common
 PROTO_FILE_NAME=message.proto
-PROTO_EXEC=../../bin/protoc
+PROTO_EXEC=protoc
 SRC_DIR=src
 GEN_DIR=gen
 

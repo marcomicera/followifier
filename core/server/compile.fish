@@ -2,7 +2,7 @@
 
 set PROTO_FILE_DIR ../../common
 set PROTO_FILE_NAME message.proto
-set PROTO_EXEC /usr/local/bin/protoc
+set PROTO_EXEC protoc
 set GEN_DIR gen
 set SRC_DIR src
 
