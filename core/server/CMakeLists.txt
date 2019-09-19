@@ -23,10 +23,10 @@ if (CMAKE_USE_PTHREADS_INIT)
 endif (CMAKE_USE_PTHREADS_INIT)
 
 # Protobuf
-set(PROTO_FILE_DIR "../../common")
-set(PROTO_EXEC "protoc")
-set(PROTO_FILE_NAME "message.proto")
-set(GEN_DIR "gen")
+set(PROTO_FILE_DIR ./common)
+set(PROTO_EXEC protoc)
+set(PROTO_FILE_NAME message.proto)
+set(GEN_DIR ./gen)
 #set(SRC_DIR "src")
 #SET_SOURCE_FILES_PROPERTIES(${PROTO_SRC} ${PROTO_INCL} PROPERTIES GENERATED TRUE)
 find_package(Protobuf REQUIRED)
@@ -34,11 +34,18 @@ include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 message(STATUS "Generating C++ proto stubs...")
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILE_NAME})
-#set(PROTOBUF_C_ARGUMENTS "--cpp_out=${GEN_DIR} --proto_path=${PROTO_FILE_DIR} ${PROTO_FILE_NAME}")
-#execute_process(COMMAND ${PROTO_EXEC} ${PROTOBUF_C_ARGUMENTS})
-message(STATUS "Proto source file: ${PROTO_SRCS}")
-message(STATUS "Proto header file: ${PROTO_HDRS}")
+#protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILE_NAME})
+list(APPEND proto_args "--cpp_out=./gen" "--proto_path=./common" "message.proto")
+#If it doesnt work try changing the command with one among
+# - protoc
+# - protoc.exe
+# - ${Protobuf_PROTOC_EXECUTABLE}
+execute_process(COMMAND protoc.exe ${proto_args}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        RESULT_VARIABLE result
+        OUTPUT_VARIABLE output
+        ERROR_VARIABLE error)
+message(STATUS ${output})
 
 message(STATUS "Generating Python proto stubs...")
 protobuf_generate_python(PROTO_PY ${PROTO_FILE_NAME})
@@ -49,7 +56,7 @@ message(STATUS "Python generated file: ${PROTO_PY}")
 file(GLOB PROTOBUF_MODELS_INCLUDES "gen/message.pb.cc")
 
 # Building executable
-add_executable(${PROJECT_NAME} protobuf_server.cpp ${PROTOBUF_MODELS_INCLUDES})
+add_executable(${PROJECT_NAME} src/protobuf_server.cpp ${PROTOBUF_MODELS_INCLUDES})
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(${PROJECT_NAME} ${Protobuf_LIBRARIES})
 if (Boost_FOUND)
