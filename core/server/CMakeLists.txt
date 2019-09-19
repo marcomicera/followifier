@@ -1,11 +1,8 @@
 # The following lines of boilerplate have to be in your project's CMakeLists
 # in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.5)
-
+set(CMAKE_CXX_FLAGS "-g -Wall -Werror")
 project(core)
-
-message(STATUS "Running core's cmake...")
-message(STATUS "Source directory is ${CMAKE_SOURCE_DIR}")
 
 # Boost
 find_package(Boost 1.67.0 COMPONENTS system filesystem REQUIRED)
@@ -58,7 +55,6 @@ file(GLOB PROTOBUF_MODELS_INCLUDES "gen/message.pb.cc")
 # Building executable
 add_executable(${PROJECT_NAME} src/protobuf_server.cpp ${PROTOBUF_MODELS_INCLUDES})
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(${PROJECT_NAME} ${Protobuf_LIBRARIES})
 if (Boost_FOUND)
     target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 endif ()
