@@ -2,7 +2,7 @@
 This simple example shows how to exchange protobuf message between a Python dummy producer and a C++ server. 
 
 #### Steps
-1. Compile this server by executing the `./compile.sh` script
+1. Compile this server with CMake
 2. Launch a TCP listener on a port (e.g., `nc -l -p 12345`)
 3. Create a batch file (e.g., `touch batch.txt`) 
 4. Launch the dummy packet producer:
