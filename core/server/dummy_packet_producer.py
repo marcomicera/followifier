@@ -1,4 +1,3 @@
-import message_pb2
 import argparse
 import datetime
 import json
@@ -7,6 +6,8 @@ import socket
 import string
 import time
 import sys
+sys.path.insert(1, './gen')
+import message_pb2
 
 from functools import wraps
 
