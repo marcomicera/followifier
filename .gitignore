@@ -1,4 +1,8 @@
+# Core executable file
+core/server/core
+
 ### CMake
+*.cbp
 cmake-build-debug
 CMakeLists.txt.user
 CMakeCache.txt

@@ -1,12 +1,15 @@
-## Dummy packet producer example
-This simple example shows how to exchange protobuf message between a Python dummy producer and a C++ server. 
+# `core` section
 
-#### Steps
-1. Compile this server with CMake
-2. Launch a TCP listener on a port (e.g., `nc -l -p 12345`)
-3. Create a batch file (e.g., `touch batch.txt`) 
-4. Launch the dummy packet producer:
+### Launch the `core` server
+```bash
+$ chmod u+x start.sh
+$ ./start.sh <BATCH_FILE>
+```
+
+#### Using a dummy packet producer to generate input data
+1. Create a batch file (e.g., `touch batch.txt`) 
+1. Launch the dummy packet producer:
     ```bash
-    python3 dummy_packet_producer.py  --batch_size 10 --batch_rate 10 --protobuf --out_file batch.txt 127.0.0.1 12345
+    $ python3 dummy_packet_producer.py  --batch_size 10 --batch_rate 10 --protobuf --out_file batch.txt 127.0.0.1 12345
     ```
-5. To deserialize the protobuf message, run `./test_server batch.txt` 
+   
