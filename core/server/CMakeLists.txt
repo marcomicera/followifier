@@ -5,14 +5,13 @@ set(CMAKE_CXX_FLAGS "-g -Wall -Werror")
 project(core)
 
 # Boost
-find_package(Boost 1.67.0 COMPONENTS system filesystem REQUIRED)
+find_package(Boost 1.67.0 COMPONENTS system filesystem thread REQUIRED)
 if (Boost_FOUND)
     message(STATUS "Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
     message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
     message(STATUS "Boost_VERSION: ${Boost_VERSION}")
     include_directories(${Boost_INCLUDE_DIRS})
 endif ()
-
 # pthread
 find_package(Threads REQUIRED)
 if (CMAKE_USE_PTHREADS_INIT)
@@ -54,4 +53,17 @@ if (Boost_FOUND)
 endif ()
 if (Protobuf_FOUND)
     target_link_libraries(${PROJECT_NAME} ${Protobuf_LIBRARIES})
+endif()
+
+set(EXE_NAME server)
+add_executable(${EXE_NAME} src/server/receiver.cpp src/server/receiver.h ${PROTOBUF_MODELS_INCLUDES}
+        src/server.cpp
+        src/server/connection.h src/server/connection.cpp
+        src/server/server.cpp src/server/server.h)
+target_link_libraries(${EXE_NAME} ${CMAKE_THREAD_LIBS_INIT})
+if (Boost_FOUND)
+    target_link_libraries(${EXE_NAME} ${Boost_LIBRARIES})
+endif ()
+if (Protobuf_FOUND)
+    target_link_libraries(${EXE_NAME} ${Protobuf_LIBRARIES})
 endif()

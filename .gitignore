@@ -1,5 +1,6 @@
-# Core executable file
+# Core and server executable file
 core/server/core
+core/server/server
 
 ### CMake
 *.cbp
