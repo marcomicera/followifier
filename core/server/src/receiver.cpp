@@ -1,4 +1,4 @@
-#include <src/server/connection.h>
+#include <src/connection.h>
 #include "receiver.h"
 
 using std::cout;

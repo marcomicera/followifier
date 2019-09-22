@@ -46,5 +46,5 @@ Software that will be running on ESP32 boards (constantly receiving Probe Reques
 1. Open a Unix shell (`Win + R` → `mingw32` on Windows)
 2. `cd $IDF_PATH` to navigate to the ESP-IDF project root
 3. `cd examples/get-started/hello_world/` to navigate to the hello world example
-4. Build and run the project with `idf.py -p PORT flash monitor`, where `PORT` indicates the serial port to which the ESP32 board is connected to (e.g., "`COM3`" on Windows or "`/dev/ttyUSB0`" on Linux)
+4. Build and run the project with `idf.py -p <port> flash monitor`, where `<port>` indicates the serial port to which the ESP32 board is connected to (e.g., "`COM3`" on Windows or "`/dev/ttyUSB0`" on Linux)
 5. To exit IDF monitor use the shortcut `Ctrl+]`

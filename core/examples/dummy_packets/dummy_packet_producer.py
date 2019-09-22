@@ -6,9 +6,7 @@ import socket
 import string
 import time
 import sys
-from scapy.all import IP, TCP, send, sr1
-
-sys.path.insert(1, './gen')
+sys.path.insert(1, '../../server/gen')
 import message_pb2
 
 from functools import wraps
@@ -46,14 +44,14 @@ def timer(func):
         print(f"Function call took {time.perf_counter() - start}")
         return res
     return wrapper
-
+        
 @timer
 def produce_json_batch(batch_size):
     return json.dumps([DummyPacket().__dict__ for _ in range(batch_size)])
 
 @timer
 def produce_protobuf_batch(batch_size):
-    batch = message_pb2.Batch()
+    batch = message_pb2.Batch() 
     for _ in range(batch_size):
         fill_message(batch.messages.add())
     return batch
@@ -62,34 +60,33 @@ def fill_message(message):
     p = DummyPacket()
     for k, v in p.__dict__.items():
         setattr(message, k, v)
-
+ 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ip', action='append', help="server IP")
+    parser.add_argument('ip', action='store', help="server IP")
     parser.add_argument('port', action='store', type=int, help='server port')
     parser.add_argument('--batch_size', action='store', type=int, help='number of packets produced per batch',
-                        default=100)
+            default=100)
     parser.add_argument('--batch_rate', action='store', type=int, help='period in seconds between subsequent batches',
-                        default=1)
+            default=1)
     parser.add_argument('--protobuf', action='store_true', help='Enable this switch for protocol buffer serialization (default JSON)',
-                        default=False)
+            default=False)
+    parser.add_argument('--out_file', action='store', help='Define optionally out file to save batches.')
     args = parser.parse_args()
 
-    target = args.ip
-    port = int(args.port)
     # UDP would probably be more suited
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((args.ip, args.port))
+    if args.out_file:
+        f = open(args.out_file, 'wb')
     while True:
         batch = produce_protobuf_batch(args.batch_size).SerializeToString() if args.protobuf else produce_json_batch(args.batch_size).encode()
-        for ip in args.ip:
-            print(ip)
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((ip, args.port))
-            s.send(batch)
-            print('ok')
-            s.send(b"\n\r\n\r")
-            s.close()
+        if args.out_file:
+            f.write(batch)
         print(len(batch))
-        time.sleep(args.batch_rate)
-
+        s.send(batch)
+        s.send(b"\n\r\n\r")
+        time.sleep(args.batch_rate) 
+        
 if __name__ == '__main__':
     main()

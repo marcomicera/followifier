@@ -8,16 +8,19 @@
 
 #include <boost/asio.hpp>
 #include "connection.h"
-const size_t port_num = 1234;
+
 
 class server {
+
+    const size_t port = 12345;
+
 public:
-    server(boost::asio::io_service &io_service);
+    explicit server(boost::asio::io_service &io_service);
 
 private:
     void start_accept();
 
-    void handle_accept(connection::pointer new_connection,
+    void handle_accept(const connection::pointer& new_connection,
                        const boost::system::error_code &error);
 
     tcp::acceptor acceptor_;
