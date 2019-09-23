@@ -2,7 +2,8 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import { ClickOutsideModule } from 'ng-click-outside';
 import {MatCardModule} from '@angular/material/card';
-import {AppRoutingModule} from './app-routing.module';
+import { RouterModule } from '@angular/router';
+import {AppRoutes} from './app.routes';
 import {AppComponent} from './app.component';
 import {StatsComponent} from './component/stats/stats.component';
 import {MatButtonModule, MatIconModule, MatListModule, MatSidenavModule, MatToolbarModule} from '@angular/material';
@@ -11,8 +12,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { SidenavComponent } from './component/sidenav/sidenav.component';
 import { ToolbarComponent } from './component/toolbar/toolbar.component';
 import { HomeComponent } from './component/home/home.component';
-import { ChartComponent } from './component/chart/chart.component';
-
+import { ChartsModule } from 'ng2-charts';
+import {ChartComponent} from './component/chart/chart.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,7 +25,6 @@ import { ChartComponent } from './component/chart/chart.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     MatSidenavModule,
     MatIconModule,
     BrowserAnimationsModule,
@@ -33,7 +33,9 @@ import { ChartComponent } from './component/chart/chart.component';
     MatListModule,
     MatButtonModule,
     MatCardModule,
-    ClickOutsideModule
+    ClickOutsideModule,
+    ChartsModule,
+    RouterModule.forRoot(AppRoutes)
   ],
   providers: [],
   bootstrap: [AppComponent]

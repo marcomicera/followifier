@@ -1,14 +1,22 @@
-<mat-toolbar color="primary">
+  <mat-toolbar color="color" class="mat-elevation-z6">
+    <mat-toolbar-row class="mat-height">
 
-  <mat-toolbar-row>
+      <span class="toolbar-spacer"></span>
 
-    <button mat-icon-button (click)="toggleSidenav.emit()">
-      <mat-icon>menu</mat-icon>
-    </button>
+      <!-- Large screen -->
+      <div fxShow="true" fxHide.lt-md>
+        <a routerLink="" class="menu-link" mat-button>
+          <mat-icon>person_pin</mat-icon> Home
+        </a>
+        <a  routerLink="/chart" class="menu-link" mat-button>
+          <mat-icon>exit_to_app</mat-icon> Chart
+        </a>
+        <a  routerLink="/stats" class="menu-link" mat-button>
+          <mat-icon>person_add</mat-icon> Stats
+        </a>
 
-    <span> Followifier </span>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
 
 
-  </mat-toolbar-row>
-
-</mat-toolbar>
