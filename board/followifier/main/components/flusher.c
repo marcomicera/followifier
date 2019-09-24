@@ -93,6 +93,10 @@ void flush(void) {
                         "Error while sending message number %hu", i);
         free(buffer[i]);
     }
+       ESP_LOGI(TAG, "Sending delimite...");
+       MUST_NOT_HAPPEN(send(tcp_socket, "\n\r\n\r", sizeof("\n\r\n\r"), 0) < 0,
+                        "Error while sending delimiter");
+
     items = 0;
 
     // Closing socket
@@ -103,6 +107,9 @@ void flush(void) {
 
     // Turning the Wi-Fi off
     ESP_ERROR_CHECK(stop_wifi());
+
+    // Re-activating the sniffer
+    init_sniffer();
 
     // Re-activating the sniffer
     ESP_ERROR_CHECK(start_sniffer());
