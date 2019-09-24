@@ -3,7 +3,7 @@
 ### Launch the `core` server
 ```bash
 $ chmod u+x start.sh
-$ ./start.sh <BATCH_FILE>
+$ ./start.sh
 ```
 
 #### Using a dummy packet producer to generate input data
