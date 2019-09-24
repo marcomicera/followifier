@@ -17,7 +17,7 @@ unsigned short items = 0;
 
 void flush();
 
-void prepare_to_flush();
+void prepare_to_flush(bool stop);
 
 void flushAsNewTask();
 
@@ -25,7 +25,7 @@ void store_message(uint8_t *serialized_data, unsigned message_length, sniffer_ru
 
     // Better check it twice
     if (items == FLUSH_THRESHOLD) {
-        prepare_to_flush(sniffer);
+        prepare_to_flush(false);
         ESP_LOGW(TAG, "Last packet has not been sent to the server.");
         return;
     }
@@ -36,7 +36,7 @@ void store_message(uint8_t *serialized_data, unsigned message_length, sniffer_ru
 
     // Time to flush the message buffer
     if (items == FLUSH_THRESHOLD) {
-        prepare_to_flush(sniffer);
+        prepare_to_flush(true);
     }
 }
 
@@ -49,7 +49,7 @@ void flushAsNewTask() {
  *
  * @param sniffer sniffer to be temporarily interrupted.
  */
-void prepare_to_flush() {
+void prepare_to_flush(bool stop) {
 
     // Printing info
     ESP_LOGI(TAG, "Time to flush the message buffer. Sending %d messages...", items);
@@ -58,7 +58,8 @@ void prepare_to_flush() {
     }
 
     // Stopping the sniffer
-    ESP_ERROR_CHECK(stop_sniffer());
+    if(stop)
+        ESP_ERROR_CHECK(stop_sniffer());
 
     // Turning on the Wi-Fi
     ESP_ERROR_CHECK(start_wifi());
@@ -93,9 +94,9 @@ void flush(void) {
                         "Error while sending message number %hu", i);
         free(buffer[i]);
     }
-       ESP_LOGI(TAG, "Sending delimite...");
-       MUST_NOT_HAPPEN(send(tcp_socket, "\n\r\n\r", sizeof("\n\r\n\r"), 0) < 0,
-                        "Error while sending delimiter");
+    ESP_LOGI(TAG, "Sending delimiter...");
+    MUST_NOT_HAPPEN(send(tcp_socket, "\n\r\n\r", sizeof("\n\r\n\r"), 0) < 0,
+                    "Error while sending delimiter");
 
     items = 0;
 
