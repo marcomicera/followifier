@@ -10,7 +10,7 @@
 /**
  * Server info
  */
-#define SERVER_ADDRESS "192.168.1.105"  // FIXME
+#define SERVER_ADDRESS "192.168.13.153"  // FIXME
 #define SERVER_PORT 12345  // FIXME
 
 /**
@@ -22,11 +22,13 @@
 /**
  * Stores a message and eventually flushes all stored ones.
  */
-void store_message(uint8_t *, unsigned, sniffer_runtime_t);
+void store_message(Followifier__ESP32Message *, sniffer_runtime_t);
 
 /**
  * Sends all stored messages to the core server.
  */
 void flush();
+
+void init_flusher();
 
 #endif //FOLLOWIFIER_FLUSHER_H
