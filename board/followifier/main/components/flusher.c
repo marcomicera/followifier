@@ -13,10 +13,25 @@
 #include "wifi.h"
 
 // Buffer
-Followifier__ESP32Message * messages[FLUSH_THRESHOLD];
+Followifier__ESP32Message *messages[FLUSH_THRESHOLD];
 uint8_t *buffer;
 unsigned int batch_length = 0;
 unsigned short items = 0;
+
+// MAC address
+uint8_t mac_address[6] = {0};
+
+void init_flusher() {
+
+    // Retrieving the Wi-Fi station MAC address
+    // https://github.com/espressif/esp-idf/tree/master/examples/system/base_mac_address
+    ESP_ERROR_CHECK(esp_efuse_mac_get_default(mac_address));
+    ESP_ERROR_CHECK(esp_base_mac_addr_set(mac_address));
+    ESP_ERROR_CHECK(esp_read_mac(mac_address, ESP_MAC_WIFI_STA));
+    ESP_LOGI("Wi-Fi station MAC address", "%02x:%02x:%02x:%02x:%02x:%02x",
+             mac_address[0], mac_address[1], mac_address[2],
+             mac_address[3], mac_address[4], mac_address[5]);
+}
 
 void flush();
 
@@ -66,8 +81,9 @@ void prepare_to_flush(bool stop) {
     ESP_LOGI(TAG, "%s", buffer);
 
     // Stopping the sniffer
-    if (stop)
+    if (stop) {
         ESP_ERROR_CHECK(stop_sniffer());
+    }
 
     // Turning on the Wi-Fi
     ESP_ERROR_CHECK(start_wifi());

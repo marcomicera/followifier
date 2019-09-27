@@ -76,17 +76,22 @@ void init_all() {
     // Event loop handler
     ESP_ERROR_CHECK(esp_event_loop_init(board_event_handler, NULL)); // FIXME deprecated
 
+    // Initialize the flusher
+    init_flusher();
+
     // Initialize the default NVS partition
     init_nvs();
 
     // Initialize board's Wi-Fi module
     init_wifi();
 
-    // Initialize sniffer
+    // Initialize the sniffer
     init_sniffer();
 }
 
-/* Entry point */
+/**
+ * Entry point
+ */
 void app_main(void) {
 
     // Initialize board

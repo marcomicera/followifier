@@ -29,6 +29,14 @@ void store_message(Followifier__ESP32Message *, sniffer_runtime_t);
  */
 void flush();
 
+/**
+ * Board's Wi-Fi station MAC address
+ */
+extern uint8_t mac_address[6];
+
+/**
+ * Initializes the flusher component.
+ */
 void init_flusher();
 
 #endif //FOLLOWIFIER_FLUSHER_H
