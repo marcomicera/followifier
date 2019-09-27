@@ -35,14 +35,14 @@ void receiver::fillDatabase(std::vector<followifier::Batch> batch){
 
 void receiver::addBatch(followifier::Batch batch, std::string address) {
     m.lock();
-    cout << "received batch from " + address << endl;
+    cout << "received batch from " + address + " with size" + std::to_string(batch.messages_size()) << endl;
     if (batches.find(address) != batches.end()) {
         //some board data got lost, resetting everything
         cout << "some packets were lost, resetting" << endl;
         batches.clear();
     }
     batches.insert(std::pair<std::string, followifier::Batch>(address, batch));
-    cout << "batch size " + std::to_string(batches.size()) << endl;
+    cout << "batches size " + std::to_string(batches.size()) << endl;
     if (batches.size() == number_boards) {
         cout << "data received from all boards" << endl;
         //data received from all boards

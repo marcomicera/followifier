@@ -28,6 +28,7 @@ void connection::start() {
             boost::asio::buffers_begin(buf.data()) + buf.size() - delimiter.size()
     };
     cout << data << endl;
+    data = data.substr(0, data.size()-1);
     if (!batch.ParseFromString(data)){
         cerr << "Failed to parse batch" << endl;
         return;
