@@ -15,8 +15,8 @@
  *  Read "Establishing Wi-Fi or Ethernet Connection" section in
  *  esp-idf/examples/protocols/README.md for more information about this function.
  */
-#define WIFI_SSID "accomazzi" // FIXME
-#define WIFI_PASSWORD "WiFiAccomair2017"  // FIXME
+#define WIFI_SSID "Wi-Fi SSID" // FIXME
+#define WIFI_PASSWORD "Wi-Fi password"  // FIXME
 #define DEFAULT_SCAN_METHOD WIFI_FAST_SCAN
 #define DEFAULT_SORT_METHOD WIFI_CONNECT_AP_BY_SIGNAL
 #define DEFAULT_RSSI -127
