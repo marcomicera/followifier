@@ -11,5 +11,6 @@ message ESP32Message {
 }
 
 message Batch {
-    repeated ESP32Message messages = 1;
+    required string mac = 1;
+    repeated ESP32Message messages = 2;
 }

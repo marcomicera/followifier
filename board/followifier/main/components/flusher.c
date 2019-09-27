@@ -69,16 +69,21 @@ void flushAsNewTask() {
  * @param sniffer sniffer to be temporarily interrupted.
  */
 void prepare_to_flush(bool stop) {
+
+    // Preparing a batch containing a set of messages
     Followifier__Batch batch = FOLLOWIFIER__BATCH__INIT;
+    batch.mac = malloc(sizeof(char) * 18);
+    snprintf(batch.mac, sizeof(char) * 18, "%02x:%02x:%02x:%02x:%02x:%02x",
+             mac_address[0], mac_address[1], mac_address[2], mac_address[3], mac_address[4], mac_address[5]);
     batch.messages = messages;
     batch.n_messages = items;
+
     // Printing info
     ESP_LOGI(TAG, "Time to flush the message buffer. Sending %d messages...", items);
     batch_length = followifier__batch__get_packed_size(&batch);
     buffer = malloc(batch_length);
     followifier__batch__pack(&batch, buffer);
-    ESP_LOGI(TAG, "%u", batch_length);
-    ESP_LOGI(TAG, "%s", buffer);
+    ESP_LOGI(TAG, "Batch src MAC: %s", batch.mac);
 
     // Stopping the sniffer
     if (stop) {

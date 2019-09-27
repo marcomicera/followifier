@@ -187,11 +187,23 @@ const ProtobufCMessageDescriptor followifier__esp32_message__descriptor =
   (ProtobufCMessageInit) followifier__esp32_message__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor followifier__batch__field_descriptors[1] =
+static const ProtobufCFieldDescriptor followifier__batch__field_descriptors[2] =
 {
   {
-    "messages",
+    "mac",
     1,
+    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_TYPE_STRING,
+    0,   /* quantifier_offset */
+    offsetof(Followifier__Batch, mac),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "messages",
+    2,
     PROTOBUF_C_LABEL_REPEATED,
     PROTOBUF_C_TYPE_MESSAGE,
     offsetof(Followifier__Batch, n_messages),
@@ -203,12 +215,13 @@ static const ProtobufCFieldDescriptor followifier__batch__field_descriptors[1] =
   },
 };
 static const unsigned followifier__batch__field_indices_by_name[] = {
-  0,   /* field[0] = messages */
+  0,   /* field[0] = mac */
+  1,   /* field[1] = messages */
 };
 static const ProtobufCIntRange followifier__batch__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 1 }
+  { 0, 2 }
 };
 const ProtobufCMessageDescriptor followifier__batch__descriptor =
 {
@@ -218,7 +231,7 @@ const ProtobufCMessageDescriptor followifier__batch__descriptor =
   "Followifier__Batch",
   "followifier",
   sizeof(Followifier__Batch),
-  1,
+  2,
   followifier__batch__field_descriptors,
   followifier__batch__field_indices_by_name,
   1,  followifier__batch__number_ranges,

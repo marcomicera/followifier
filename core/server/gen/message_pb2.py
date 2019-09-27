@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='followifier',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\rmessage.proto\x12\x0b\x66ollowifier\"]\n\x0c\x45SP32Message\x12\x0b\n\x03mac\x18\x01 \x02(\t\x12\x0c\n\x04ssid\x18\x02 \x02(\t\x12\x11\n\ttimestamp\x18\x03 \x02(\x03\x12\x12\n\nframe_hash\x18\x04 \x02(\t\x12\x0b\n\x03rsi\x18\x05 \x02(\x05\"4\n\x05\x42\x61tch\x12+\n\x08messages\x18\x01 \x03(\x0b\x32\x19.followifier.ESP32Message')
+  serialized_pb=_b('\n\rmessage.proto\x12\x0b\x66ollowifier\"]\n\x0c\x45SP32Message\x12\x0b\n\x03mac\x18\x01 \x02(\t\x12\x0c\n\x04ssid\x18\x02 \x02(\t\x12\x11\n\ttimestamp\x18\x03 \x02(\x03\x12\x12\n\nframe_hash\x18\x04 \x02(\t\x12\x0b\n\x03rsi\x18\x05 \x02(\x05\"A\n\x05\x42\x61tch\x12\x0b\n\x03mac\x18\x01 \x02(\t\x12+\n\x08messages\x18\x02 \x03(\x0b\x32\x19.followifier.ESP32Message')
 )
 
 
@@ -92,8 +92,15 @@ _BATCH = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='messages', full_name='followifier.Batch.messages', index=0,
-      number=1, type=11, cpp_type=10, label=3,
+      name='mac', full_name='followifier.Batch.mac', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='messages', full_name='followifier.Batch.messages', index=1,
+      number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -111,7 +118,7 @@ _BATCH = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=125,
-  serialized_end=177,
+  serialized_end=190,
 )
 
 _BATCH.fields_by_name['messages'].message_type = _ESP32MESSAGE

@@ -338,10 +338,10 @@ class Batch : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 
   // accessors -------------------------------------------------------
 
-  // repeated .followifier.ESP32Message messages = 1;
+  // repeated .followifier.ESP32Message messages = 2;
   int messages_size() const;
   void clear_messages();
-  static const int kMessagesFieldNumber = 1;
+  static const int kMessagesFieldNumber = 2;
   ::followifier::ESP32Message* mutable_messages(int index);
   ::google::protobuf::RepeatedPtrField< ::followifier::ESP32Message >*
       mutable_messages();
@@ -350,13 +350,31 @@ class Batch : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   const ::google::protobuf::RepeatedPtrField< ::followifier::ESP32Message >&
       messages() const;
 
+  // required string mac = 1;
+  bool has_mac() const;
+  void clear_mac();
+  static const int kMacFieldNumber = 1;
+  const ::std::string& mac() const;
+  void set_mac(const ::std::string& value);
+  #if LANG_CXX11
+  void set_mac(::std::string&& value);
+  #endif
+  void set_mac(const char* value);
+  void set_mac(const char* value, size_t size);
+  ::std::string* mutable_mac();
+  ::std::string* release_mac();
+  void set_allocated_mac(::std::string* mac);
+
   // @@protoc_insertion_point(class_scope:followifier.Batch)
  private:
+  void set_has_mac();
+  void clear_has_mac();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::HasBits<1> _has_bits_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::RepeatedPtrField< ::followifier::ESP32Message > messages_;
+  ::google::protobuf::internal::ArenaStringPtr mac_;
   friend struct ::protobuf_message_2eproto::TableStruct;
 };
 // ===================================================================
@@ -620,7 +638,73 @@ inline void ESP32Message::set_rsi(::google::protobuf::int32 value) {
 
 // Batch
 
-// repeated .followifier.ESP32Message messages = 1;
+// required string mac = 1;
+inline bool Batch::has_mac() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Batch::set_has_mac() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Batch::clear_has_mac() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Batch::clear_mac() {
+  mac_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_mac();
+}
+inline const ::std::string& Batch::mac() const {
+  // @@protoc_insertion_point(field_get:followifier.Batch.mac)
+  return mac_.GetNoArena();
+}
+inline void Batch::set_mac(const ::std::string& value) {
+  set_has_mac();
+  mac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:followifier.Batch.mac)
+}
+#if LANG_CXX11
+inline void Batch::set_mac(::std::string&& value) {
+  set_has_mac();
+  mac_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:followifier.Batch.mac)
+}
+#endif
+inline void Batch::set_mac(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  set_has_mac();
+  mac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:followifier.Batch.mac)
+}
+inline void Batch::set_mac(const char* value, size_t size) {
+  set_has_mac();
+  mac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:followifier.Batch.mac)
+}
+inline ::std::string* Batch::mutable_mac() {
+  set_has_mac();
+  // @@protoc_insertion_point(field_mutable:followifier.Batch.mac)
+  return mac_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Batch::release_mac() {
+  // @@protoc_insertion_point(field_release:followifier.Batch.mac)
+  if (!has_mac()) {
+    return NULL;
+  }
+  clear_has_mac();
+  return mac_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Batch::set_allocated_mac(::std::string* mac) {
+  if (mac != NULL) {
+    set_has_mac();
+  } else {
+    clear_has_mac();
+  }
+  mac_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), mac);
+  // @@protoc_insertion_point(field_set_allocated:followifier.Batch.mac)
+}
+
+// repeated .followifier.ESP32Message messages = 2;
 inline int Batch::messages_size() const {
   return messages_.size();
 }
