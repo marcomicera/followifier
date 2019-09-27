@@ -6,7 +6,6 @@ Communication test between ESP32 boards (client) and a central PC (server).
 1. Build and run the server `cd server && ant build run [-Dport=<port_number>]` (default port is 9991)
 2. Specify the Wi-Fi SSID and password by modifying the `WIFI_SSID` and `WIFI_PASSWORD` #define constants in [echo-upper.c](client/main/echo-upper.c)
 3. Configure the server destination and port in the same [echo-upper.c](client/main/echo-upper.c) file (`SERVER_ADDRESS` and `SERVER_PORT` #define constants)
-5. Set the proper serial port to which the ESP32 board is connected to via the `cd ../client && make menuconfig` command, as shown in the [Compile and run an hello world example](../../README.md) section
 6. Build and run the application with `idf.py -p PORT flash monitor`, where `PORT` indicates the serial port to which the ESP32 board is connected to (e.g., "`COM3`" on Windows or "`/dev/ttyUSB0`" on Linux)
 7. You can stop the board application with the `Ctrl + ]` key combo
 

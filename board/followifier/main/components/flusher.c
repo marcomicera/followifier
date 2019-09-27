@@ -7,36 +7,40 @@
 #include <tcpip_adapter.h>
 #include <esp_log.h>
 #include <esp_wifi.h>
+#include <message.pb-c.h>
 #include "flusher.h"
 #include "util/misc.h"
 #include "wifi.h"
 
 // Buffer
-uint8_t *buffer[FLUSH_THRESHOLD];
+Followifier__ESP32Message * messages[FLUSH_THRESHOLD];
+uint8_t *buffer;
+unsigned int batch_length = 0;
 unsigned short items = 0;
 
 void flush();
 
-void prepare_to_flush();
+void prepare_to_flush(bool stop);
 
 void flushAsNewTask();
 
-void store_message(uint8_t *serialized_data, unsigned message_length, sniffer_runtime_t sniffer) {
+void store_message(Followifier__ESP32Message *serialized_data, sniffer_runtime_t sniffer) {
 
     // Better check it twice
     if (items == FLUSH_THRESHOLD) {
-        prepare_to_flush(sniffer);
+        prepare_to_flush(false);
         ESP_LOGW(TAG, "Last packet has not been sent to the server.");
         return;
     }
 
     // Storing the message into the buffer
-    buffer[items] = serialized_data;
+    messages[items] = serialized_data;
+
     ++items;
 
     // Time to flush the message buffer
     if (items == FLUSH_THRESHOLD) {
-        prepare_to_flush(sniffer);
+        prepare_to_flush(true);
     }
 }
 
@@ -49,16 +53,21 @@ void flushAsNewTask() {
  *
  * @param sniffer sniffer to be temporarily interrupted.
  */
-void prepare_to_flush() {
-
+void prepare_to_flush(bool stop) {
+    Followifier__Batch batch = FOLLOWIFIER__BATCH__INIT;
+    batch.messages = messages;
+    batch.n_messages = items;
     // Printing info
     ESP_LOGI(TAG, "Time to flush the message buffer. Sending %d messages...", items);
-    for (unsigned short i = 0; i < items; ++i) {
-        ESP_LOGI(TAG, "Message %d: length %u", i, sizeof(buffer[i]));
-    }
+    batch_length = followifier__batch__get_packed_size(&batch);
+    buffer = malloc(batch_length);
+    followifier__batch__pack(&batch, buffer);
+    ESP_LOGI(TAG, "%u", batch_length);
+    ESP_LOGI(TAG, "%s", buffer);
 
     // Stopping the sniffer
-    ESP_ERROR_CHECK(stop_sniffer());
+    if (stop)
+        ESP_ERROR_CHECK(stop_sniffer());
 
     // Turning on the Wi-Fi
     ESP_ERROR_CHECK(start_wifi());
@@ -87,13 +96,15 @@ void flush(void) {
                     "Error while connecting to the server");
 
     // Flushing the message buffer
-    for (unsigned short i = 0; i < items; ++i) {
-        ESP_LOGI(TAG, "Sending message %d...", i);
-        MUST_NOT_HAPPEN(send(tcp_socket, (void *) &buffer[i], sizeof(buffer[i]), 0) < 0,
-                        "Error while sending message number %hu", i);
-        free(buffer[i]);
-    }
+    ESP_LOGI(TAG, "Sending batch");
+    MUST_NOT_HAPPEN(send(tcp_socket, (char *) buffer, batch_length, 0) < 0,
+                    "Error while sending batch");
+    ESP_LOGI(TAG, "Sending delimiter...");
+    MUST_NOT_HAPPEN(send(tcp_socket, "\n\r\n\r", sizeof("\n\r\n\r"), 0) < 0,
+                    "Error while sending delimiter");
+
     items = 0;
+    free(buffer);
 
     // Closing socket
     ESP_LOGI(TAG, "Shutting down socket towards %s:%d...", SERVER_ADDRESS, SERVER_PORT);
@@ -103,6 +114,9 @@ void flush(void) {
 
     // Turning the Wi-Fi off
     ESP_ERROR_CHECK(stop_wifi());
+
+    // Re-activating the sniffer
+    init_sniffer();
 
     // Re-activating the sniffer
     ESP_ERROR_CHECK(start_sniffer());

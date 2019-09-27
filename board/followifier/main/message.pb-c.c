@@ -139,7 +139,7 @@ static const ProtobufCFieldDescriptor followifier__esp32_message__field_descript
     "frame_hash",
     4,
     PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_INT64,
+    PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
     offsetof(Followifier__ESP32Message, frame_hash),
     NULL,
