@@ -180,30 +180,25 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
                  hash_value,
                  ppkt->rx_ctrl.rssi
         );
-
         Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
-        uint8_t *serialized_data;      // Buffer to store serialized data
-        unsigned message_length;    // Length of serialized data
 
         // Forming the MAC source address string
         char macString[18];
         snprintf(macString, sizeof(macString), "%02x:%02x:%02x:%02x:%02x:%02x",
                  hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], hdr->addr2[3], hdr->addr2[4], hdr->addr2[5]);
 
-        message.frame_hash = hash_value;
+
+        message.frame_hash = malloc(21);
+        sprintf(message.frame_hash, "%lu", hash_value);
         message.mac = malloc(sizeof(macString));
         sprintf(message.mac, "%s", macString);
         message.rsi = ppkt->rx_ctrl.rssi;
         message.ssid = malloc(sizeof(WIFI_SSID));
-        sprintf(message.ssid, WIFI_SSID);
+        sprintf(message.ssid, "%s", WIFI_SSID);
         message.timestamp = ppkt->rx_ctrl.timestamp;
 
-        message_length = followifier__esp32_message__get_packed_size(&message);
-        serialized_data = malloc(message_length);
-        followifier__esp32_message__pack(&message, serialized_data);
-
         // Store this message
-        store_message(serialized_data, message_length, snf_rt);
+        store_message(&message, snf_rt);
     }
 }
 
