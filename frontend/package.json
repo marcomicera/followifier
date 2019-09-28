@@ -24,7 +24,11 @@
     "@syncfusion/ej2-ng-charts": "latest",
     "angular-chart.js": "^1.1.1",
     "builder-pattern": "^1.2.2",
+    "chart.js": "^2.8.0",
     "ng-click-outside": "^5.0.0",
+    "ng2-charts": "^2.2.4",
+    "ng2-google-charts": "^4.0.0",
+    "ng2-googlechart": "^2.21.0",
     "rxjs": "~6.4.0",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"

@@ -1,6 +1,12 @@
 <div class="wrap">
-  <canvas #canvas (click)="click($event)"></canvas>
-  <div #popup id="info" (clickOutside)="closePopup($event)">
-    <p *ngIf="info">NAME : {{info.name}}</p>
-  </div>
+
+   <canvas baseChart
+             [datasets]="scatterChartData"
+             [options]="scatterChartOptions"
+             [chartType]="scatterChartType">
+</canvas>
 </div>
+<nav>
+  <a routerLink="/chart" routerLinkActive="active">chart</a>
+</nav>
+<router-outlet></router-outlet>

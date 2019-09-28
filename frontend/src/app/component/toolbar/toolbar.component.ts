@@ -6,8 +6,8 @@ import {Component, OnInit, Output, EventEmitter} from '@angular/core';
   styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent implements OnInit {
-  @Output() toggleSidenav = new EventEmitter<void>();
-  constructor() { }
+
+
 
   ngOnInit() {
   }
