@@ -6,9 +6,16 @@ import { RouterModule } from '@angular/router';
 import {AppRoutes} from './app.routes';
 import {AppComponent} from './app.component';
 import {StatsComponent} from './component/stats/stats.component';
-import {MatButtonModule, MatIconModule, MatListModule, MatSidenavModule, MatToolbarModule} from '@angular/material';
-import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatButtonModule} from '@angular/material/button';
+
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatListModule} from '@angular/material/list';
+
+import {MatIconModule} from '@angular/material/icon';
+
+import {HttpClientModule} from '@angular/common/http';
 import { SidenavComponent } from './component/sidenav/sidenav.component';
 import { ToolbarComponent } from './component/toolbar/toolbar.component';
 import { HomeComponent } from './component/home/home.component';
