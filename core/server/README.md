@@ -1,5 +1,8 @@
 # `core` section
 
+### Preparing the `core` server
+The number of boards needs to be correctly setted in the `receiver.h` file.
+
 ### Launch the `core` server
 ```bash
 $ chmod u+x start.sh
