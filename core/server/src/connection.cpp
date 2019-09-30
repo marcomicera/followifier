@@ -34,7 +34,7 @@ void connection::start() {
         return;
     }
 
-    receiver::addBatch(batch, socket_.remote_endpoint().address().to_string());
+    receiver::addBatch(batch);
 }
 
 connection::connection(boost::asio::io_service &io_service) : socket_(io_service) {}

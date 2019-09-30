@@ -20,11 +20,6 @@ void server::handle_accept(const connection::pointer& new_connection,
                            const boost::system::error_code &error) {
     if (!error) {
         new_connection->start();
-
-        // Printing new board info
-        std::string boardIp = new_connection->socket().remote_endpoint().address().to_string();
-        unsigned short boardPort = new_connection->socket().remote_endpoint().port();
-        std::cout << "New board connected: " << boardIp << ":" << boardPort << std::endl;
     }
 
     start_accept();

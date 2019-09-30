@@ -12,6 +12,7 @@
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 #include <sys/unistd.h>
+#include <pthread.h>
 #include "esp_log.h"
 #include "esp_wifi.h"
 #include "esp_console.h"
@@ -26,7 +27,6 @@
 #define SNIFFER_PROCESS_PACKET_TIMEOUT_MS (100)
 
 #define PROBE_REQUEST    0x0040
-#define PROBE_RESPONSE    0x0050
 #define SUBTYPE_MASK 0x00F0
 
 const char *SNIFFER_TAG = "followifier";
@@ -64,9 +64,9 @@ void init_sniffer(void) {
 void sniffer_packet_handler(void *, wifi_promiscuous_pkt_type_t);
 
 static void sniffer_task(void *);
+static void *sniffer_timer(void *);
 
 esp_err_t start_sniffer(void) {
-
     esp_log_level_set(SNIFFER_TAG, ESP_LOG_VERBOSE);
     wifi_promiscuous_filter_t wifi_filter;
     snf_rt.is_running = true;
@@ -90,6 +90,9 @@ esp_err_t start_sniffer(void) {
                                        err_start);
             esp_wifi_set_channel(snf_rt.channel, WIFI_SECOND_CHAN_NONE);
             ESP_LOGI(SNIFFER_TAG, "Wi-Fi promiscuous mode started.");
+            pthread_t thread_id;
+            pthread_create(&thread_id, NULL, sniffer_timer, NULL);
+
             break;
 
         default:
@@ -122,15 +125,13 @@ const char *packet_subtype2str(wifi_ieee80211_mac_hdr_t *header) {
     switch (header->frame_ctrl & SUBTYPE_MASK) {
         case PROBE_REQUEST:
             return "PROBE_REQUEST";
-        case PROBE_RESPONSE:
-            return "PROBE_RESPONSE";
         default:
             return "NOTIMPL";
     }
 }
 
 int sniffer_is_probe(unsigned short fctl) {
-    return ((fctl & SUBTYPE_MASK) == PROBE_REQUEST || (fctl & SUBTYPE_MASK) == PROBE_RESPONSE);
+    return ((fctl & SUBTYPE_MASK) == PROBE_REQUEST);
 }
 
 /**
@@ -198,8 +199,18 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         message.timestamp = ppkt->rx_ctrl.timestamp;
 
         // Store this message
-        store_message(&message, snf_rt);
+        store_message(&message);
     }
+}
+
+void *sniffer_timer(void* args){
+    //wait 1 min = 60s = 60000 ms
+    ESP_LOGI(TAG, "Timer started");
+    //it seems that its not actually ms but 100ms so --> 600
+    vTaskDelay(portTICK_PERIOD_MS*600);
+    ESP_LOGI(TAG, "1min passed. time to send batch");
+    prepare_to_flush(true);
+    return NULL;
 }
 
 void sniffer_task(void *parameters) {
