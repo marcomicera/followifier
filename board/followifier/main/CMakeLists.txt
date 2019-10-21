@@ -1,6 +1,6 @@
 idf_component_register(SRCS "followifier.c"
         "components/sniffer.c"
-        "message.pb-c.c"
+        "gen/message.pb-c.c"
         "components/flusher.c"
         "components/wifi.c"
         "components/nvs.c"
