@@ -91,7 +91,7 @@ esp_err_t start_sniffer(void) {
             esp_wifi_set_channel(snf_rt.channel, WIFI_SECOND_CHAN_NONE);
             ESP_LOGI(SNIFFER_TAG, "Wi-Fi promiscuous mode started.");
             pthread_t thread_id;
-            pthread_create(&thread_id, NULL, sniffer_timer, NULL);
+            pthread_create(&thread_id, NULL, sniffer_timer, NULL); // starting flush timer
 
             break;
 
@@ -204,11 +204,9 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
 }
 
 void *sniffer_timer(void* args){
-    //wait 1 min = 60s = 60000 ms
-    ESP_LOGI(TAG, "Timer started");
-    //it seems that its not actually ms but 100ms so --> 600
-    vTaskDelay(portTICK_PERIOD_MS*600);
-    ESP_LOGI(TAG, "1min passed. time to send batch");
+    ESP_LOGI(TAG, "Flush timer started.");
+    vTaskDelay(portTICK_PERIOD_MS * FLUSH_RATE_IN_SECONDS * 10); // in deci-seconds (0.1 seconds)
+    ESP_LOGI(TAG, "Flush timer expired (%d seconds): time to flush the batch.", FLUSH_RATE_IN_SECONDS);
     prepare_to_flush(true);
     return NULL;
 }
@@ -231,7 +229,7 @@ void sniffer_task(void *parameters) {
 }
 
 esp_err_t stop_sniffer(void) {
-    ESP_ERROR_CHECK_JUMP_LABEL(snf_rt.is_running, "sniffer is already stopped", err);
+    ESP_ERROR_CHECK_JUMP_LABEL(snf_rt.is_running, "Sniffer is already stopped.", err);
 
     switch (snf_rt.interf) {
         case SNIFFER_INTF_WLAN:
@@ -242,7 +240,7 @@ esp_err_t stop_sniffer(void) {
             ESP_ERROR_CHECK_JUMP_LABEL(false, "unsupported interface", err);
             break;
     }
-    ESP_LOGI(SNIFFER_TAG, "stop WiFi promiscuous ok");
+    ESP_LOGI(SNIFFER_TAG, "Wi-Fi promiscuous mode stopped.");
 
     /* stop sniffer local task */
     snf_rt.is_running = false;

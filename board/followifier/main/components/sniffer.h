@@ -16,6 +16,11 @@ extern "C" {
 
 #define SNIFFER_DEFAULT_CHANNEL (1)
 
+/**
+ * Board flush rate in seconds.
+ */
+#define FLUSH_RATE_IN_SECONDS (30)
+
 extern const char *SNIFFER_TAG;
 
 /**
