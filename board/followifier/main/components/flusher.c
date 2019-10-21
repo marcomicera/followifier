@@ -108,30 +108,41 @@ void flush(void) {
     inet_ntoa_r(server_address.sin_addr, addr_str, sizeof(addr_str) - 1);
 
     // Creating the socket
-    MUST_NOT_HAPPEN((tcp_socket = socket(addr_family, SOCK_STREAM, ip_protocol)) < 0,
-                    "socket() error");
+    ESP_ERROR_CHECK_JUMP_LABEL((tcp_socket = socket(addr_family, SOCK_STREAM, ip_protocol)) < 0,
+                               "socket() error: discarding local packets, re-enabling sniffing mode...",
+                               reactivate_sniffer);
     ESP_LOGI(TAG, "Socket created, connecting to %s:%d...", SERVER_ADDRESS, SERVER_PORT);
 
     // Creating connection to the server
-    MUST_NOT_HAPPEN(connect(tcp_socket, (struct sockaddr *) &server_address, sizeof(server_address)) != 0,
-                    "Error while connecting to the server");
+    ESP_ERROR_CHECK_JUMP_LABEL(connect(tcp_socket, (struct sockaddr *) &server_address, sizeof(server_address)) != 0,
+                               "Error while connecting to the server: discarding local packets, re-enabling sniffing mode...",
+                               closing_socket);
 
     // Flushing the message buffer
     ESP_LOGI(TAG, "Sending batch");
-    MUST_NOT_HAPPEN(send(tcp_socket, (char *) buffer, batch_length, 0) < 0,
-                    "Error while sending batch");
+    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length, 0) < 0,
+                               "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
+                               closing_socket);
     ESP_LOGI(TAG, "Sending delimiter...");
-    MUST_NOT_HAPPEN(send(tcp_socket, "\n\r\n\r", sizeof("\n\r\n\r"), 0) < 0,
-                    "Error while sending delimiter");
+    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, "\n\r\n\r", sizeof("\n\r\n\r"), 0) < 0,
+                               "Error while sending delimiter: discarding local packets, re-enabling sniffing mode...",
+                               closing_socket);
 
-    items = 0;
-    free(buffer);
+    // Skipping until here in case connection towards the server was unsuccessful
+    closing_socket:
 
     // Closing socket
     ESP_LOGI(TAG, "Shutting down socket towards %s:%d...", SERVER_ADDRESS, SERVER_PORT);
     shutdown(tcp_socket, 0);
     close(tcp_socket);
     ESP_LOGI(TAG, "...socket towards %s:%d closed.", SERVER_ADDRESS, SERVER_PORT);
+
+    // Skipping until here in case of error while creating a socket towards the server
+    reactivate_sniffer:
+
+    // Deleting local buffer elements
+    items = 0;
+    free(buffer);
 
     // Turning the Wi-Fi off
     ESP_ERROR_CHECK(stop_wifi());
