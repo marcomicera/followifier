@@ -20,12 +20,10 @@ This is the firmware for `followifier` boards.
 1. Run the [`core`](../../core/server) server and take note of its IP address and port
     - More instructions on how to do it [here](../../core/server/README.md)
 1. Configure the [`core`](../../core/server) server's IP address and port in [`main/components/flusher.h`](main/components/flusher.h)
-1. Preferably clean the project either with `idf.py clean` or `idf.py fullclean`
-1. Build the project with `idf.py build`
-1. Flash and run the software on all boards with:
-    ```cpp
-    $ idf.py -p <port> flash monitor
-    ```
+1. Clean, compile, flash and run the software on all boards:
+    ```bash
+   $ idf.py fullclean && idf.py build && idf.py -p <port> flash monitor 
+   ```
    Where `<port>` indicates the serial port to which the ESP32 board is connected to (e.g., "`COM3`" on Windows or "`/dev/ttyUSB0`" on Linux)
     - You can list all connected boards on Linux with:
         ```bash
