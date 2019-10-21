@@ -11,10 +11,12 @@
 #define NUMBER_BOARDS 1
 class receiver {
 public:
-    static void addBatch(const followifier::Batch& batch);
+    static void addBatch(const followifier::Batch& newBatch);
 private:
     static bool isContained(const std::string& mac, const std::string& hash);
     static std::mutex m;
+
+    /* Mapping source MAD addresses to batch of messages */
     static std::map<std::string, followifier::Batch> batches;
  };
 

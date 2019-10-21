@@ -18,7 +18,7 @@ tcp::socket &connection::socket() {
 }
 
 void connection::start() {
-    cout << "start connection" <<endl;
+    cout << "Ready to receive a new batch." << endl;
     GOOGLE_PROTOBUF_VERIFY_VERSION;
     boost::asio::streambuf buf;
     followifier::Batch batch;
@@ -30,7 +30,7 @@ void connection::start() {
     cout << data << endl;
     data = data.substr(0, data.size()-1);
     if (!batch.ParseFromString(data)){
-        cerr << "Failed to parse batch" << endl;
+        cerr << "Failed to parse batch." << endl;
         return;
     }
 
