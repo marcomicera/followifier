@@ -1,13 +1,12 @@
 # `core` section
 
-### Preparing the `core` server
-The number of boards needs to be correctly setted in the `receiver.h` file.
-
 ### Launch the `core` server
-```bash
-$ chmod u+x start.sh
-$ ./start.sh
-```
+- Set the number of boards in [`receiver.h`](src/receiver.h)
+- Run:
+    ```bash
+    $ chmod u+x start.sh
+    $ ./start.sh
+    ```
 
 #### Using a dummy packet producer to generate input data
 1. Create a batch file (e.g., `touch batch.txt`) 
