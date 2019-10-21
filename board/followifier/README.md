@@ -20,7 +20,7 @@ This is the firmware for `followifier` boards.
 1. Run the [`core`](../../core/server) server and take note of its IP address and port
     - More instructions on how to do it [here](../../core/server/README.md)
 1. Configure the [`core`](../../core/server) server's IP address and port in [`main/components/flusher.h`](main/components/flusher.h)
-1. Clean, compile, flash and run the software on all boards:
+1. Clean, compile, flash and run the software on all boards, **one at a time**:
     ```bash
    $ idf.py fullclean && idf.py build && idf.py -p <port> flash monitor 
    ```
