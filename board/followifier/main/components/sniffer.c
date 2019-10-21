@@ -18,7 +18,7 @@
 #include "esp_console.h"
 #include "sniffer.h"
 #include "sdkconfig.h"
-#include "message.pb-c.h"
+#include "gen/message.pb-c.h"
 #include "flusher.h"
 #include "util/misc.h"
 #include "wifi.h"

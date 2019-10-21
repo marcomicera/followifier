@@ -13,7 +13,7 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "sdkconfig.h"
-#include "message.pb-c.h"
+#include "gen/message.pb-c.h"
 #include "components/wifi.h"
 #include "components/flusher.h"
 #include "components/nvs.h"
