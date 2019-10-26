@@ -27,9 +27,18 @@ typedef struct _Followifier__Batch Followifier__Batch;
 struct  _Followifier__ESP32Message
 {
   ProtobufCMessage base;
-  char *mac;
+  /*
+   * FIXME change name
+   */
+  char *apmac;
   char *ssid;
+  /*
+   * TODO check whether this is set by the phone
+   */
   int64_t timestamp;
+  /*
+   * TODO is it computed starting from AP's MAC & timestamp?
+   */
   char *frame_hash;
   int32_t rsi;
 };
@@ -41,7 +50,10 @@ struct  _Followifier__ESP32Message
 struct  _Followifier__Batch
 {
   ProtobufCMessage base;
-  char *mac;
+  /*
+   * FIXME change name
+   */
+  char *boardmac;
   size_t n_messages;
   Followifier__ESP32Message **messages;
 };
