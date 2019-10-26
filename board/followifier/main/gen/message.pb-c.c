@@ -100,12 +100,12 @@ void   followifier__batch__free_unpacked
 static const ProtobufCFieldDescriptor followifier__esp32_message__field_descriptors[5] =
 {
   {
-    "mac",
+    "apMac",
     1,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
-    offsetof(Followifier__ESP32Message, mac),
+    offsetof(Followifier__ESP32Message, apmac),
     NULL,
     NULL,
     0,             /* flags */
@@ -161,8 +161,8 @@ static const ProtobufCFieldDescriptor followifier__esp32_message__field_descript
   },
 };
 static const unsigned followifier__esp32_message__field_indices_by_name[] = {
+  0,   /* field[0] = apMac */
   3,   /* field[3] = frame_hash */
-  0,   /* field[0] = mac */
   4,   /* field[4] = rsi */
   1,   /* field[1] = ssid */
   2,   /* field[2] = timestamp */
@@ -190,12 +190,12 @@ const ProtobufCMessageDescriptor followifier__esp32_message__descriptor =
 static const ProtobufCFieldDescriptor followifier__batch__field_descriptors[2] =
 {
   {
-    "mac",
+    "boardMac",
     1,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
-    offsetof(Followifier__Batch, mac),
+    offsetof(Followifier__Batch, boardmac),
     NULL,
     NULL,
     0,             /* flags */
@@ -215,7 +215,7 @@ static const ProtobufCFieldDescriptor followifier__batch__field_descriptors[2] =
   },
 };
 static const unsigned followifier__batch__field_indices_by_name[] = {
-  0,   /* field[0] = mac */
+  0,   /* field[0] = boardMac */
   1,   /* field[1] = messages */
 };
 static const ProtobufCIntRange followifier__batch__number_ranges[1 + 1] =

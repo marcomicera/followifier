@@ -59,8 +59,8 @@ void prepare_to_flush(bool stop) {
 
     // Preparing a batch containing a set of messages
     Followifier__Batch batch = FOLLOWIFIER__BATCH__INIT;
-    batch.mac = malloc(18);
-    snprintf(batch.mac, 18, "%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx",
+    batch.boardmac = malloc(18);
+    snprintf(batch.boardmac, 18, "%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx",
              mac_address[0], mac_address[1], mac_address[2], mac_address[3], mac_address[4], mac_address[5]);
     batch.messages = messages;
     batch.n_messages = items;
@@ -70,7 +70,7 @@ void prepare_to_flush(bool stop) {
     batch_length = followifier__batch__get_packed_size(&batch);
     buffer = malloc(batch_length);
     followifier__batch__pack(&batch, buffer);
-    ESP_LOGI(TAG, "Batch src MAC: %s", batch.mac);
+    ESP_LOGI(TAG, "Board's source MAC: %s", batch.boardmac);
 
     // Stopping the sniffer
     if (stop) {

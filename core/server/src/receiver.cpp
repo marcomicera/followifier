@@ -20,7 +20,7 @@ bool receiver::isContained(const std::string &mac, const std::string &hash) {
 void receiver::addBatch(const followifier::Batch &newBatch) {
 
     m.lock();
-    std::string newBatchSrcAddress = newBatch.mac();
+    std::string newBatchSrcAddress = newBatch.boardmac();
     cout << "Received batch from " + newBatchSrcAddress + " of size " + std::to_string(newBatch.messages_size()) << "." << endl;
 
     /* Source MAC address appears for the first time */

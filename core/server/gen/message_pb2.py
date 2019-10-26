@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='followifier',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\rmessage.proto\x12\x0b\x66ollowifier\"]\n\x0c\x45SP32Message\x12\x0b\n\x03mac\x18\x01 \x02(\t\x12\x0c\n\x04ssid\x18\x02 \x02(\t\x12\x11\n\ttimestamp\x18\x03 \x02(\x03\x12\x12\n\nframe_hash\x18\x04 \x02(\t\x12\x0b\n\x03rsi\x18\x05 \x02(\x05\"A\n\x05\x42\x61tch\x12\x0b\n\x03mac\x18\x01 \x02(\t\x12+\n\x08messages\x18\x02 \x03(\x0b\x32\x19.followifier.ESP32Message')
+  serialized_pb=_b('\n\rmessage.proto\x12\x0b\x66ollowifier\"_\n\x0c\x45SP32Message\x12\r\n\x05\x61pMac\x18\x01 \x02(\t\x12\x0c\n\x04ssid\x18\x02 \x02(\t\x12\x11\n\ttimestamp\x18\x03 \x02(\x03\x12\x12\n\nframe_hash\x18\x04 \x02(\t\x12\x0b\n\x03rsi\x18\x05 \x02(\x05\"F\n\x05\x42\x61tch\x12\x10\n\x08\x62oardMac\x18\x01 \x02(\t\x12+\n\x08messages\x18\x02 \x03(\x0b\x32\x19.followifier.ESP32Message')
 )
 
 
@@ -33,7 +33,7 @@ _ESP32MESSAGE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='mac', full_name='followifier.ESP32Message.mac', index=0,
+      name='apMac', full_name='followifier.ESP32Message.apMac', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -80,7 +80,7 @@ _ESP32MESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=30,
-  serialized_end=123,
+  serialized_end=125,
 )
 
 
@@ -92,7 +92,7 @@ _BATCH = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='mac', full_name='followifier.Batch.mac', index=0,
+      name='boardMac', full_name='followifier.Batch.boardMac', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -117,8 +117,8 @@ _BATCH = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=125,
-  serialized_end=190,
+  serialized_start=127,
+  serialized_end=197,
 )
 
 _BATCH.fields_by_name['messages'].message_type = _ESP32MESSAGE

@@ -191,8 +191,8 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
 
         message.frame_hash = malloc(21);
         sprintf(message.frame_hash, "%lu", hash_value);
-        message.mac = malloc(sizeof(macString));
-        sprintf(message.mac, "%s", macString);
+        message.apmac = malloc(sizeof(macString));
+        sprintf(message.apmac, "%s", macString);
         message.rsi = ppkt->rx_ctrl.rssi;
         message.ssid = malloc(sizeof(WIFI_SSID));
         sprintf(message.ssid, "%s", WIFI_SSID);

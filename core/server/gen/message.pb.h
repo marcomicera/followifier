@@ -157,20 +157,20 @@ class ESP32Message : public ::google::protobuf::Message /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // required string mac = 1;
-  bool has_mac() const;
-  void clear_mac();
-  static const int kMacFieldNumber = 1;
-  const ::std::string& mac() const;
-  void set_mac(const ::std::string& value);
+  // required string apMac = 1;
+  bool has_apmac() const;
+  void clear_apmac();
+  static const int kApMacFieldNumber = 1;
+  const ::std::string& apmac() const;
+  void set_apmac(const ::std::string& value);
   #if LANG_CXX11
-  void set_mac(::std::string&& value);
+  void set_apmac(::std::string&& value);
   #endif
-  void set_mac(const char* value);
-  void set_mac(const char* value, size_t size);
-  ::std::string* mutable_mac();
-  ::std::string* release_mac();
-  void set_allocated_mac(::std::string* mac);
+  void set_apmac(const char* value);
+  void set_apmac(const char* value, size_t size);
+  ::std::string* mutable_apmac();
+  ::std::string* release_apmac();
+  void set_allocated_apmac(::std::string* apmac);
 
   // required string ssid = 2;
   bool has_ssid() const;
@@ -218,8 +218,8 @@ class ESP32Message : public ::google::protobuf::Message /* @@protoc_insertion_po
 
   // @@protoc_insertion_point(class_scope:followifier.ESP32Message)
  private:
-  void set_has_mac();
-  void clear_has_mac();
+  void set_has_apmac();
+  void clear_has_apmac();
   void set_has_ssid();
   void clear_has_ssid();
   void set_has_timestamp();
@@ -235,7 +235,7 @@ class ESP32Message : public ::google::protobuf::Message /* @@protoc_insertion_po
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::HasBits<1> _has_bits_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  ::google::protobuf::internal::ArenaStringPtr mac_;
+  ::google::protobuf::internal::ArenaStringPtr apmac_;
   ::google::protobuf::internal::ArenaStringPtr ssid_;
   ::google::protobuf::internal::ArenaStringPtr frame_hash_;
   ::google::protobuf::int64 timestamp_;
@@ -350,31 +350,31 @@ class Batch : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   const ::google::protobuf::RepeatedPtrField< ::followifier::ESP32Message >&
       messages() const;
 
-  // required string mac = 1;
-  bool has_mac() const;
-  void clear_mac();
-  static const int kMacFieldNumber = 1;
-  const ::std::string& mac() const;
-  void set_mac(const ::std::string& value);
+  // required string boardMac = 1;
+  bool has_boardmac() const;
+  void clear_boardmac();
+  static const int kBoardMacFieldNumber = 1;
+  const ::std::string& boardmac() const;
+  void set_boardmac(const ::std::string& value);
   #if LANG_CXX11
-  void set_mac(::std::string&& value);
+  void set_boardmac(::std::string&& value);
   #endif
-  void set_mac(const char* value);
-  void set_mac(const char* value, size_t size);
-  ::std::string* mutable_mac();
-  ::std::string* release_mac();
-  void set_allocated_mac(::std::string* mac);
+  void set_boardmac(const char* value);
+  void set_boardmac(const char* value, size_t size);
+  ::std::string* mutable_boardmac();
+  ::std::string* release_boardmac();
+  void set_allocated_boardmac(::std::string* boardmac);
 
   // @@protoc_insertion_point(class_scope:followifier.Batch)
  private:
-  void set_has_mac();
-  void clear_has_mac();
+  void set_has_boardmac();
+  void clear_has_boardmac();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::HasBits<1> _has_bits_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::RepeatedPtrField< ::followifier::ESP32Message > messages_;
-  ::google::protobuf::internal::ArenaStringPtr mac_;
+  ::google::protobuf::internal::ArenaStringPtr boardmac_;
   friend struct ::protobuf_message_2eproto::TableStruct;
 };
 // ===================================================================
@@ -388,70 +388,70 @@ class Batch : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 #endif  // __GNUC__
 // ESP32Message
 
-// required string mac = 1;
-inline bool ESP32Message::has_mac() const {
+// required string apMac = 1;
+inline bool ESP32Message::has_apmac() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void ESP32Message::set_has_mac() {
+inline void ESP32Message::set_has_apmac() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void ESP32Message::clear_has_mac() {
+inline void ESP32Message::clear_has_apmac() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void ESP32Message::clear_mac() {
-  mac_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clear_has_mac();
+inline void ESP32Message::clear_apmac() {
+  apmac_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_apmac();
 }
-inline const ::std::string& ESP32Message::mac() const {
-  // @@protoc_insertion_point(field_get:followifier.ESP32Message.mac)
-  return mac_.GetNoArena();
+inline const ::std::string& ESP32Message::apmac() const {
+  // @@protoc_insertion_point(field_get:followifier.ESP32Message.apMac)
+  return apmac_.GetNoArena();
 }
-inline void ESP32Message::set_mac(const ::std::string& value) {
-  set_has_mac();
-  mac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:followifier.ESP32Message.mac)
+inline void ESP32Message::set_apmac(const ::std::string& value) {
+  set_has_apmac();
+  apmac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:followifier.ESP32Message.apMac)
 }
 #if LANG_CXX11
-inline void ESP32Message::set_mac(::std::string&& value) {
-  set_has_mac();
-  mac_.SetNoArena(
+inline void ESP32Message::set_apmac(::std::string&& value) {
+  set_has_apmac();
+  apmac_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:followifier.ESP32Message.mac)
+  // @@protoc_insertion_point(field_set_rvalue:followifier.ESP32Message.apMac)
 }
 #endif
-inline void ESP32Message::set_mac(const char* value) {
+inline void ESP32Message::set_apmac(const char* value) {
   GOOGLE_DCHECK(value != NULL);
-  set_has_mac();
-  mac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:followifier.ESP32Message.mac)
+  set_has_apmac();
+  apmac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:followifier.ESP32Message.apMac)
 }
-inline void ESP32Message::set_mac(const char* value, size_t size) {
-  set_has_mac();
-  mac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+inline void ESP32Message::set_apmac(const char* value, size_t size) {
+  set_has_apmac();
+  apmac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:followifier.ESP32Message.mac)
+  // @@protoc_insertion_point(field_set_pointer:followifier.ESP32Message.apMac)
 }
-inline ::std::string* ESP32Message::mutable_mac() {
-  set_has_mac();
-  // @@protoc_insertion_point(field_mutable:followifier.ESP32Message.mac)
-  return mac_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::std::string* ESP32Message::mutable_apmac() {
+  set_has_apmac();
+  // @@protoc_insertion_point(field_mutable:followifier.ESP32Message.apMac)
+  return apmac_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* ESP32Message::release_mac() {
-  // @@protoc_insertion_point(field_release:followifier.ESP32Message.mac)
-  if (!has_mac()) {
+inline ::std::string* ESP32Message::release_apmac() {
+  // @@protoc_insertion_point(field_release:followifier.ESP32Message.apMac)
+  if (!has_apmac()) {
     return NULL;
   }
-  clear_has_mac();
-  return mac_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_apmac();
+  return apmac_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void ESP32Message::set_allocated_mac(::std::string* mac) {
-  if (mac != NULL) {
-    set_has_mac();
+inline void ESP32Message::set_allocated_apmac(::std::string* apmac) {
+  if (apmac != NULL) {
+    set_has_apmac();
   } else {
-    clear_has_mac();
+    clear_has_apmac();
   }
-  mac_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), mac);
-  // @@protoc_insertion_point(field_set_allocated:followifier.ESP32Message.mac)
+  apmac_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), apmac);
+  // @@protoc_insertion_point(field_set_allocated:followifier.ESP32Message.apMac)
 }
 
 // required string ssid = 2;
@@ -638,70 +638,70 @@ inline void ESP32Message::set_rsi(::google::protobuf::int32 value) {
 
 // Batch
 
-// required string mac = 1;
-inline bool Batch::has_mac() const {
+// required string boardMac = 1;
+inline bool Batch::has_boardmac() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void Batch::set_has_mac() {
+inline void Batch::set_has_boardmac() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void Batch::clear_has_mac() {
+inline void Batch::clear_has_boardmac() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void Batch::clear_mac() {
-  mac_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clear_has_mac();
+inline void Batch::clear_boardmac() {
+  boardmac_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_boardmac();
 }
-inline const ::std::string& Batch::mac() const {
-  // @@protoc_insertion_point(field_get:followifier.Batch.mac)
-  return mac_.GetNoArena();
+inline const ::std::string& Batch::boardmac() const {
+  // @@protoc_insertion_point(field_get:followifier.Batch.boardMac)
+  return boardmac_.GetNoArena();
 }
-inline void Batch::set_mac(const ::std::string& value) {
-  set_has_mac();
-  mac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:followifier.Batch.mac)
+inline void Batch::set_boardmac(const ::std::string& value) {
+  set_has_boardmac();
+  boardmac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:followifier.Batch.boardMac)
 }
 #if LANG_CXX11
-inline void Batch::set_mac(::std::string&& value) {
-  set_has_mac();
-  mac_.SetNoArena(
+inline void Batch::set_boardmac(::std::string&& value) {
+  set_has_boardmac();
+  boardmac_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:followifier.Batch.mac)
+  // @@protoc_insertion_point(field_set_rvalue:followifier.Batch.boardMac)
 }
 #endif
-inline void Batch::set_mac(const char* value) {
+inline void Batch::set_boardmac(const char* value) {
   GOOGLE_DCHECK(value != NULL);
-  set_has_mac();
-  mac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:followifier.Batch.mac)
+  set_has_boardmac();
+  boardmac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:followifier.Batch.boardMac)
 }
-inline void Batch::set_mac(const char* value, size_t size) {
-  set_has_mac();
-  mac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+inline void Batch::set_boardmac(const char* value, size_t size) {
+  set_has_boardmac();
+  boardmac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:followifier.Batch.mac)
+  // @@protoc_insertion_point(field_set_pointer:followifier.Batch.boardMac)
 }
-inline ::std::string* Batch::mutable_mac() {
-  set_has_mac();
-  // @@protoc_insertion_point(field_mutable:followifier.Batch.mac)
-  return mac_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::std::string* Batch::mutable_boardmac() {
+  set_has_boardmac();
+  // @@protoc_insertion_point(field_mutable:followifier.Batch.boardMac)
+  return boardmac_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* Batch::release_mac() {
-  // @@protoc_insertion_point(field_release:followifier.Batch.mac)
-  if (!has_mac()) {
+inline ::std::string* Batch::release_boardmac() {
+  // @@protoc_insertion_point(field_release:followifier.Batch.boardMac)
+  if (!has_boardmac()) {
     return NULL;
   }
-  clear_has_mac();
-  return mac_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_boardmac();
+  return boardmac_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Batch::set_allocated_mac(::std::string* mac) {
-  if (mac != NULL) {
-    set_has_mac();
+inline void Batch::set_allocated_boardmac(::std::string* boardmac) {
+  if (boardmac != NULL) {
+    set_has_boardmac();
   } else {
-    clear_has_mac();
+    clear_has_boardmac();
   }
-  mac_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), mac);
-  // @@protoc_insertion_point(field_set_allocated:followifier.Batch.mac)
+  boardmac_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), boardmac);
+  // @@protoc_insertion_point(field_set_allocated:followifier.Batch.boardMac)
 }
 
 // repeated .followifier.ESP32Message messages = 2;
