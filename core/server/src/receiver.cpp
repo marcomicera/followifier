@@ -30,6 +30,7 @@ void receiver::addBatch(const followifier::Batch &newBatch) {
         /* New timeslot, need to clear all previous batches */
         batches.clear();
         batches.insert(std::pair<std::string, followifier::Batch>(newBatchSrcAddress, newBatch));
+        cout << "Received batch of new timeslot. Resetting" << endl;
     }
 
     /* Server has received batches from all boards */
@@ -48,6 +49,7 @@ void receiver::addBatch(const followifier::Batch &newBatch) {
                 //remove from stored batches
             }
         }
+        cout << "Checked all messages of this timeslot" << endl;
     }
 
     m.unlock();

@@ -18,23 +18,28 @@ tcp::socket &connection::socket() {
 }
 
 void connection::start() {
-    cout << "Ready to receive a new batch." << endl;
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
-    boost::asio::streambuf buf;
-    followifier::Batch batch;
-    boost::asio::read_until(socket_, buf, delimiter);
-    std::string data{
-            boost::asio::buffers_begin(buf.data()),
-            boost::asio::buffers_begin(buf.data()) + buf.size() - delimiter.size()
-    };
-    cout << data << endl;
-    data = data.substr(0, data.size()-1);
-    if (!batch.ParseFromString(data)){
-        cerr << "Failed to parse batch." << endl;
-        return;
-    }
+    try {
+        cout << "Ready to receive a new batch." << endl;
+        GOOGLE_PROTOBUF_VERIFY_VERSION;
+        boost::asio::streambuf buf;
+        followifier::Batch batch;
+        boost::asio::read_until(socket_, buf, delimiter);
+        std::string data{
+                boost::asio::buffers_begin(buf.data()),
+                boost::asio::buffers_begin(buf.data()) + buf.size() - delimiter.size()
+        };
+        cout << data << endl;
+        data = data.substr(0, data.size() - 1);
+        if (!batch.ParseFromString(data)) {
+            cerr << "Failed to parse batch." << endl;
+            cerr << "len:" << data.length() << endl;
+            return;
+        }
 
-    receiver::addBatch(batch);
+        receiver::addBatch(batch);
+    }catch (std::exception e){
+        cerr << "Failed to parse batch." << endl;
+    }
 }
 
 connection::connection(boost::asio::io_service &io_service) : socket_(io_service) {}
