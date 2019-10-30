@@ -19,7 +19,7 @@ tcp::socket &connection::socket() {
 
 void connection::start() {
     try {
-        cout << "Ready to receive a new batch." << endl;
+        cout << "Ready to receive a new batch... ";
         GOOGLE_PROTOBUF_VERIFY_VERSION;
         boost::asio::streambuf buf;
         followifier::Batch batch;
@@ -28,17 +28,15 @@ void connection::start() {
                 boost::asio::buffers_begin(buf.data()),
                 boost::asio::buffers_begin(buf.data()) + buf.size() - delimiter.size()
         };
-        cout << data << endl;
         data = data.substr(0, data.size() - 1);
         if (!batch.ParseFromString(data)) {
-            cerr << "Failed to parse batch." << endl;
-            cerr << "len:" << data.length() << endl;
+            cerr << "failed to parse batch (length" << data.length() << ")." << endl; // intentionally lowercase
             return;
         }
 
         receiver::addBatch(batch);
     } catch (const std::exception &e) {
-        cerr << "Failed to parse batch." << endl;
+        cerr << "failed to parse batch." << endl; // intentionally lowercase
     }
 }
 

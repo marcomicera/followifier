@@ -4,7 +4,7 @@
 
 server::server(boost::asio::io_service &io_service) : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)) {
     std::cout << "Core server started on " << acceptor_.local_endpoint().address() << ":"
-              << acceptor_.local_endpoint().port() << std::endl;
+              << acceptor_.local_endpoint().port() << ".\n\n";
     start_accept();
 }
 

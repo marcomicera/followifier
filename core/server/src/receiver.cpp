@@ -27,8 +27,19 @@ void receiver::addBatch(const followifier::Batch &newBatch) {
     /* Critical section */
     std::lock_guard<std::mutex> lockGuard(m);
 
-    cout << "Received batch from " + newBatch.boardmac() + " of size " + std::to_string(newBatch.messages_size())
-         << "." << endl;
+    // Printing received messages
+    cout << "new batch received from " + newBatch.boardmac() + " of size " + // intentionally lowercase
+            std::to_string(newBatch.messages_size());
+    if (newBatch.messages_size() > 0) { // if there is at least one message in it
+        cout << ":" << endl;
+        int messageCounter = 1;
+        for (const auto &newMessage : newBatch.messages()) { // print all messages
+            cout << messageCounter++ << ")\t<" << newMessage.apmac() << ", " << newMessage.timestamp() << ">" << endl;
+        }
+    } else {
+        cout << ".";
+    }
+    cout << endl << endl;
 
     /* Source MAC address appears for the first time */
     if (batchesBuffer.find(newBatch) == batchesBuffer.end()) {
@@ -63,16 +74,22 @@ void receiver::addBatch(const followifier::Batch &newBatch) {
                 }
             }
 
+            /* Store message only if it has been sent by all boards */
             if (messageHasBeenSentByAllBoards) {
 
-                /* TODO Add newMessage to the database */
                 cout << "Message <" << newMessage.apmac() << ", " << newMessage.timestamp()
                      << "> has been sent by all boards." << endl;
 
-                /* TODO Remove it from the batches buffer */
-                batchesBuffer.clear(); // FIXME
+                // TODO Add newMessage to the database
+            }
+            else { // message has not been sent by all boards: dropping it
+                cout << "Message <" << newMessage.apmac() << ", " << newMessage.timestamp()
+                     << "> has not been sent by all boards. Dropping it..." << endl;
             }
         }
-        cout << "Checked all messages of this timeslot" << endl;
+
+        // Clearing the batches buffer
+        cout << "Checked all messages of this timeslot. Clearing internal buffer...\n\n\n";
+        batchesBuffer.clear();
     }
 }
