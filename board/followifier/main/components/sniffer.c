@@ -167,16 +167,10 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
                  packet_subtype2str((wifi_ieee80211_mac_hdr_t *) hdr),
                  ppkt->rx_ctrl.channel,
                  ppkt->rx_ctrl.rssi,
-
-        // Source MAC address
-                 hdr->addr2[0], hdr->addr2[1], hdr->addr2[2],
+                 hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], // Source MAC address
                  hdr->addr2[3], hdr->addr2[4], hdr->addr2[5],
-
-        // BSSID
-                 hdr->addr3[0], hdr->addr3[1], hdr->addr3[2],
+                 hdr->addr3[0], hdr->addr3[1], hdr->addr3[2], // BSSID
                  hdr->addr3[3], hdr->addr3[4], hdr->addr3[5],
-
-        // Other info
                  ppkt->rx_ctrl.timestamp,
                  hash_value,
                  ppkt->rx_ctrl.rssi
@@ -184,15 +178,14 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
 
         // Forming the MAC source address string
-        char macString[18];
-        snprintf(macString, sizeof(macString), "%02x:%02x:%02x:%02x:%02x:%02x",
+        char apMacString[18];
+        snprintf(apMacString, sizeof(apMacString), "%02x:%02x:%02x:%02x:%02x:%02x",
                  hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], hdr->addr2[3], hdr->addr2[4], hdr->addr2[5]);
-
 
         message.frame_hash = malloc(21);
         sprintf(message.frame_hash, "%lu", hash_value);
-        message.apmac = malloc(sizeof(macString));
-        sprintf(message.apmac, "%s", macString);
+        message.apmac = malloc(sizeof(apMacString));
+        sprintf(message.apmac, "%s", apMacString);
         message.rsi = ppkt->rx_ctrl.rssi;
         message.ssid = malloc(sizeof(WIFI_SSID));
         sprintf(message.ssid, "%s", WIFI_SSID);

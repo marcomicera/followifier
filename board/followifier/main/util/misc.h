@@ -29,6 +29,7 @@ extern const char *TAG;
         if (!(a))                                                                         \
         {                                                                                 \
             ESP_LOGE(SNIFFER_TAG, "%s(%d): " str, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+            ESP_LOGE(SNIFFER_TAG, "errno %d: %s ", errno, strerror(errno));               \
             goto goto_tag;                                                                \
         }                                                                                 \
     } while (0)

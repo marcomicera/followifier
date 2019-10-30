@@ -15,13 +15,13 @@ class server {
     const size_t port = 12345;
 
 public:
-    explicit server(boost::asio::io_service &io_service);
+    explicit server(boost::asio::io_service&);
 
 private:
     void start_accept();
 
-    void handle_accept(const connection::pointer& new_connection,
-                       const boost::system::error_code &error);
+    void handle_accept(const connection::pointer&,
+                       const boost::system::error_code &);
 
     tcp::acceptor acceptor_;
 };
