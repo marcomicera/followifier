@@ -108,23 +108,23 @@ void flush(void) {
     inet_ntoa_r(server_address.sin_addr, addr_str, sizeof(addr_str) - 1);
 
     // Creating the socket
-    ESP_ERROR_CHECK_JUMP_LABEL((tcp_socket = socket(addr_family, SOCK_STREAM, ip_protocol)) < 0,
+    ESP_ERROR_CHECK_JUMP_LABEL((tcp_socket = socket(addr_family, SOCK_STREAM, ip_protocol)) >= 0,
                                "socket() error: discarding local packets, re-enabling sniffing mode...",
                                reactivate_sniffer);
     ESP_LOGI(TAG, "Socket created, connecting to %s:%d...", SERVER_ADDRESS, SERVER_PORT);
 
     // Creating connection to the server
-    ESP_ERROR_CHECK_JUMP_LABEL(connect(tcp_socket, (struct sockaddr *) &server_address, sizeof(server_address)) != 0,
+    ESP_ERROR_CHECK_JUMP_LABEL(!connect(tcp_socket, (struct sockaddr *) &server_address, sizeof(server_address)),
                                "Error while connecting to the server: discarding local packets, re-enabling sniffing mode...",
                                closing_socket);
 
     // Flushing the message buffer
     ESP_LOGI(TAG, "Sending batch");
-    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length, 0) < 0,
+    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length, 0) >= 0,
                                "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
                                closing_socket);
     ESP_LOGI(TAG, "Sending delimiter...");
-    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, "\n\r\n\r", sizeof("\n\r\n\r"), 0) < 0,
+    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, "\n\r\n\r", sizeof("\n\r\n\r"), 0) >= 0,
                                "Error while sending delimiter: discarding local packets, re-enabling sniffing mode...",
                                closing_socket);
 
