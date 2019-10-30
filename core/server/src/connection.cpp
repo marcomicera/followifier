@@ -37,7 +37,7 @@ void connection::start() {
         }
 
         receiver::addBatch(batch);
-    }catch (std::exception e){
+    } catch (const std::exception &e) {
         cerr << "Failed to parse batch." << endl;
     }
 }
