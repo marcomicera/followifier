@@ -4,6 +4,8 @@
 
 #include "mbedtls/md.h"
 #include "stddef.h"
+#include <string.h>
+#include <stdio.h>
 
 /**
  * All-purpose hash function.
@@ -33,7 +35,7 @@ int main() {
     for(unsigned long i= 0; i < sizeof(result); i++){
         char str[3];
         sprintf(str, "%02x", (int)result[i]);
-        Serial.print(str);
+        printf("%s", str);
     }
 
     return 0;
