@@ -160,7 +160,7 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
     if (sniffer_is_probe((unsigned short) hdr->frame_ctrl)) {
 
         unsigned char hash_value[33];
-        hash((const char *) ppkt->payload, hash_value);
+        hash(ppkt, hash_value);
         hash_value[32] = '\0';
 
         ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d | RSSI=%02d\n"

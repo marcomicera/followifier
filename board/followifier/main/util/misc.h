@@ -5,6 +5,7 @@
 #ifndef FOLLOWIFIER_MISC_H
 #define FOLLOWIFIER_MISC_H
 
+#include <esp_wifi_types.h>
 #include "stddef.h"
 
 extern const char *TAG;
@@ -37,12 +38,12 @@ extern const char *TAG;
     } while (0)
 
 /**
- * All-purpose hash function.
+ * Hashes a Wi-Fi 802.11 packet.
  * https://techtutorialsx.com/2018/05/10/esp32-arduino-mbed-tls-using-the-sha-256-algorithm/
  *
- * @param payload   payload to be hashed.
+ * @param payload   packet whose payload must be hashed.
  * @param result    the digest.
  */
-void hash(const char *payload, unsigned char* result);
+void hash(const wifi_promiscuous_pkt_t *packet, unsigned char* result);
 
 #endif //FOLLOWIFIER_MISC_H
