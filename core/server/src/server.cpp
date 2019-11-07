@@ -9,6 +9,7 @@ server::server(boost::asio::io_service &io_service) : acceptor_(io_service, tcp:
 }
 
 void server::start_accept() {
+    std::cout << "Ready to accept a new connection." << std::endl;
     connection::pointer new_connection = connection::create(acceptor_.get_io_service());
 
     acceptor_.async_accept(new_connection->socket(),
@@ -19,6 +20,7 @@ void server::start_accept() {
 void server::handle_accept(const connection::pointer &new_connection,
                            const boost::system::error_code &error) {
     if (!error) {
+        std::cout << "Establishing new connection... ";
         new_connection->start();
     }
 

@@ -64,6 +64,7 @@ void init_sniffer(void) {
 void sniffer_packet_handler(void *, wifi_promiscuous_pkt_type_t);
 
 static void sniffer_task(void *);
+
 static void *sniffer_timer(void *);
 
 esp_err_t start_sniffer(void) {
@@ -158,12 +159,14 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
 
     if (sniffer_is_probe((unsigned short) hdr->frame_ctrl)) {
 
-        unsigned long hash_value = hash((unsigned char *) ppkt);
+        unsigned char hash_value[33];
+        hash((const char *) ppkt->payload, hash_value);
+        hash_value[32] = '\0';
 
-        ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d | RSSI=%02d \n"
-                              "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x |"
-                              " BSSID=%02x:%02x:%02x:%02x:%02x:%02x \n"
-                              "TIMESTAMP=%10d | hash=%lu | RSSI=%d\n",
+        ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d | RSSI=%02d\n"
+                              "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x | BSSID=%02x:%02x:%02x:%02x:%02x:%02x\n"
+                              "HASH=%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n"
+                              "TIMESTAMP=%10d | RSSI=%d\n",
                  packet_subtype2str((wifi_ieee80211_mac_hdr_t *) hdr),
                  ppkt->rx_ctrl.channel,
                  ppkt->rx_ctrl.rssi,
@@ -171,8 +174,18 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
                  hdr->addr2[3], hdr->addr2[4], hdr->addr2[5],
                  hdr->addr3[0], hdr->addr3[1], hdr->addr3[2], // BSSID
                  hdr->addr3[3], hdr->addr3[4], hdr->addr3[5],
+                 hash_value[0], hash_value[1], hash_value[2], // frame hash
+                 hash_value[3], hash_value[4], hash_value[5],
+                 hash_value[6], hash_value[7], hash_value[8],
+                 hash_value[9], hash_value[10], hash_value[11],
+                 hash_value[12], hash_value[13], hash_value[14],
+                 hash_value[15], hash_value[16], hash_value[17],
+                 hash_value[18], hash_value[19], hash_value[20],
+                 hash_value[21], hash_value[22], hash_value[23],
+                 hash_value[24], hash_value[25], hash_value[26],
+                 hash_value[27], hash_value[28], hash_value[29],
+                 hash_value[30], hash_value[31],
                  ppkt->rx_ctrl.timestamp,
-                 hash_value,
                  ppkt->rx_ctrl.rssi
         );
         Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
@@ -182,8 +195,11 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         snprintf(apMacString, sizeof(apMacString), "%02x:%02x:%02x:%02x:%02x:%02x",
                  hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], hdr->addr2[3], hdr->addr2[4], hdr->addr2[5]);
 
-        message.frame_hash = malloc(21);
-        sprintf(message.frame_hash, "%lu", hash_value);
+        message.frame_hash.len = sizeof(hash_value);
+        message.frame_hash.data = (uint8_t *) malloc(sizeof(hash_value));
+        for (unsigned long i = 0; i < sizeof(hash_value); ++i) {
+            message.frame_hash.data[i] = (uint8_t)hash_value[i];
+        }
         message.apmac = malloc(sizeof(apMacString));
         sprintf(message.apmac, "%s", apMacString);
         message.rsi = ppkt->rx_ctrl.rssi;
@@ -196,7 +212,7 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
     }
 }
 
-void *sniffer_timer(void* args){
+void *sniffer_timer(void *args) {
     ESP_LOGI(TAG, "Flush timer started.");
     vTaskDelay(portTICK_PERIOD_MS * FLUSH_RATE_IN_SECONDS * 10); // in deci-seconds (0.1 seconds)
     ESP_LOGI(TAG, "Flush timer expired (%d seconds): time to flush the batch.", FLUSH_RATE_IN_SECONDS);

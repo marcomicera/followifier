@@ -5,6 +5,8 @@
 #ifndef FOLLOWIFIER_MISC_H
 #define FOLLOWIFIER_MISC_H
 
+#include "stddef.h"
+
 extern const char *TAG;
 
 /**
@@ -35,12 +37,12 @@ extern const char *TAG;
     } while (0)
 
 /**
- * djb2 hash function by Dan Bernstein.
- * https://stackoverflow.com/questions/7666509/hash-function-for-string
+ * All-purpose hash function.
+ * https://techtutorialsx.com/2018/05/10/esp32-arduino-mbed-tls-using-the-sha-256-algorithm/
  *
- * @param str   data to be hashed.
- * @return      data digest.
+ * @param payload   payload to be hashed.
+ * @param result    the digest.
  */
-unsigned long hash(unsigned char *);
+void hash(const char *payload, unsigned char* result);
 
 #endif //FOLLOWIFIER_MISC_H

@@ -11,10 +11,8 @@ bool receiver::batchContainsMessage(const followifier::Batch &batch, const follo
 
     for (const auto &batchMessage: batch.messages()) {
 
-        /* Two messages are equal if the Access Point's MAC address are the same, and they have been
-         * sent at the same time by the mobile device
-         */
-        if (batchMessage.apmac() == message.apmac() && batchMessage.timestamp() == message.timestamp()) {
+        /* Two messages are equal if their hash values are equal */
+        if (batchMessage.frame_hash() == message.frame_hash()) {
             return true;
         }
     }
@@ -34,7 +32,7 @@ void receiver::addBatch(const followifier::Batch &newBatch) {
         cout << ":" << endl;
         int messageCounter = 1;
         for (const auto &newMessage : newBatch.messages()) { // print all messages
-            cout << messageCounter++ << ")\t<" << newMessage.apmac() << ", " << newMessage.timestamp() << ">" << endl;
+            cout << messageCounter++ << ")\t" << logMessage(newMessage) << endl;
         }
     } else {
         cout << ".";
@@ -43,9 +41,11 @@ void receiver::addBatch(const followifier::Batch &newBatch) {
 
     /* Source MAC address appears for the first time */
     if (batchesBuffer.find(newBatch) == batchesBuffer.end()) {
+
         /* Insert batch into local buffer */
         batchesBuffer.insert(newBatch);
     } else {
+
         /* New timeslot, need to clear the batches buffer */
         batchesBuffer.clear();
         batchesBuffer.insert(newBatch);
@@ -77,14 +77,12 @@ void receiver::addBatch(const followifier::Batch &newBatch) {
             /* Store message only if it has been sent by all boards */
             if (messageHasBeenSentByAllBoards) {
 
-                cout << "Message <" << newMessage.apmac() << ", " << newMessage.timestamp()
-                     << "> has been sent by all boards." << endl;
+                cout << "Message " << logMessage(newMessage) << " has been sent by all boards." << endl;
 
                 // TODO Add newMessage to the database
             }
             else { // message has not been sent by all boards: dropping it
-                cout << "Message <" << newMessage.apmac() << ", " << newMessage.timestamp()
-                     << "> has not been sent by all boards. Dropping it..." << endl;
+                cout << "Message " << logMessage(newMessage) << " has not been sent by all boards. Dropping it..." << endl;
             }
         }
 

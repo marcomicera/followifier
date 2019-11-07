@@ -19,7 +19,7 @@ tcp::socket &connection::socket() {
 
 void connection::start() {
     try {
-        cout << "Ready to receive a new batch... ";
+        cout << "new connection established.\nReady to receive a new batch... ";
         GOOGLE_PROTOBUF_VERIFY_VERSION;
         boost::asio::streambuf buf;
         followifier::Batch batch;

@@ -187,7 +187,7 @@ class ESP32Message : public ::google::protobuf::Message /* @@protoc_insertion_po
   ::std::string* release_ssid();
   void set_allocated_ssid(::std::string* ssid);
 
-  // required string frame_hash = 4;
+  // required bytes frame_hash = 4;
   bool has_frame_hash() const;
   void clear_frame_hash();
   static const int kFrameHashFieldNumber = 4;
@@ -197,7 +197,7 @@ class ESP32Message : public ::google::protobuf::Message /* @@protoc_insertion_po
   void set_frame_hash(::std::string&& value);
   #endif
   void set_frame_hash(const char* value);
-  void set_frame_hash(const char* value, size_t size);
+  void set_frame_hash(const void* value, size_t size);
   ::std::string* mutable_frame_hash();
   ::std::string* release_frame_hash();
   void set_allocated_frame_hash(::std::string* frame_hash);
@@ -544,7 +544,7 @@ inline void ESP32Message::set_timestamp(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:followifier.ESP32Message.timestamp)
 }
 
-// required string frame_hash = 4;
+// required bytes frame_hash = 4;
 inline bool ESP32Message::has_frame_hash() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -581,7 +581,7 @@ inline void ESP32Message::set_frame_hash(const char* value) {
   frame_hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
   // @@protoc_insertion_point(field_set_char:followifier.ESP32Message.frame_hash)
 }
-inline void ESP32Message::set_frame_hash(const char* value, size_t size) {
+inline void ESP32Message::set_frame_hash(const void* value, size_t size) {
   set_has_frame_hash();
   frame_hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));

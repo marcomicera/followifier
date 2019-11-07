@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='followifier',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\rmessage.proto\x12\x0b\x66ollowifier\"_\n\x0c\x45SP32Message\x12\r\n\x05\x61pMac\x18\x01 \x02(\t\x12\x0c\n\x04ssid\x18\x02 \x02(\t\x12\x11\n\ttimestamp\x18\x03 \x02(\x03\x12\x12\n\nframe_hash\x18\x04 \x02(\t\x12\x0b\n\x03rsi\x18\x05 \x02(\x05\"F\n\x05\x42\x61tch\x12\x10\n\x08\x62oardMac\x18\x01 \x02(\t\x12+\n\x08messages\x18\x02 \x03(\x0b\x32\x19.followifier.ESP32Message')
+  serialized_pb=_b('\n\rmessage.proto\x12\x0b\x66ollowifier\"_\n\x0c\x45SP32Message\x12\r\n\x05\x61pMac\x18\x01 \x02(\t\x12\x0c\n\x04ssid\x18\x02 \x02(\t\x12\x11\n\ttimestamp\x18\x03 \x02(\x03\x12\x12\n\nframe_hash\x18\x04 \x02(\x0c\x12\x0b\n\x03rsi\x18\x05 \x02(\x05\"F\n\x05\x42\x61tch\x12\x10\n\x08\x62oardMac\x18\x01 \x02(\t\x12+\n\x08messages\x18\x02 \x03(\x0b\x32\x19.followifier.ESP32Message')
 )
 
 
@@ -55,8 +55,8 @@ _ESP32MESSAGE = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='frame_hash', full_name='followifier.ESP32Message.frame_hash', index=3,
-      number=4, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=4, type=12, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),

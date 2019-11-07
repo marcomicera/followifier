@@ -7,6 +7,10 @@
 
 #include <string>
 #include <gen/message.pb.h>
+#include <boost/uuid/detail/md5.hpp>
+#include <boost/algorithm/hex.hpp>
+
+using boost::uuids::detail::md5;
 
 #define NUMBER_BOARDS 1
 
@@ -38,7 +42,19 @@ public:
         }
     };
 
-private:
+    /**
+     * Logs a Proto message following its own format.
+     *
+     * @param message   message to be printed.
+     * @return          a string representation of the message.
+     */
+    static std::string logMessage(const followifier::ESP32Message &message) {
+        return "< Hash: " + prettyHash(message.frame_hash()) +
+               ",  Src MAC: " + message.apmac() +
+               ",  Timestamp: " + std::to_string(message.timestamp()) + ">";
+    }
+
+protected:
 
     /**
      * Checks whether a batch contains the specified message or not.
@@ -60,6 +76,19 @@ private:
      * batch of messages they have sent during the last timeslot.
      */
     static std::unordered_set<followifier::Batch, BatchHasher, BatchEqualFn> batchesBuffer;
+
+    /**
+     * Pretty-prints a hash digest.
+     *
+     * @param digest    digest to be printed.
+     * @return          a pretty-printed digest.
+     */
+    static std::string prettyHash(const std::string &digest) {
+        const auto charDigest = digest.c_str();
+        std::string result;
+        boost::algorithm::hex(charDigest, charDigest + sizeof(md5::digest_type) * 2, std::back_inserter(result));
+        return result;
+    }
 };
 
 #endif //CORE_RECEIVER_H

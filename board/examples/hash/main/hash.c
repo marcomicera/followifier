@@ -15,7 +15,7 @@ static const char* TAG = "hash-example";
  * https://techtutorialsx.com/2018/05/10/esp32-arduino-mbed-tls-using-the-sha-256-algorithm/
  *
  * @param payload   payload to be hashed.
- * @return          the digest.
+ * @param result    the digest.
  */
 void hash(const char *payload, unsigned char* result) {
     mbedtls_md_context_t ctx;
