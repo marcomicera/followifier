@@ -77,7 +77,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             /* Store message only if it has been sent by all boards */
             if (messageHasBeenSentByAllBoards) {
                 cout << "Message " << logMessage(newMessage) << " has been sent by all boards." << endl;
-                database.insert_message(newMessage); // TODO Test this one out
+                database.insert_message(newMessage); // TODO check object internal represenation in MongoDB
             }
             else { // message has not been sent by all boards: dropping it
                 cout << "Message " << logMessage(newMessage) << " has not been sent by all boards. Dropping it..." << endl;
