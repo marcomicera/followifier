@@ -8,6 +8,7 @@
 
 #include <boost/asio.hpp>
 #include "connection.h"
+#include "database.h"
 
 
 class server {
