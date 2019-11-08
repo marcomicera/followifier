@@ -1,4 +1,6 @@
-# Followifier
+<p align="center">
+  <img src="media/logo.png" alt="followifier logo">
+</p>
 
 Tracking people by exploiting WiFi Probe Request frames.
 
