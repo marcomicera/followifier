@@ -4,6 +4,12 @@ cmake_minimum_required(VERSION 3.5)
 set(CMAKE_CXX_FLAGS "-g -Wall -Werror")
 project(core)
 
+#mongo
+find_package (libmongoc-static-1.0 1.7 REQUIRED)
+message ("--   mongoc found version \"${MONGOC_STATIC_VERSION}\"")
+message ("--   mongoc include path \"${MONGOC_STATIC_INCLUDE_DIRS}\"")
+message ("--   mongoc libraries \"${MONGOC_STATIC_LIBRARIES}\"")
+
 # Boost
 find_package(Boost 1.67.0 COMPONENTS system filesystem thread REQUIRED)
 if (Boost_FOUND)
@@ -57,11 +63,18 @@ message(STATUS "...done. ${output}")
 add_executable(${PROJECT_NAME} src/receiver.cpp src/receiver.h ${PROTOBUF_MODELS_INCLUDES}
         src/main.cpp
         src/connection.h src/connection.cpp
-        src/server.cpp src/server.h)
+        src/server.cpp src/server.h
+        src/database.cpp src/database.h)
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 if (Boost_FOUND)
     target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 endif ()
 if (Protobuf_FOUND)
     target_link_libraries(${PROJECT_NAME} ${Protobuf_LIBRARIES})
+endif()
+
+if(libmongoc-static-1.0_FOUND)
+    target_include_directories (${PROJECT_NAME} PRIVATE "${MONGOC_STATIC_INCLUDE_DIRS}")
+    target_link_libraries (${PROJECT_NAME}  "${MONGOC_STATIC_LIBRARIES}")
+    target_compile_definitions (${PROJECT_NAME} PRIVATE "${MONGOC_STATIC_DEFINITIONS}")
 endif()

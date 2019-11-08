@@ -20,7 +20,7 @@ bool receiver::batchContainsMessage(const followifier::Batch &batch, const follo
     return false;
 }
 
-void receiver::addBatch(const followifier::Batch &newBatch) {
+void receiver::addBatch(const followifier::Batch &newBatch, database &database) {
 
     /* Critical section */
     std::lock_guard<std::mutex> lockGuard(m);
@@ -76,10 +76,8 @@ void receiver::addBatch(const followifier::Batch &newBatch) {
 
             /* Store message only if it has been sent by all boards */
             if (messageHasBeenSentByAllBoards) {
-
                 cout << "Message " << logMessage(newMessage) << " has been sent by all boards." << endl;
-
-                // TODO Add newMessage to the database
+                database.insert_message(newMessage); // TODO Test this one out
             }
             else { // message has not been sent by all boards: dropping it
                 cout << "Message " << logMessage(newMessage) << " has not been sent by all boards. Dropping it..." << endl;

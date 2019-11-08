@@ -9,6 +9,7 @@
 #include <gen/message.pb.h>
 #include <boost/uuid/detail/md5.hpp>
 #include <boost/algorithm/hex.hpp>
+#include "database.h"
 
 using boost::uuids::detail::md5;
 
@@ -26,7 +27,7 @@ public:
      *
      * @param newBatch the just-received batch to be added to the buffer.
      */
-    static void addBatch(const followifier::Batch &newBatch);
+    static void addBatch(const followifier::Batch &newBatch, database &database);
 
     class BatchHasher {
     public:

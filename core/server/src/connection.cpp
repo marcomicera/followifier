@@ -23,6 +23,7 @@ void connection::start() {
         GOOGLE_PROTOBUF_VERIFY_VERSION;
         boost::asio::streambuf buf;
         followifier::Batch batch;
+        database database;
         boost::asio::read_until(socket_, buf, delimiter);
         std::string data{
                 boost::asio::buffers_begin(buf.data()),
@@ -33,8 +34,7 @@ void connection::start() {
             cerr << "failed to parse batch (length" << data.length() << ")." << endl; // intentionally lowercase
             return;
         }
-
-        receiver::addBatch(batch);
+        receiver::addBatch(batch,database);
     } catch (const std::exception &e) {
         cerr << "failed to parse batch." << endl; // intentionally lowercase
     }
