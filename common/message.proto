@@ -3,14 +3,14 @@ syntax = "proto2";
 package followifier;
 
 message ESP32Message {
-    required string apMac = 1; // FIXME change name
+    required string apMac = 1;
     required string ssid = 2;
-    required int64 timestamp = 3; // TODO check whether this is set by the phone
-    required string frame_hash = 4; // TODO is it computed starting from AP's MAC & timestamp?
+    required int64 timestamp = 3;
+    required bytes frame_hash = 4;
     required int32 rsi = 5;
 }
 
 message Batch {
-    required string boardMac = 1; // FIXME change name
+    required string boardMac = 1;
     repeated ESP32Message messages = 2;
 }

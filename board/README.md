@@ -50,3 +50,6 @@ Software that will be running on ESP32 boards (constantly receiving Probe Reques
 4. Build the project with `idf.py build`
 4. Flash and run the project with `idf.py -p <port> flash monitor`, where `<port>` indicates the serial port to which the ESP32 board is connected to (e.g., "`COM3`" on Windows or "`/dev/ttyUSB0`" on Linux)
 5. To exit IDF monitor use the shortcut `Ctrl+]`
+
+## References
+- A list of the most common [Wireshark 802.11 filters](https://www.semfionetworks.com/uploads/2/9/8/3/29831147/wireshark_802.11_filters_-_reference_sheet.pdf)

@@ -130,7 +130,7 @@ void AddDescriptorsImpl() {
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\rmessage.proto\022\013followifier\"_\n\014ESP32Mes"
       "sage\022\r\n\005apMac\030\001 \002(\t\022\014\n\004ssid\030\002 \002(\t\022\021\n\ttim"
-      "estamp\030\003 \002(\003\022\022\n\nframe_hash\030\004 \002(\t\022\013\n\003rsi\030"
+      "estamp\030\003 \002(\003\022\022\n\nframe_hash\030\004 \002(\014\022\013\n\003rsi\030"
       "\005 \002(\005\"F\n\005Batch\022\020\n\010boardMac\030\001 \002(\t\022+\n\010mess"
       "ages\030\002 \003(\0132\031.followifier.ESP32Message"
   };
@@ -312,16 +312,12 @@ bool ESP32Message::MergePartialFromCodedStream(
         break;
       }
 
-      // required string frame_hash = 4;
+      // required bytes frame_hash = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_frame_hash()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->frame_hash().data(), static_cast<int>(this->frame_hash().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "followifier.ESP32Message.frame_hash");
         } else {
           goto handle_unusual;
         }
@@ -394,13 +390,9 @@ void ESP32Message::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->timestamp(), output);
   }
 
-  // required string frame_hash = 4;
+  // required bytes frame_hash = 4;
   if (cached_has_bits & 0x00000004u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->frame_hash().data(), static_cast<int>(this->frame_hash().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "followifier.ESP32Message.frame_hash");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
       4, this->frame_hash(), output);
   }
 
@@ -451,14 +443,10 @@ void ESP32Message::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->timestamp(), target);
   }
 
-  // required string frame_hash = 4;
+  // required bytes frame_hash = 4;
   if (cached_has_bits & 0x00000004u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->frame_hash().data(), static_cast<int>(this->frame_hash().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "followifier.ESP32Message.frame_hash");
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         4, this->frame_hash(), target);
   }
 
@@ -494,9 +482,9 @@ size_t ESP32Message::RequiredFieldsByteSizeFallback() const {
   }
 
   if (has_frame_hash()) {
-    // required string frame_hash = 4;
+    // required bytes frame_hash = 4;
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->frame_hash());
   }
 
@@ -536,9 +524,9 @@ size_t ESP32Message::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->ssid());
 
-    // required string frame_hash = 4;
+    // required bytes frame_hash = 4;
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->frame_hash());
 
     // required int64 timestamp = 3;

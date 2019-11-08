@@ -12,6 +12,7 @@
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 #include <sys/unistd.h>
+#include <pthread.h>
 #include "esp_log.h"
 #include "esp_wifi.h"
 #include "esp_console.h"
@@ -26,7 +27,6 @@
 #define SNIFFER_PROCESS_PACKET_TIMEOUT_MS (100)
 
 #define PROBE_REQUEST    0x0040
-#define PROBE_RESPONSE    0x0050
 #define SUBTYPE_MASK 0x00F0
 
 const char *SNIFFER_TAG = "followifier";
@@ -65,8 +65,9 @@ void sniffer_packet_handler(void *, wifi_promiscuous_pkt_type_t);
 
 static void sniffer_task(void *);
 
-esp_err_t start_sniffer(void) {
+static void *sniffer_timer(void *);
 
+esp_err_t start_sniffer(void) {
     esp_log_level_set(SNIFFER_TAG, ESP_LOG_VERBOSE);
     wifi_promiscuous_filter_t wifi_filter;
     snf_rt.is_running = true;
@@ -90,6 +91,9 @@ esp_err_t start_sniffer(void) {
                                        err_start);
             esp_wifi_set_channel(snf_rt.channel, WIFI_SECOND_CHAN_NONE);
             ESP_LOGI(SNIFFER_TAG, "Wi-Fi promiscuous mode started.");
+            pthread_t thread_id;
+            pthread_create(&thread_id, NULL, sniffer_timer, NULL); // starting flush timer
+
             break;
 
         default:
@@ -122,15 +126,13 @@ const char *packet_subtype2str(wifi_ieee80211_mac_hdr_t *header) {
     switch (header->frame_ctrl & SUBTYPE_MASK) {
         case PROBE_REQUEST:
             return "PROBE_REQUEST";
-        case PROBE_RESPONSE:
-            return "PROBE_RESPONSE";
         default:
             return "NOTIMPL";
     }
 }
 
 int sniffer_is_probe(unsigned short fctl) {
-    return ((fctl & SUBTYPE_MASK) == PROBE_REQUEST || (fctl & SUBTYPE_MASK) == PROBE_RESPONSE);
+    return ((fctl & SUBTYPE_MASK) == PROBE_REQUEST);
 }
 
 /**
@@ -157,49 +159,65 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
 
     if (sniffer_is_probe((unsigned short) hdr->frame_ctrl)) {
 
-        unsigned long hash_value = hash((unsigned char *) ppkt);
+        unsigned char hash_value[33];
+        hash(ppkt, hash_value);
+        hash_value[32] = '\0';
 
-        ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d | RSSI=%02d \n"
-                              "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x |"
-                              " BSSID=%02x:%02x:%02x:%02x:%02x:%02x \n"
-                              "TIMESTAMP=%10d | hash=%lu | RSSI=%d\n",
+        ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d | RSSI=%02d\n"
+                              "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x | BSSID=%02x:%02x:%02x:%02x:%02x:%02x\n"
+                              "HASH=%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n"
+                              "TIMESTAMP=%10d | RSSI=%d\n",
                  packet_subtype2str((wifi_ieee80211_mac_hdr_t *) hdr),
                  ppkt->rx_ctrl.channel,
                  ppkt->rx_ctrl.rssi,
-
-        // Source MAC address
-                 hdr->addr2[0], hdr->addr2[1], hdr->addr2[2],
+                 hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], // Source MAC address
                  hdr->addr2[3], hdr->addr2[4], hdr->addr2[5],
-
-        // BSSID
-                 hdr->addr3[0], hdr->addr3[1], hdr->addr3[2],
+                 hdr->addr3[0], hdr->addr3[1], hdr->addr3[2], // BSSID
                  hdr->addr3[3], hdr->addr3[4], hdr->addr3[5],
-
-        // Other info
+                 hash_value[0], hash_value[1], hash_value[2], // frame hash
+                 hash_value[3], hash_value[4], hash_value[5],
+                 hash_value[6], hash_value[7], hash_value[8],
+                 hash_value[9], hash_value[10], hash_value[11],
+                 hash_value[12], hash_value[13], hash_value[14],
+                 hash_value[15], hash_value[16], hash_value[17],
+                 hash_value[18], hash_value[19], hash_value[20],
+                 hash_value[21], hash_value[22], hash_value[23],
+                 hash_value[24], hash_value[25], hash_value[26],
+                 hash_value[27], hash_value[28], hash_value[29],
+                 hash_value[30], hash_value[31],
                  ppkt->rx_ctrl.timestamp,
-                 hash_value,
                  ppkt->rx_ctrl.rssi
         );
         Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
 
         // Forming the MAC source address string
-        char macString[18];
-        snprintf(macString, sizeof(macString), "%02x:%02x:%02x:%02x:%02x:%02x",
+        char apMacString[18];
+        snprintf(apMacString, sizeof(apMacString), "%02x:%02x:%02x:%02x:%02x:%02x",
                  hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], hdr->addr2[3], hdr->addr2[4], hdr->addr2[5]);
 
-
-        message.frame_hash = malloc(21);
-        sprintf(message.frame_hash, "%lu", hash_value);
-        message.apmac = malloc(sizeof(macString));
-        sprintf(message.apmac, "%s", macString);
+        message.frame_hash.len = sizeof(hash_value);
+        message.frame_hash.data = (uint8_t *) malloc(sizeof(hash_value));
+        for (unsigned long i = 0; i < sizeof(hash_value); ++i) {
+            message.frame_hash.data[i] = (uint8_t)hash_value[i];
+        }
+        message.apmac = malloc(sizeof(apMacString));
+        sprintf(message.apmac, "%s", apMacString);
         message.rsi = ppkt->rx_ctrl.rssi;
         message.ssid = malloc(sizeof(WIFI_SSID));
         sprintf(message.ssid, "%s", WIFI_SSID);
         message.timestamp = ppkt->rx_ctrl.timestamp;
 
         // Store this message
-        store_message(&message, snf_rt);
+        store_message(&message);
     }
+}
+
+void *sniffer_timer(void *args) {
+    ESP_LOGI(TAG, "Flush timer started.");
+    vTaskDelay(portTICK_PERIOD_MS * FLUSH_RATE_IN_SECONDS * 10); // in deci-seconds (0.1 seconds)
+    ESP_LOGI(TAG, "Flush timer expired (%d seconds): time to flush the batch.", FLUSH_RATE_IN_SECONDS);
+    prepare_to_flush(true);
+    return NULL;
 }
 
 void sniffer_task(void *parameters) {
@@ -220,7 +238,7 @@ void sniffer_task(void *parameters) {
 }
 
 esp_err_t stop_sniffer(void) {
-    ESP_ERROR_CHECK_JUMP_LABEL(snf_rt.is_running, "sniffer is already stopped", err);
+    ESP_ERROR_CHECK_JUMP_LABEL(snf_rt.is_running, "Sniffer is already stopped.", err);
 
     switch (snf_rt.interf) {
         case SNIFFER_INTF_WLAN:
@@ -231,7 +249,7 @@ esp_err_t stop_sniffer(void) {
             ESP_ERROR_CHECK_JUMP_LABEL(false, "unsupported interface", err);
             break;
     }
-    ESP_LOGI(SNIFFER_TAG, "stop WiFi promiscuous ok");
+    ESP_LOGI(SNIFFER_TAG, "Wi-Fi promiscuous mode stopped.");
 
     /* stop sniffer local task */
     snf_rt.is_running = false;

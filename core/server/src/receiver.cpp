@@ -5,54 +5,87 @@ using std::cout;
 using std::endl;
 
 std::mutex receiver::m;
-std::map<std::string,followifier::Batch> receiver::batches;
+std::unordered_set<followifier::Batch, receiver::BatchHasher, receiver::BatchEqualFn> receiver::batchesBuffer;
 
-bool receiver::isContained(const followifier::Batch &batch, std::string hash) {
-    for (int i = 0; i < batch.messages_size(); i++) {
-        const followifier::ESP32Message &msg = batch.messages(i);
-        if(msg.frame_hash().compare(hash)==0){
+bool receiver::batchContainsMessage(const followifier::Batch &batch, const followifier::ESP32Message &message) {
+
+    for (const auto &batchMessage: batch.messages()) {
+
+        /* Two messages are equal if their hash values are equal */
+        if (batchMessage.frame_hash() == message.frame_hash()) {
             return true;
         }
     }
+
     return false;
 }
 
-void receiver::fillDatabase(std::vector<followifier::Batch> batch){
-    for(int i=0; i<batch[0].messages_size(); i++){
-        const followifier::ESP32Message &msg = batch[0].messages(i);
-        bool check = true;
-        for(auto j = batch.begin() + 1; j!=batch.end(); ++j){
-            check = check and isContained(*j, msg.frame_hash());
-        }
-        if(check){
-            std::cout << "added " + msg.frame_hash()<< std::endl;
-            //addToDatabase
-        }else{
-            std::cout << "not added " + msg.frame_hash() << std::endl;
-        }
-    }
-}
+void receiver::addBatch(const followifier::Batch &newBatch, database &database) {
 
-void receiver::addBatch(followifier::Batch batch, std::string address) {
-    m.lock();
-    cout << "received batch from " + address + " with size" + std::to_string(batch.messages_size()) << endl;
-    if (batches.find(address) != batches.end()) {
-        //some board data got lost, resetting everything
-        cout << "some packets were lost, resetting" << endl;
-        batches.clear();
-    }
-    batches.insert(std::pair<std::string, followifier::Batch>(address, batch));
-    cout << "batches size " + std::to_string(batches.size()) << endl;
-    if (batches.size() == number_boards) {
-        cout << "data received from all boards" << endl;
-        //data received from all boards
-        std::vector<followifier::Batch> bs;
-        for (auto i = batches.begin(); i != batches.end(); i++) {
-            bs.push_back(i->second);
+    /* Critical section */
+    std::lock_guard<std::mutex> lockGuard(m);
+
+    // Printing received messages
+    cout << "new batch received from " + newBatch.boardmac() + " of size " + // intentionally lowercase
+            std::to_string(newBatch.messages_size());
+    if (newBatch.messages_size() > 0) { // if there is at least one message in it
+        cout << ":" << endl;
+        int messageCounter = 1;
+        for (const auto &newMessage : newBatch.messages()) { // print all messages
+            cout << messageCounter++ << ")\t" << logMessage(newMessage) << endl;
         }
-        receiver::fillDatabase(bs);
-        //clean batches
-        batches.clear();
+    } else {
+        cout << ".";
     }
-    m.unlock();
+    cout << endl << endl;
+
+    /* Source MAC address appears for the first time */
+    if (batchesBuffer.find(newBatch) == batchesBuffer.end()) {
+
+        /* Insert batch into local buffer */
+        batchesBuffer.insert(newBatch);
+    } else {
+
+        /* New timeslot, need to clear the batches buffer */
+        batchesBuffer.clear();
+        batchesBuffer.insert(newBatch);
+    }
+
+    /* Server has received batches from all boards.
+     * This means this 'round' (timeslot) is about to finish and it is time
+     * to discard messages that have not been sent by all boards.
+     */
+    if (batchesBuffer.size() == NUMBER_BOARDS) {
+
+        /* Batches comparator */
+        receiver::BatchEqualFn batchEqualFn;
+
+        /* Checking whether all messages have been sent by all the other boards */
+        for (const followifier::ESP32Message &newMessage : newBatch.messages()) {
+
+            bool messageHasBeenSentByAllBoards = true;
+
+            for (auto &otherBatch : batchesBuffer) {
+
+                /* Skipping the current batch and testing whether the other batch contains the current newMessage */
+                if (!batchEqualFn(otherBatch, newBatch) && !batchContainsMessage(otherBatch, newMessage)) {
+                    messageHasBeenSentByAllBoards = false;
+                    break;
+                }
+            }
+
+            /* Store message only if it has been sent by all boards */
+            if (messageHasBeenSentByAllBoards) {
+                cout << "Message " << logMessage(newMessage) << " has been sent by all boards." << endl;
+                database.insert_message(newMessage); // TODO Test this one out
+            }
+            else { // message has not been sent by all boards: dropping it
+                cout << "Message " << logMessage(newMessage) << " has not been sent by all boards. Dropping it..." << endl;
+            }
+        }
+
+        // Clearing the batches buffer
+        cout << "Checked all messages of this timeslot. Clearing internal buffer...\n\n\n";
+        batchesBuffer.clear();
+    }
 }

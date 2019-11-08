@@ -5,6 +5,9 @@
 #ifndef FOLLOWIFIER_MISC_H
 #define FOLLOWIFIER_MISC_H
 
+#include <esp_wifi_types.h>
+#include "stddef.h"
+
 extern const char *TAG;
 
 /**
@@ -29,17 +32,18 @@ extern const char *TAG;
         if (!(a))                                                                         \
         {                                                                                 \
             ESP_LOGE(SNIFFER_TAG, "%s(%d): " str, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+            ESP_LOGE(SNIFFER_TAG, "errno %d: %s ", errno, strerror(errno));               \
             goto goto_tag;                                                                \
         }                                                                                 \
     } while (0)
 
 /**
- * djb2 hash function by Dan Bernstein.
- * https://stackoverflow.com/questions/7666509/hash-function-for-string
+ * Hashes a Wi-Fi 802.11 packet.
+ * https://techtutorialsx.com/2018/05/10/esp32-arduino-mbed-tls-using-the-sha-256-algorithm/
  *
- * @param str   data to be hashed.
- * @return      data digest.
+ * @param payload   packet whose payload must be hashed.
+ * @param result    the digest.
  */
-unsigned long hash(unsigned char *);
+void hash(const wifi_promiscuous_pkt_t *packet, unsigned char* result);
 
 #endif //FOLLOWIFIER_MISC_H

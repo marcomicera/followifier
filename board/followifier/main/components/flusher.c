@@ -13,7 +13,7 @@
 #include "wifi.h"
 
 // Buffer
-Followifier__ESP32Message *messages[FLUSH_THRESHOLD];
+static Followifier__ESP32Message **messages;
 uint8_t *buffer;
 unsigned int batch_length = 0;
 unsigned short items = 0;
@@ -35,28 +35,15 @@ void init_flusher() {
 
 void flush();
 
-void prepare_to_flush(bool stop);
-
 void flushAsNewTask();
 
-void store_message(Followifier__ESP32Message *serialized_data, sniffer_runtime_t sniffer) {
-
-    // Better check it twice
-    if (items == FLUSH_THRESHOLD) {
-        prepare_to_flush(false);
-        ESP_LOGW(TAG, "Last packet has not been sent to the server.");
-        return;
-    }
+void store_message(Followifier__ESP32Message *data) {
 
     // Storing the message into the buffer
-    messages[items] = serialized_data;
-
+    messages = realloc(messages, sizeof(Followifier__ESP32Message *)*(items+1));
+    messages[items] = malloc(sizeof(Followifier__ESP32Message));
+    memcpy(messages[items], data, sizeof(Followifier__ESP32Message));
     ++items;
-
-    // Time to flush the message buffer
-    if (items == FLUSH_THRESHOLD) {
-        prepare_to_flush(true);
-    }
 }
 
 void flushAsNewTask() {
@@ -72,8 +59,8 @@ void prepare_to_flush(bool stop) {
 
     // Preparing a batch containing a set of messages
     Followifier__Batch batch = FOLLOWIFIER__BATCH__INIT;
-    batch.boardmac = malloc(sizeof(char) * 18);
-    snprintf(batch.boardmac, sizeof(char) * 18, "%02x:%02x:%02x:%02x:%02x:%02x",
+    batch.boardmac = malloc(18);
+    snprintf(batch.boardmac, 18, "%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx",
              mac_address[0], mac_address[1], mac_address[2], mac_address[3], mac_address[4], mac_address[5]);
     batch.messages = messages;
     batch.n_messages = items;

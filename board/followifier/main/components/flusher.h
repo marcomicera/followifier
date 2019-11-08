@@ -22,7 +22,7 @@
 /**
  * Stores a message and eventually flushes all stored ones.
  */
-void store_message(Followifier__ESP32Message *, sniffer_runtime_t);
+void store_message(Followifier__ESP32Message *);
 
 /**
  * Sends all stored messages to the core server.
@@ -38,5 +38,8 @@ extern uint8_t mac_address[6];
  * Initializes the flusher component.
  */
 void init_flusher();
-
+/**
+ * prepare to flush batch
+ */
+void prepare_to_flush(bool stop);
 #endif //FOLLOWIFIER_FLUSHER_H

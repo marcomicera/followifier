@@ -6,6 +6,8 @@ import socket
 import string
 import time
 import sys
+from scapy.all import IP, TCP, send, sr1
+
 sys.path.insert(1, '../../server/gen')
 import message_pb2
 
@@ -30,7 +32,7 @@ def gen_random_rsi():
 
 class DummyPacket(object):
     def __init__(self, mac=None, ssid=None, timestamp=None, frame_hash=None, rsi=None):
-        self.mac = mac or gen_random_mac()
+        self.apMac = mac or gen_random_mac()
         self.ssid = ssid or gen_random_ssid()
         self.timestamp = timestamp or gen_random_timestamp()
         self.frame_hash = frame_hash or gen_random_hash()
@@ -44,49 +46,52 @@ def timer(func):
         print(f"Function call took {time.perf_counter() - start}")
         return res
     return wrapper
-        
-@timer
-def produce_json_batch(batch_size):
-    return json.dumps([DummyPacket().__dict__ for _ in range(batch_size)])
 
-@timer
-def produce_protobuf_batch(batch_size):
-    batch = message_pb2.Batch() 
+def produce_protobuf_dummy_batch(batch_size):
+    batch = message_pb2.Batch()
     for _ in range(batch_size):
         fill_message(batch.messages.add())
+    return batch
+
+def produce_protobuf_batch(batch, mac):
+    batch.boardMac = mac
+    for message in batch.messages:
+        message.rsi = gen_random_rsi()
     return batch
 
 def fill_message(message):
     p = DummyPacket()
     for k, v in p.__dict__.items():
         setattr(message, k, v)
- 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('ip', action='store', help="server IP")
     parser.add_argument('port', action='store', type=int, help='server port')
     parser.add_argument('--batch_size', action='store', type=int, help='number of packets produced per batch',
-            default=100)
+                        default=100)
     parser.add_argument('--batch_rate', action='store', type=int, help='period in seconds between subsequent batches',
-            default=1)
-    parser.add_argument('--protobuf', action='store_true', help='Enable this switch for protocol buffer serialization (default JSON)',
-            default=False)
-    parser.add_argument('--out_file', action='store', help='Define optionally out file to save batches.')
+                        default=1)
+    parser.add_argument('--boards_number', action='store', type=int, help='number of dummy boards',
+                        default=1)
     args = parser.parse_args()
-
+    port = int(args.port)
+    macs = []
     # UDP would probably be more suited
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((args.ip, args.port))
-    if args.out_file:
-        f = open(args.out_file, 'wb')
+    for i in range(0, args.boards_number):
+        macs.append(gen_random_mac())
     while True:
-        batch = produce_protobuf_batch(args.batch_size).SerializeToString() if args.protobuf else produce_json_batch(args.batch_size).encode()
-        if args.out_file:
-            f.write(batch)
-        print(len(batch))
-        s.send(batch)
-        s.send(b"\n\r\n\r")
-        time.sleep(args.batch_rate) 
-        
+        dummy_batch = produce_protobuf_dummy_batch(args.batch_size)
+        for mac in macs:
+            batch = produce_protobuf_batch(dummy_batch, mac).SerializeToString()
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((args.ip, args.port))
+            #add '\0' because last byte is removed from server since board adds it
+            s.send(batch+b'\0')
+            s.send(b'\n\r\n\r')
+            print("Sent batch from board with mac " + mac)
+            s.close()
+        time.sleep(args.batch_rate)
+
 if __name__ == '__main__':
     main()

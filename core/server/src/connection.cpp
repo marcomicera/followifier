@@ -18,23 +18,26 @@ tcp::socket &connection::socket() {
 }
 
 void connection::start() {
-    cout << "start connection" <<endl;
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
-    boost::asio::streambuf buf;
-    followifier::Batch batch;
-    boost::asio::read_until(socket_, buf, delimiter);
-    std::string data{
-            boost::asio::buffers_begin(buf.data()),
-            boost::asio::buffers_begin(buf.data()) + buf.size() - delimiter.size()
-    };
-    cout << data << endl;
-    data = data.substr(0, data.size()-1);
-    if (!batch.ParseFromString(data)){
-        cerr << "Failed to parse batch" << endl;
-        return;
+    try {
+        cout << "new connection established.\nReady to receive a new batch... ";
+        GOOGLE_PROTOBUF_VERIFY_VERSION;
+        boost::asio::streambuf buf;
+        followifier::Batch batch;
+        database database;
+        boost::asio::read_until(socket_, buf, delimiter);
+        std::string data{
+                boost::asio::buffers_begin(buf.data()),
+                boost::asio::buffers_begin(buf.data()) + buf.size() - delimiter.size()
+        };
+        data = data.substr(0, data.size() - 1);
+        if (!batch.ParseFromString(data)) {
+            cerr << "failed to parse batch (length" << data.length() << ")." << endl; // intentionally lowercase
+            return;
+        }
+        receiver::addBatch(batch,database);
+    } catch (const std::exception &e) {
+        cerr << "failed to parse batch." << endl; // intentionally lowercase
     }
-
-    receiver::addBatch(batch, socket_.remote_endpoint().address().to_string());
 }
 
 connection::connection(boost::asio::io_service &io_service) : socket_(io_service) {}
