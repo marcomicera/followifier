@@ -87,6 +87,8 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
             /* Storing it into the database */
             cout << "Message " << logMessage(newMessage) << " has been sent by all boards." << endl;
+            // TODO Computing statistics (#33)
+            // FIXME The following should store all these statistics
             database.insert_message(newMessage); // TODO check object internal representation in MongoDB
 
             /* Clearing the entry relative to this frame */
