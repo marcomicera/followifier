@@ -128,8 +128,11 @@ void flush(void) {
     reactivate_sniffer:
 
     // Deleting local buffer elements
-    items = 0;
     free(buffer);
+    for(int i=0; i<items; i++){
+        free(messages[i]);
+    }
+    items = 0;
 
     // Turning the Wi-Fi off
     ESP_ERROR_CHECK(stop_wifi());
