@@ -26,6 +26,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
     std::lock_guard<std::mutex> lockGuard(m);
 
     // Printing received messages
+    cout.flush();
     cout << "new batch received from " + newBatch.boardmac() + " of size " + // intentionally lowercase
             std::to_string(newBatch.messages_size());
     if (newBatch.messages_size() > 0) { // if there is at least one message in it
