@@ -7,7 +7,6 @@ using boost::asio::ip::tcp;
 
 #ifndef CORE_CONNECTION_H
 #define CORE_CONNECTION_H
-const std::string delimiter = "\n\r\n\r";
 
 class connection : public boost::enable_shared_from_this<connection> {
 public:
