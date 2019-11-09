@@ -13,12 +13,28 @@
 
 using boost::uuids::detail::md5;
 
-#define NUMBER_BOARDS 1
+#define NUMBER_BOARDS 2
+
+typedef std::unordered_multimap<
+        std::string, // frame hash
+        std::pair< // sender
+                std::string, // board's MAC address
+                followifier::ESP32Metadata
+        >> messages_map;
 
 /**
  * Receives and filters batches from all boards.
  */
 class receiver {
+
+    /**
+     * When true, it never deletes frames of previous rounds.
+     *
+     * Warning: this is an experimental flag that should be set only in special cases
+     *          (e.g., debugging, no synchronization between boards, etc.).
+     *          This flag will cause a StackOverflow after a while.
+     */
+    static const bool ROUNDLESS_MODE = false;
 
 public:
 
@@ -28,20 +44,6 @@ public:
      * @param newBatch the just-received batch to be added to the buffer.
      */
     static void addBatch(const followifier::Batch &newBatch, database &database);
-
-    class BatchHasher {
-    public:
-        inline size_t operator()(const followifier::Batch &batch) const {
-            return ((std::hash<std::string>()(batch.boardmac())));
-        }
-    };
-
-    class BatchEqualFn {
-    public:
-        inline bool operator()(const followifier::Batch &b1, const followifier::Batch &b2) const {
-            return b1.boardmac() == b2.boardmac();
-        }
-    };
 
     /**
      * Logs a Proto message following its own format.
@@ -53,6 +55,17 @@ public:
         return "< Hash: " + prettyHash(message.frame_hash()) +
                ",  Src MAC: " + message.metadata().apmac() +
                ",  Timestamp: " + std::to_string(message.metadata().timestamp()) + ">";
+    }
+
+    /**
+     * To be called every time a new round begins.
+     */
+    static void newRound() {
+        if (!ROUNDLESS_MODE) {
+            lastRoundBoardMacs.clear();
+            messagesBuffer.clear();
+        }
+        std::cout << "All boards have sent their batch. Starting a new round..." << std::endl;
     }
 
 protected:
@@ -73,10 +86,14 @@ protected:
     static std::mutex m;
 
     /**
-     * Batches buffer mapping board source MAC addresses to the
-     * batch of messages they have sent during the last timeslot.
+     * Messages buffer mapping frame hashes to boards' metadata.
      */
-    static std::unordered_set<followifier::Batch, BatchHasher, BatchEqualFn> batchesBuffer;
+    static messages_map messagesBuffer;
+
+    /**
+     * MAC addresses of boards that have sent a message during the last round.
+     */
+    static std::unordered_set<std::string> lastRoundBoardMacs;
 
     /**
      * Pretty-prints a hash digest.
