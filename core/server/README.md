@@ -12,6 +12,10 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
    $ sudo service mongod start 
    ```
 1. Set the number of boards in [`receiver.h`](src/receiver.h)
+1. Optionally, free the `core` server port (default is `12345`):
+    ```bash
+   lsof -i tcp:12345 | grep LISTEN | awk '{print $2}' | xargs kill
+   ```
 1. Run the `core` server:
     ```bash
     $ chmod u+x start.sh
