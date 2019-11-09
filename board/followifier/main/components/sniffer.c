@@ -190,7 +190,6 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         );
         Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
         Followifier__ESP32Metadata metadata = FOLLOWIFIER__ESP32_METADATA__INIT;
-        message.metadata = &metadata;
 
         // Forming the MAC source address string
         char apMacString[18];
@@ -202,12 +201,15 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         for (unsigned long i = 0; i < sizeof(hash_value); ++i) {
             message.frame_hash.data[i] = (uint8_t)hash_value[i];
         }
-        message.metadata->apmac = malloc(sizeof(apMacString));
-        sprintf(message.metadata->apmac, "%s", apMacString);
-        message.metadata->rsi = ppkt->rx_ctrl.rssi;
-        message.metadata->ssid = malloc(sizeof(WIFI_SSID));
-        sprintf(message.metadata->ssid, "%s", WIFI_SSID);
-        message.metadata->timestamp = ppkt->rx_ctrl.timestamp;
+        metadata.apmac = malloc(sizeof(apMacString));
+        sprintf(metadata.apmac, "%s", apMacString);
+        metadata.rsi = ppkt->rx_ctrl.rssi;
+        metadata.ssid = malloc(sizeof(WIFI_SSID));
+        sprintf(metadata.ssid, "%s", WIFI_SSID);
+        metadata.timestamp = ppkt->rx_ctrl.timestamp;
+
+        message.metadata = malloc(sizeof(metadata));
+        memcpy(message.metadata, &metadata, sizeof(metadata));
 
         // Store this message
         store_message(&message);
