@@ -65,7 +65,7 @@ public:
             lastRoundBoardMacs.clear();
             messagesBuffer.clear();
         }
-        std::cout << "All boards have sent their batch. Starting a new round..." << std::endl;
+        std::cout << "All boards have sent their batch. Starting a new round...\n\n\n\n";
     }
 
 protected:
