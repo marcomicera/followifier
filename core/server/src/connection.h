@@ -17,12 +17,15 @@ public:
     tcp::socket &socket();
 
     void start();
+    void handle_read(const boost::system::error_code&,size_t);
 
 private:
     connection(boost::asio::io_service& io_service);
-
+    boost::asio::streambuf buf;
     tcp::socket socket_;
     std::string message_;
+    const std::string delimiter = "\n\r\n\r";
+
 };
 
 #endif //CORE_CONNECTION_H

@@ -68,8 +68,9 @@ void prepare_to_flush(bool stop) {
     // Printing info
     ESP_LOGI(TAG, "Time to flush the message buffer. Sending %d messages...", items);
     batch_length = followifier__batch__get_packed_size(&batch);
-    buffer = malloc(batch_length);
+    buffer = malloc(batch_length + sizeof("\n\r\n\r"));
     followifier__batch__pack(&batch, buffer);
+    memcpy(buffer+batch_length, "\n\r\n\r", sizeof("\n\r\n\r"));
     ESP_LOGI(TAG, "Board's source MAC: %s", batch.boardmac);
 
     // Stopping the sniffer
@@ -111,10 +112,6 @@ void flush(void) {
                                "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
                                closing_socket);
     ESP_LOGI(TAG, "Sending delimiter...");
-    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, "\n\r\n\r", sizeof("\n\r\n\r"), 0) >= 0,
-                               "Error while sending delimiter: discarding local packets, re-enabling sniffing mode...",
-                               closing_socket);
-
     // Skipping until here in case connection towards the server was unsuccessful
     closing_socket:
 
