@@ -20,9 +20,15 @@
 // @@protoc_insertion_point(includes)
 
 namespace protobuf_message_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_message_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ESP32Message;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_message_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ESP32Metadata;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_message_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_ESP32Message;
 }  // namespace protobuf_message_2eproto
 namespace followifier {
+class ESP32MetadataDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<ESP32Metadata>
+      _instance;
+} _ESP32Metadata_default_instance_;
 class ESP32MessageDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<ESP32Message>
@@ -35,6 +41,20 @@ class BatchDefaultTypeInternal {
 } _Batch_default_instance_;
 }  // namespace followifier
 namespace protobuf_message_2eproto {
+static void InitDefaultsESP32Metadata() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::followifier::_ESP32Metadata_default_instance_;
+    new (ptr) ::followifier::ESP32Metadata();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::followifier::ESP32Metadata::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_ESP32Metadata =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsESP32Metadata}, {}};
+
 static void InitDefaultsESP32Message() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -46,8 +66,9 @@ static void InitDefaultsESP32Message() {
   ::followifier::ESP32Message::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_ESP32Message =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsESP32Message}, {}};
+::google::protobuf::internal::SCCInfo<1> scc_info_ESP32Message =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsESP32Message}, {
+      &protobuf_message_2eproto::scc_info_ESP32Metadata.base,}};
 
 static void InitDefaultsBatch() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -65,28 +86,36 @@ static void InitDefaultsBatch() {
       &protobuf_message_2eproto::scc_info_ESP32Message.base,}};
 
 void InitDefaults() {
+  ::google::protobuf::internal::InitSCC(&scc_info_ESP32Metadata.base);
   ::google::protobuf::internal::InitSCC(&scc_info_ESP32Message.base);
   ::google::protobuf::internal::InitSCC(&scc_info_Batch.base);
 }
 
-::google::protobuf::Metadata file_level_metadata[2];
+::google::protobuf::Metadata file_level_metadata[3];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Metadata, _has_bits_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Metadata, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Metadata, apmac_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Metadata, ssid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Metadata, timestamp_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Metadata, rsi_),
+  0,
+  1,
+  2,
+  3,
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Message, _has_bits_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Message, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Message, apmac_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Message, ssid_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Message, timestamp_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Message, metadata_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Message, frame_hash_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::ESP32Message, rsi_),
-  0,
   1,
-  3,
-  2,
-  4,
+  0,
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::Batch, _has_bits_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::followifier::Batch, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -98,11 +127,13 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 10, sizeof(::followifier::ESP32Message)},
-  { 15, 22, sizeof(::followifier::Batch)},
+  { 0, 9, sizeof(::followifier::ESP32Metadata)},
+  { 13, 20, sizeof(::followifier::ESP32Message)},
+  { 22, 29, sizeof(::followifier::Batch)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::google::protobuf::Message*>(&::followifier::_ESP32Metadata_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::followifier::_ESP32Message_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::followifier::_Batch_default_instance_),
 };
@@ -122,20 +153,22 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 2);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 3);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\rmessage.proto\022\013followifier\"_\n\014ESP32Mes"
-      "sage\022\r\n\005apMac\030\001 \002(\t\022\014\n\004ssid\030\002 \002(\t\022\021\n\ttim"
-      "estamp\030\003 \002(\003\022\022\n\nframe_hash\030\004 \002(\014\022\013\n\003rsi\030"
-      "\005 \002(\005\"F\n\005Batch\022\020\n\010boardMac\030\001 \002(\t\022+\n\010mess"
-      "ages\030\002 \003(\0132\031.followifier.ESP32Message"
+      "\n\rmessage.proto\022\013followifier\"L\n\rESP32Met"
+      "adata\022\r\n\005apMac\030\001 \002(\t\022\014\n\004ssid\030\002 \002(\t\022\021\n\tti"
+      "mestamp\030\003 \002(\003\022\013\n\003rsi\030\005 \002(\005\"P\n\014ESP32Messa"
+      "ge\022,\n\010metadata\030\001 \002(\0132\032.followifier.ESP32"
+      "Metadata\022\022\n\nframe_hash\030\002 \002(\014\"F\n\005Batch\022\020\n"
+      "\010boardMac\030\001 \002(\t\022+\n\010messages\030\002 \003(\0132\031.foll"
+      "owifier.ESP32Message"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 197);
+      descriptor, 260);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "message.proto", &protobuf_RegisterTypes);
 }
@@ -155,14 +188,443 @@ namespace followifier {
 
 // ===================================================================
 
-void ESP32Message::InitAsDefaultInstance() {
+void ESP32Metadata::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ESP32Message::kApMacFieldNumber;
-const int ESP32Message::kSsidFieldNumber;
-const int ESP32Message::kTimestampFieldNumber;
+const int ESP32Metadata::kApMacFieldNumber;
+const int ESP32Metadata::kSsidFieldNumber;
+const int ESP32Metadata::kTimestampFieldNumber;
+const int ESP32Metadata::kRsiFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+ESP32Metadata::ESP32Metadata()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_message_2eproto::scc_info_ESP32Metadata.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:followifier.ESP32Metadata)
+}
+ESP32Metadata::ESP32Metadata(const ESP32Metadata& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  apmac_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.has_apmac()) {
+    apmac_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.apmac_);
+  }
+  ssid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.has_ssid()) {
+    ssid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.ssid_);
+  }
+  ::memcpy(&timestamp_, &from.timestamp_,
+    static_cast<size_t>(reinterpret_cast<char*>(&rsi_) -
+    reinterpret_cast<char*>(&timestamp_)) + sizeof(rsi_));
+  // @@protoc_insertion_point(copy_constructor:followifier.ESP32Metadata)
+}
+
+void ESP32Metadata::SharedCtor() {
+  apmac_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ssid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&timestamp_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&rsi_) -
+      reinterpret_cast<char*>(&timestamp_)) + sizeof(rsi_));
+}
+
+ESP32Metadata::~ESP32Metadata() {
+  // @@protoc_insertion_point(destructor:followifier.ESP32Metadata)
+  SharedDtor();
+}
+
+void ESP32Metadata::SharedDtor() {
+  apmac_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ssid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void ESP32Metadata::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* ESP32Metadata::descriptor() {
+  ::protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_message_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const ESP32Metadata& ESP32Metadata::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_message_2eproto::scc_info_ESP32Metadata.base);
+  return *internal_default_instance();
+}
+
+
+void ESP32Metadata::Clear() {
+// @@protoc_insertion_point(message_clear_start:followifier.ESP32Metadata)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 3u) {
+    if (cached_has_bits & 0x00000001u) {
+      apmac_.ClearNonDefaultToEmptyNoArena();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      ssid_.ClearNonDefaultToEmptyNoArena();
+    }
+  }
+  if (cached_has_bits & 12u) {
+    ::memset(&timestamp_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&rsi_) -
+        reinterpret_cast<char*>(&timestamp_)) + sizeof(rsi_));
+  }
+  _has_bits_.Clear();
+  _internal_metadata_.Clear();
+}
+
+bool ESP32Metadata::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:followifier.ESP32Metadata)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required string apMac = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_apmac()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->apmac().data(), static_cast<int>(this->apmac().length()),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "followifier.ESP32Metadata.apMac");
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // required string ssid = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_ssid()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->ssid().data(), static_cast<int>(this->ssid().length()),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "followifier.ESP32Metadata.ssid");
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // required int64 timestamp = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+          set_has_timestamp();
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &timestamp_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // required int32 rsi = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(40u /* 40 & 0xFF */)) {
+          set_has_rsi();
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &rsi_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:followifier.ESP32Metadata)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:followifier.ESP32Metadata)
+  return false;
+#undef DO_
+}
+
+void ESP32Metadata::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:followifier.ESP32Metadata)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // required string apMac = 1;
+  if (cached_has_bits & 0x00000001u) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->apmac().data(), static_cast<int>(this->apmac().length()),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "followifier.ESP32Metadata.apMac");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->apmac(), output);
+  }
+
+  // required string ssid = 2;
+  if (cached_has_bits & 0x00000002u) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->ssid().data(), static_cast<int>(this->ssid().length()),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "followifier.ESP32Metadata.ssid");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->ssid(), output);
+  }
+
+  // required int64 timestamp = 3;
+  if (cached_has_bits & 0x00000004u) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->timestamp(), output);
+  }
+
+  // required int32 rsi = 5;
+  if (cached_has_bits & 0x00000008u) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->rsi(), output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:followifier.ESP32Metadata)
+}
+
+::google::protobuf::uint8* ESP32Metadata::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:followifier.ESP32Metadata)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // required string apMac = 1;
+  if (cached_has_bits & 0x00000001u) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->apmac().data(), static_cast<int>(this->apmac().length()),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "followifier.ESP32Metadata.apMac");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->apmac(), target);
+  }
+
+  // required string ssid = 2;
+  if (cached_has_bits & 0x00000002u) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->ssid().data(), static_cast<int>(this->ssid().length()),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "followifier.ESP32Metadata.ssid");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->ssid(), target);
+  }
+
+  // required int64 timestamp = 3;
+  if (cached_has_bits & 0x00000004u) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->timestamp(), target);
+  }
+
+  // required int32 rsi = 5;
+  if (cached_has_bits & 0x00000008u) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->rsi(), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:followifier.ESP32Metadata)
+  return target;
+}
+
+size_t ESP32Metadata::RequiredFieldsByteSizeFallback() const {
+// @@protoc_insertion_point(required_fields_byte_size_fallback_start:followifier.ESP32Metadata)
+  size_t total_size = 0;
+
+  if (has_apmac()) {
+    // required string apMac = 1;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->apmac());
+  }
+
+  if (has_ssid()) {
+    // required string ssid = 2;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->ssid());
+  }
+
+  if (has_timestamp()) {
+    // required int64 timestamp = 3;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->timestamp());
+  }
+
+  if (has_rsi()) {
+    // required int32 rsi = 5;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->rsi());
+  }
+
+  return total_size;
+}
+size_t ESP32Metadata::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:followifier.ESP32Metadata)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  if (((_has_bits_[0] & 0x0000000f) ^ 0x0000000f) == 0) {  // All required fields are present.
+    // required string apMac = 1;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->apmac());
+
+    // required string ssid = 2;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->ssid());
+
+    // required int64 timestamp = 3;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->timestamp());
+
+    // required int32 rsi = 5;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->rsi());
+
+  } else {
+    total_size += RequiredFieldsByteSizeFallback();
+  }
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void ESP32Metadata::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:followifier.ESP32Metadata)
+  GOOGLE_DCHECK_NE(&from, this);
+  const ESP32Metadata* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const ESP32Metadata>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:followifier.ESP32Metadata)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:followifier.ESP32Metadata)
+    MergeFrom(*source);
+  }
+}
+
+void ESP32Metadata::MergeFrom(const ESP32Metadata& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:followifier.ESP32Metadata)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._has_bits_[0];
+  if (cached_has_bits & 15u) {
+    if (cached_has_bits & 0x00000001u) {
+      set_has_apmac();
+      apmac_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.apmac_);
+    }
+    if (cached_has_bits & 0x00000002u) {
+      set_has_ssid();
+      ssid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.ssid_);
+    }
+    if (cached_has_bits & 0x00000004u) {
+      timestamp_ = from.timestamp_;
+    }
+    if (cached_has_bits & 0x00000008u) {
+      rsi_ = from.rsi_;
+    }
+    _has_bits_[0] |= cached_has_bits;
+  }
+}
+
+void ESP32Metadata::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:followifier.ESP32Metadata)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ESP32Metadata::CopyFrom(const ESP32Metadata& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:followifier.ESP32Metadata)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ESP32Metadata::IsInitialized() const {
+  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  return true;
+}
+
+void ESP32Metadata::Swap(ESP32Metadata* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void ESP32Metadata::InternalSwap(ESP32Metadata* other) {
+  using std::swap;
+  apmac_.Swap(&other->apmac_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  ssid_.Swap(&other->ssid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(timestamp_, other->timestamp_);
+  swap(rsi_, other->rsi_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata ESP32Metadata::GetMetadata() const {
+  protobuf_message_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_message_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void ESP32Message::InitAsDefaultInstance() {
+  ::followifier::_ESP32Message_default_instance_._instance.get_mutable()->metadata_ = const_cast< ::followifier::ESP32Metadata*>(
+      ::followifier::ESP32Metadata::internal_default_instance());
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ESP32Message::kMetadataFieldNumber;
 const int ESP32Message::kFrameHashFieldNumber;
-const int ESP32Message::kRsiFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ESP32Message::ESP32Message()
@@ -177,31 +639,21 @@ ESP32Message::ESP32Message(const ESP32Message& from)
       _internal_metadata_(NULL),
       _has_bits_(from._has_bits_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  apmac_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_apmac()) {
-    apmac_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.apmac_);
-  }
-  ssid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_ssid()) {
-    ssid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.ssid_);
-  }
   frame_hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.has_frame_hash()) {
     frame_hash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.frame_hash_);
   }
-  ::memcpy(&timestamp_, &from.timestamp_,
-    static_cast<size_t>(reinterpret_cast<char*>(&rsi_) -
-    reinterpret_cast<char*>(&timestamp_)) + sizeof(rsi_));
+  if (from.has_metadata()) {
+    metadata_ = new ::followifier::ESP32Metadata(*from.metadata_);
+  } else {
+    metadata_ = NULL;
+  }
   // @@protoc_insertion_point(copy_constructor:followifier.ESP32Message)
 }
 
 void ESP32Message::SharedCtor() {
-  apmac_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ssid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   frame_hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&timestamp_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&rsi_) -
-      reinterpret_cast<char*>(&timestamp_)) + sizeof(rsi_));
+  metadata_ = NULL;
 }
 
 ESP32Message::~ESP32Message() {
@@ -210,9 +662,8 @@ ESP32Message::~ESP32Message() {
 }
 
 void ESP32Message::SharedDtor() {
-  apmac_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ssid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   frame_hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete metadata_;
 }
 
 void ESP32Message::SetCachedSize(int size) const {
@@ -236,21 +687,14 @@ void ESP32Message::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 7u) {
+  if (cached_has_bits & 3u) {
     if (cached_has_bits & 0x00000001u) {
-      apmac_.ClearNonDefaultToEmptyNoArena();
-    }
-    if (cached_has_bits & 0x00000002u) {
-      ssid_.ClearNonDefaultToEmptyNoArena();
-    }
-    if (cached_has_bits & 0x00000004u) {
       frame_hash_.ClearNonDefaultToEmptyNoArena();
     }
-  }
-  if (cached_has_bits & 24u) {
-    ::memset(&timestamp_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&rsi_) -
-        reinterpret_cast<char*>(&timestamp_)) + sizeof(rsi_));
+    if (cached_has_bits & 0x00000002u) {
+      GOOGLE_DCHECK(metadata_ != NULL);
+      metadata_->Clear();
+    }
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear();
@@ -266,72 +710,24 @@ bool ESP32Message::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string apMac = 1;
+      // required .followifier.ESP32Metadata metadata = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_apmac()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->apmac().data(), static_cast<int>(this->apmac().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "followifier.ESP32Message.apMac");
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_metadata()));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // required string ssid = 2;
+      // required bytes frame_hash = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_ssid()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->ssid().data(), static_cast<int>(this->ssid().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "followifier.ESP32Message.ssid");
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // required int64 timestamp = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
-          set_has_timestamp();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &timestamp_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // required bytes frame_hash = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_frame_hash()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // required int32 rsi = 5;
-      case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(40u /* 40 & 0xFF */)) {
-          set_has_rsi();
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &rsi_)));
         } else {
           goto handle_unusual;
         }
@@ -365,40 +761,16 @@ void ESP32Message::SerializeWithCachedSizes(
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  // required string apMac = 1;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->apmac().data(), static_cast<int>(this->apmac().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "followifier.ESP32Message.apMac");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->apmac(), output);
-  }
-
-  // required string ssid = 2;
+  // required .followifier.ESP32Metadata metadata = 1;
   if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->ssid().data(), static_cast<int>(this->ssid().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "followifier.ESP32Message.ssid");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->ssid(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->_internal_metadata(), output);
   }
 
-  // required int64 timestamp = 3;
-  if (cached_has_bits & 0x00000008u) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->timestamp(), output);
-  }
-
-  // required bytes frame_hash = 4;
-  if (cached_has_bits & 0x00000004u) {
+  // required bytes frame_hash = 2;
+  if (cached_has_bits & 0x00000001u) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      4, this->frame_hash(), output);
-  }
-
-  // required int32 rsi = 5;
-  if (cached_has_bits & 0x00000010u) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->rsi(), output);
+      2, this->frame_hash(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -416,43 +788,18 @@ void ESP32Message::SerializeWithCachedSizes(
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  // required string apMac = 1;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->apmac().data(), static_cast<int>(this->apmac().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "followifier.ESP32Message.apMac");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->apmac(), target);
-  }
-
-  // required string ssid = 2;
+  // required .followifier.ESP32Metadata metadata = 1;
   if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->ssid().data(), static_cast<int>(this->ssid().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "followifier.ESP32Message.ssid");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->ssid(), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->_internal_metadata(), deterministic, target);
   }
 
-  // required int64 timestamp = 3;
-  if (cached_has_bits & 0x00000008u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->timestamp(), target);
-  }
-
-  // required bytes frame_hash = 4;
-  if (cached_has_bits & 0x00000004u) {
+  // required bytes frame_hash = 2;
+  if (cached_has_bits & 0x00000001u) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        4, this->frame_hash(), target);
-  }
-
-  // required int32 rsi = 5;
-  if (cached_has_bits & 0x00000010u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->rsi(), target);
+        2, this->frame_hash(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -467,39 +814,18 @@ size_t ESP32Message::RequiredFieldsByteSizeFallback() const {
 // @@protoc_insertion_point(required_fields_byte_size_fallback_start:followifier.ESP32Message)
   size_t total_size = 0;
 
-  if (has_apmac()) {
-    // required string apMac = 1;
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->apmac());
-  }
-
-  if (has_ssid()) {
-    // required string ssid = 2;
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->ssid());
-  }
-
   if (has_frame_hash()) {
-    // required bytes frame_hash = 4;
+    // required bytes frame_hash = 2;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->frame_hash());
   }
 
-  if (has_timestamp()) {
-    // required int64 timestamp = 3;
+  if (has_metadata()) {
+    // required .followifier.ESP32Metadata metadata = 1;
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->timestamp());
-  }
-
-  if (has_rsi()) {
-    // required int32 rsi = 5;
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->rsi());
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *metadata_);
   }
 
   return total_size;
@@ -513,31 +839,16 @@ size_t ESP32Message::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         _internal_metadata_.unknown_fields());
   }
-  if (((_has_bits_[0] & 0x0000001f) ^ 0x0000001f) == 0) {  // All required fields are present.
-    // required string apMac = 1;
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->apmac());
-
-    // required string ssid = 2;
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->ssid());
-
-    // required bytes frame_hash = 4;
+  if (((_has_bits_[0] & 0x00000003) ^ 0x00000003) == 0) {  // All required fields are present.
+    // required bytes frame_hash = 2;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->frame_hash());
 
-    // required int64 timestamp = 3;
+    // required .followifier.ESP32Metadata metadata = 1;
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->timestamp());
-
-    // required int32 rsi = 5;
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->rsi());
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *metadata_);
 
   } else {
     total_size += RequiredFieldsByteSizeFallback();
@@ -570,26 +881,14 @@ void ESP32Message::MergeFrom(const ESP32Message& from) {
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 31u) {
+  if (cached_has_bits & 3u) {
     if (cached_has_bits & 0x00000001u) {
-      set_has_apmac();
-      apmac_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.apmac_);
-    }
-    if (cached_has_bits & 0x00000002u) {
-      set_has_ssid();
-      ssid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.ssid_);
-    }
-    if (cached_has_bits & 0x00000004u) {
       set_has_frame_hash();
       frame_hash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.frame_hash_);
     }
-    if (cached_has_bits & 0x00000008u) {
-      timestamp_ = from.timestamp_;
+    if (cached_has_bits & 0x00000002u) {
+      mutable_metadata()->::followifier::ESP32Metadata::MergeFrom(from.metadata());
     }
-    if (cached_has_bits & 0x00000010u) {
-      rsi_ = from.rsi_;
-    }
-    _has_bits_[0] |= cached_has_bits;
   }
 }
 
@@ -608,7 +907,10 @@ void ESP32Message::CopyFrom(const ESP32Message& from) {
 }
 
 bool ESP32Message::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  if (has_metadata()) {
+    if (!this->metadata_->IsInitialized()) return false;
+  }
   return true;
 }
 
@@ -618,14 +920,9 @@ void ESP32Message::Swap(ESP32Message* other) {
 }
 void ESP32Message::InternalSwap(ESP32Message* other) {
   using std::swap;
-  apmac_.Swap(&other->apmac_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  ssid_.Swap(&other->ssid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
   frame_hash_.Swap(&other->frame_hash_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
-  swap(timestamp_, other->timestamp_);
-  swap(rsi_, other->rsi_);
+  swap(metadata_, other->metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
@@ -936,6 +1233,9 @@ void Batch::InternalSwap(Batch* other) {
 }  // namespace followifier
 namespace google {
 namespace protobuf {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::followifier::ESP32Metadata* Arena::CreateMaybeMessage< ::followifier::ESP32Metadata >(Arena* arena) {
+  return Arena::CreateInternal< ::followifier::ESP32Metadata >(arena);
+}
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::followifier::ESP32Message* Arena::CreateMaybeMessage< ::followifier::ESP32Message >(Arena* arena) {
   return Arena::CreateInternal< ::followifier::ESP32Message >(arena);
 }

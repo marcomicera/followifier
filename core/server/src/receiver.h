@@ -51,8 +51,8 @@ public:
      */
     static std::string logMessage(const followifier::ESP32Message &message) {
         return "< Hash: " + prettyHash(message.frame_hash()) +
-               ",  Src MAC: " + message.apmac() +
-               ",  Timestamp: " + std::to_string(message.timestamp()) + ">";
+               ",  Src MAC: " + message.metadata().apmac() +
+               ",  Timestamp: " + std::to_string(message.metadata().timestamp()) + ">";
     }
 
 protected:
