@@ -120,7 +120,7 @@ void flush(void) {
 
     // Closing socket
     ESP_LOGI(TAG, "Shutting down socket towards %s:%d...", SERVER_ADDRESS, SERVER_PORT);
-    shutdown(tcp_socket, 0);
+    shutdown(tcp_socket, SHUT_RDWR);
     close(tcp_socket);
     ESP_LOGI(TAG, "...socket towards %s:%d closed.", SERVER_ADDRESS, SERVER_PORT);
 
