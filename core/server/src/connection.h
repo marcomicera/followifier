@@ -7,10 +7,11 @@ using boost::asio::ip::tcp;
 
 #ifndef CORE_CONNECTION_H
 #define CORE_CONNECTION_H
-const std::string delimiter = "\n\r\n\r";
 
 class connection : public boost::enable_shared_from_this<connection> {
+
 public:
+
     typedef boost::shared_ptr<connection> pointer;
 
     static pointer create(boost::asio::io_service &io_service);
@@ -19,11 +20,19 @@ public:
 
     void start();
 
+    void handle_read(const boost::system::error_code &, size_t);
+
 private:
-    connection(boost::asio::io_service& io_service);
+
+    connection(boost::asio::io_service &io_service);
+
+    boost::asio::streambuf buf;
 
     tcp::socket socket_;
+
     std::string message_;
+
+    const std::string delimiter = "\n\r\n\r";
 };
 
 #endif //CORE_CONNECTION_H
