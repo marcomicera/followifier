@@ -35,7 +35,10 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
         lastRoundBoardMacs.insert(newBatch.boardmac());
     } else {
 
-        /* New round event */
+        /* A new round begins.
+         * The same board could otherwise announce the same frame at least twice during the same round,
+         * and this is considered to be an error.
+         */
         newRound();
     }
 
@@ -57,8 +60,11 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
                              /* Error: same board has announced the same frame twice */
                              cerr << "Board " << newBatch.boardmac() << " has announced frame "
-                                       << newMessage.frame_hash() << "at least twice." << endl;
-                             exit(1); // FIXME maybe there's a better way to handle this
+                                  << newMessage.frame_hash() << " at least twice." << endl;
+                             if (!ROUNDLESS_MODE) {
+                                 cerr << "Terminating since roundless mode is disabled." << endl;
+                                 exit(1); // FIXME maybe there's a better way to handle this
+                             }
                          }
                      });
         }
@@ -73,7 +79,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             aFrameHasBeenSentByAllBoards = true;
 
             /* Storing it into the database */
-            cout << "Message " << logMessage(newMessage) << " has been sent by all boards." << endl;
+            cout << "Message " << prettyHash(newMessage.frame_hash()) << " has been sent by all boards." << endl;
             // TODO Computing statistics (#33)
             // FIXME The following should store all these statistics
             database.insert_message(newMessage); // TODO check object internal representation in MongoDB
@@ -82,15 +88,18 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             messagesBuffer.erase(newMessage.frame_hash());
         } else {
 
-            // TODO Delete messages not being sent by all boards after a while
+            // TODO Roundless mode: delete messages not being sent by all boards after a while
         }
     }
 
     /* Number of boards seen during this round assertion */
     if (aFrameHasBeenSentByAllBoards && (lastRoundBoardMacs.size() != NUMBER_BOARDS)) {
-        cout << "A frame has been sent by all boards, but not all their MAC addresses have been stored in"
-                "the corresponding data structure. There is something wrong. Terminating..." << endl;
-        exit(1);
+        cout << "A frame has been sent by all boards, but during different rounds." << endl;
+        if (!ROUNDLESS_MODE) {
+            cerr << "Server should not consider frames belonging to previous round since roundless mode is disabled."
+                 << endl;
+            exit(1);
+        }
     }
 
     /* If all boards have sent their batch */

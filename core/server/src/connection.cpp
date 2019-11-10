@@ -33,8 +33,9 @@ void connection::start() {
 /**
  * Handles the asynchronous reception of data from a board.
  *
- * @param error result of the operation.
- * @param bytes_transferred the number of bytes in the `streambuf`'s get area up to including the delimiter. 0 in an error occurred.
+ * @param error                 result of the operation.
+ * @param bytes_transferred     the number of bytes in the `streambuf`'s get area up to including the delimiter.
+ *                              0 in an error occurred.
  */
 void connection::handle_read(const boost::system::error_code &error,
                              size_t bytes_transferred) {

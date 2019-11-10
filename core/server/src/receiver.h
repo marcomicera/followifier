@@ -15,6 +15,15 @@ using boost::uuids::detail::md5;
 
 #define NUMBER_BOARDS 2
 
+/**
+     * When true, it never deletes frames of previous rounds.
+     *
+     * Warning: this is an experimental flag that should be set only in special cases
+     *          (e.g., debugging, no synchronization between boards, etc.).
+     *          This flag will cause a StackOverflow after a while.
+     */
+#define ROUNDLESS_MODE 0
+
 typedef std::unordered_multimap<
         std::string, // frame hash
         std::pair< // sender
@@ -26,15 +35,6 @@ typedef std::unordered_multimap<
  * Receives and filters batches from all boards.
  */
 class receiver {
-
-    /**
-     * When true, it never deletes frames of previous rounds.
-     *
-     * Warning: this is an experimental flag that should be set only in special cases
-     *          (e.g., debugging, no synchronization between boards, etc.).
-     *          This flag will cause a StackOverflow after a while.
-     */
-    static const bool ROUNDLESS_MODE = false;
 
 public:
 
@@ -65,7 +65,20 @@ public:
             lastRoundBoardMacs.clear();
             messagesBuffer.clear();
         }
-        std::cout << "All boards have sent their batch. Starting a new round...\n\n\n\n";
+        std::cout << "All boards have sent their batch. Starting a new round...\n\n\n\n" << std::flush;
+    }
+
+    /**
+     * Pretty-prints a hash digest.
+     *
+     * @param digest    digest to be printed.
+     * @return          a pretty-printed digest.
+     */
+    static std::string prettyHash(const std::string &digest) {
+        const auto charDigest = digest.c_str();
+        std::string result;
+        boost::algorithm::hex(charDigest, charDigest + sizeof(md5::digest_type) * 2, std::back_inserter(result));
+        return result;
     }
 
 protected:
@@ -84,19 +97,6 @@ protected:
      * MAC addresses of boards that have sent a message during the last round.
      */
     static std::unordered_set<std::string> lastRoundBoardMacs;
-
-    /**
-     * Pretty-prints a hash digest.
-     *
-     * @param digest    digest to be printed.
-     * @return          a pretty-printed digest.
-     */
-    static std::string prettyHash(const std::string &digest) {
-        const auto charDigest = digest.c_str();
-        std::string result;
-        boost::algorithm::hex(charDigest, charDigest + sizeof(md5::digest_type) * 2, std::back_inserter(result));
-        return result;
-    }
 };
 
 #endif //CORE_RECEIVER_H
