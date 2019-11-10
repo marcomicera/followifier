@@ -108,7 +108,7 @@ void flush(void) {
 
     // Flushing the message buffer
     ESP_LOGI(TAG, "Sending batch");
-    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length, 0) >= 0,
+    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length + sizeof("\n\r\n\r"), 0) >= 0,
                                "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
                                closing_socket);
     ESP_LOGI(TAG, "Sending delimiter...");
@@ -117,7 +117,7 @@ void flush(void) {
 
     // Closing socket
     ESP_LOGI(TAG, "Shutting down socket towards %s:%d...", SERVER_ADDRESS, SERVER_PORT);
-    shutdown(tcp_socket, 0);
+    shutdown(tcp_socket, SHUT_RDWR);
     close(tcp_socket);
     ESP_LOGI(TAG, "...socket towards %s:%d closed.", SERVER_ADDRESS, SERVER_PORT);
 
