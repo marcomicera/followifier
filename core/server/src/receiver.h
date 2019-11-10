@@ -16,12 +16,12 @@ using boost::uuids::detail::md5;
 #define NUMBER_BOARDS 2
 
 /**
-     * When true, it never deletes frames of previous rounds.
-     *
-     * Warning: this is an experimental flag that should be set only in special cases
-     *          (e.g., debugging, no synchronization between boards, etc.).
-     *          This flag will cause a StackOverflow after a while.
-     */
+ * When true, it never deletes frames of previous rounds.
+ *
+ * Warning: this is an experimental flag that should be set only in special cases
+ *          (e.g., debugging, no synchronization between boards, etc.).
+ *          This flag will cause a StackOverflow after a while.
+ */
 #define ROUNDLESS_MODE 0
 
 typedef std::unordered_multimap<
