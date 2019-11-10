@@ -20,14 +20,13 @@ tcp::socket &connection::socket() {
 
 void connection::start() {
     try {
-        cout << "new connection established. Reading batch asynchronously... " << endl;
         GOOGLE_PROTOBUF_VERIFY_VERSION;
         boost::asio::async_read_until(socket_, buf, delimiter,
                                       boost::bind(&connection::handle_read, shared_from_this(),
                                                   boost::asio::placeholders::error,
                                                   boost::asio::placeholders::bytes_transferred));
     } catch (const std::exception &e) {
-        cerr << "failed to parse batch." << endl; // intentionally lowercase
+        cerr << "Failure while parsing a batch." << endl;
     }
 }
 
@@ -40,34 +39,29 @@ void connection::start() {
 void connection::handle_read(const boost::system::error_code &error,
                              size_t bytes_transferred) {
 
-    // If the batch has not been received correctly
-    if (!error || bytes_transferred == 0) {
-        cerr << "Something went wrong while receiving a batch." << endl << "Error: " << error.message() << endl
-             << "Number of transferred bytes: " << bytes_transferred << endl;
-    }
-    else {
+    /* If the batch has not been received correctly */
+    if (bytes_transferred == 0) {
+        cerr << "Something went wrong while receiving a batch (" << error.message() << ", " << bytes_transferred
+             << " bytes transferred)." << endl << endl;
+    } else {
 
         followifier::Batch batch;
         database database;
 
-        // Verify buf contains more data beyond the delimiter. (e.g.
-        // async_read_until read beyond the delimiter)
+        /* Verify buf contains more data beyond the delimiter. (e.g. async_read_until read beyond the delimiter) */
         assert(buf.size() > bytes_transferred);
 
-        // Extract up to the first delimiter.
-        cout << endl << "Buffer size: " << buf.size() << ", transferred bytes: " << bytes_transferred
-             << ", delimiter size: " << delimiter.size() << endl;
+        /* Extract up to the first delimiter */
         std::string data{
                 buffers_begin(buf.data()),
                 buffers_begin(buf.data()) + bytes_transferred - delimiter.size()
         };
 
-        // Consume through the first delimiter so that subsequent async_read_until
-        // will not reiterate over the same data.
+        /* Consume through the first delimiter so that subsequent async_read_until will not reiterate over the same data. */
         buf.consume(bytes_transferred);
 
         if (!batch.ParseFromString(data)) {
-            cerr << "failed to parse batch (length" << data.length() << ")." << endl; // intentionally lowercase
+            cerr << "Couldn't parse a batch of size " << data.length() << "." << endl;
             return;
         }
         receiver::addBatch(batch, database);

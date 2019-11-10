@@ -27,8 +27,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
     // Printing received messages
     cout.flush();
-    cout << "new batch received from " + newBatch.boardmac() + " of size " + // intentionally lowercase
-            std::to_string(newBatch.messages_size());
+    cout << "New batch received from " + newBatch.boardmac() + " of size " + std::to_string(newBatch.messages_size());
     if (newBatch.messages_size() > 0) { // if there is at least one message in it
         cout << ":" << endl;
         int messageCounter = 1;
