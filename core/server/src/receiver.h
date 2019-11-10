@@ -71,16 +71,6 @@ public:
 protected:
 
     /**
-     * Checks whether a batch contains the specified message or not.
-     *
-     * @param batch     the batch against which the check must be performed.
-     * @param message   the message against which the check must be performed.
-     * @return          true in case the specified message is contained in the
-     *                  specified batch, false otherwise.
-     */
-    static bool batchContainsMessage(const followifier::Batch &batch, const followifier::ESP32Message &message);
-
-    /**
      * Batches must be added in an interruptable fashion.
      */
     static std::mutex m;

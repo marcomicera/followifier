@@ -9,19 +9,6 @@ std::mutex receiver::m;
 messages_map receiver::messagesBuffer;
 std::unordered_set<std::string> receiver::lastRoundBoardMacs;
 
-bool receiver::batchContainsMessage(const followifier::Batch &batch, const followifier::ESP32Message &message) {
-
-    for (const auto &batchMessage: batch.messages()) {
-
-        /* Two messages are equal if their hash values are equal */
-        if (batchMessage.frame_hash() == message.frame_hash()) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 void receiver::addBatch(const followifier::Batch &newBatch, database &database) {
 
     /* Critical section */
