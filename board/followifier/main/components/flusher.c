@@ -72,6 +72,7 @@ void prepare_to_flush(bool stop) {
     followifier__batch__pack(&batch, buffer);
     memcpy(buffer+batch_length, "\n\r\n\r", sizeof("\n\r\n\r"));
     ESP_LOGI(TAG, "Board's source MAC: %s", batch.boardmac);
+    free(batch.boardmac);
 
     // Stopping the sniffer
     if (stop) {
@@ -127,6 +128,9 @@ void flush(void) {
     // Deleting local buffer elements
     free(buffer);
     for(int i=0; i<items; i++){
+        free(messages[i]->frame_hash.data);
+        free(messages[i]->apmac);
+        free(messages[i]->ssid);
         free(messages[i]);
     }
     items = 0;
