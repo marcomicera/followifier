@@ -15,6 +15,7 @@ PROTOBUF_C__BEGIN_DECLS
 #endif
 
 
+typedef struct _Followifier__ESP32Metadata Followifier__ESP32Metadata;
 typedef struct _Followifier__ESP32Message Followifier__ESP32Message;
 typedef struct _Followifier__Batch Followifier__Batch;
 
@@ -24,18 +25,28 @@ typedef struct _Followifier__Batch Followifier__Batch;
 
 /* --- messages --- */
 
-struct  _Followifier__ESP32Message
+struct  _Followifier__ESP32Metadata
 {
   ProtobufCMessage base;
   char *apmac;
   char *ssid;
   int64_t timestamp;
-  ProtobufCBinaryData frame_hash;
   int32_t rsi;
+};
+#define FOLLOWIFIER__ESP32_METADATA__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&followifier__esp32_metadata__descriptor) \
+    , NULL, NULL, 0, 0 }
+
+
+struct  _Followifier__ESP32Message
+{
+  ProtobufCMessage base;
+  Followifier__ESP32Metadata *metadata;
+  ProtobufCBinaryData frame_hash;
 };
 #define FOLLOWIFIER__ESP32_MESSAGE__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&followifier__esp32_message__descriptor) \
-    , NULL, NULL, 0, {0,NULL}, 0 }
+    , NULL, {0,NULL} }
 
 
 struct  _Followifier__Batch
@@ -50,6 +61,25 @@ struct  _Followifier__Batch
     , NULL, 0,NULL }
 
 
+/* Followifier__ESP32Metadata methods */
+void   followifier__esp32_metadata__init
+                     (Followifier__ESP32Metadata         *message);
+size_t followifier__esp32_metadata__get_packed_size
+                     (const Followifier__ESP32Metadata   *message);
+size_t followifier__esp32_metadata__pack
+                     (const Followifier__ESP32Metadata   *message,
+                      uint8_t             *out);
+size_t followifier__esp32_metadata__pack_to_buffer
+                     (const Followifier__ESP32Metadata   *message,
+                      ProtobufCBuffer     *buffer);
+Followifier__ESP32Metadata *
+       followifier__esp32_metadata__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   followifier__esp32_metadata__free_unpacked
+                     (Followifier__ESP32Metadata *message,
+                      ProtobufCAllocator *allocator);
 /* Followifier__ESP32Message methods */
 void   followifier__esp32_message__init
                      (Followifier__ESP32Message         *message);
@@ -90,6 +120,9 @@ void   followifier__batch__free_unpacked
                       ProtobufCAllocator *allocator);
 /* --- per-message closures --- */
 
+typedef void (*Followifier__ESP32Metadata_Closure)
+                 (const Followifier__ESP32Metadata *message,
+                  void *closure_data);
 typedef void (*Followifier__ESP32Message_Closure)
                  (const Followifier__ESP32Message *message,
                   void *closure_data);
@@ -102,6 +135,7 @@ typedef void (*Followifier__Batch_Closure)
 
 /* --- descriptors --- */
 
+extern const ProtobufCMessageDescriptor followifier__esp32_metadata__descriptor;
 extern const ProtobufCMessageDescriptor followifier__esp32_message__descriptor;
 extern const ProtobufCMessageDescriptor followifier__batch__descriptor;
 

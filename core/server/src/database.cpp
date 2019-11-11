@@ -18,11 +18,11 @@ void database::insert_message(followifier::ESP32Message message){
     bson_error_t error;
     doc = bson_new ();
 
-    BSON_APPEND_INT32 (doc, "kApMacFieldNumber",message.kApMacFieldNumber);
-    BSON_APPEND_INT32 (doc, "kSsidFieldNumber",message.kSsidFieldNumber);
-    BSON_APPEND_INT32 (doc, "kTimestampFieldNumber",message.kTimestampFieldNumber);
+    BSON_APPEND_INT32 (doc, "kApMacFieldNumber",message.metadata().kApMacFieldNumber);
+    BSON_APPEND_INT32 (doc, "kSsidFieldNumber",message.metadata().kSsidFieldNumber);
+    BSON_APPEND_INT32 (doc, "kTimestampFieldNumber",message.metadata().kTimestampFieldNumber);
     BSON_APPEND_INT32 (doc, "kFrameHashFieldNumber",message.kFrameHashFieldNumber);
-    BSON_APPEND_INT32 (doc, "kRsiFieldNumber",message.kRsiFieldNumber);
+    BSON_APPEND_INT32 (doc, "kRsiFieldNumber",message.metadata().kRsiFieldNumber);
 
     if (!mongoc_collection_insert_one (collection, doc, NULL, NULL, &error)) {
         fprintf (stderr, "%s\n", error.message);

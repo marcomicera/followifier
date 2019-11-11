@@ -129,8 +129,9 @@ void flush(void) {
     free(buffer);
     for(int i=0; i<items; i++){
         free(messages[i]->frame_hash.data);
-        free(messages[i]->apmac);
-        free(messages[i]->ssid);
+        free(messages[i]->metadata->apmac);
+        free(messages[i]->metadata->ssid);
+        free(messages[i]->metadata);
         free(messages[i]);
     }
     items = 0;
