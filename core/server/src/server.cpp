@@ -3,8 +3,7 @@
 #include "server.h"
 
 server::server(boost::asio::io_service &io_service) : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)) {
-    std::cout << "Core server started on " << acceptor_.local_endpoint().address() << ":"
-              << acceptor_.local_endpoint().port() << ".\n\n";
+    std::cout << "Core server started on port " << acceptor_.local_endpoint().port() << ".\n\n"; // TODO print local address
     start_accept();
 }
 
