@@ -64,7 +64,7 @@ add_executable(${PROJECT_NAME} src/receiver.cpp src/receiver.h ${PROTOBUF_MODELS
         src/main.cpp
         src/connection.h src/connection.cpp
         src/server.cpp src/server.h
-        src/database.cpp src/database.h)
+        src/database.cpp src/database.h src/board.h src/point.h src/settings.cpp src/settings.h)
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 if (Boost_FOUND)
     target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
