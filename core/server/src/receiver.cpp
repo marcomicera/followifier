@@ -14,33 +14,35 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
     /* Critical section */
     std::lock_guard<std::mutex> lockGuard(m);
 
-    // Printing received messages
+    /* Printing headline info */
     cout.flush();
-    cout << "New batch received from " + newBatch.boardmac() + " of size " + std::to_string(newBatch.messages_size());
-    if (newBatch.messages_size() > 0) { // if there is at least one message in it
-        cout << ":" << endl;
-        int messageCounter = 1;
-        for (const auto &newMessage : newBatch.messages()) { // print all messages
-            cout << messageCounter++ << ")\t" << logMessage(newMessage) << endl;
-        }
-    } else {
-        cout << ".";
-    }
-    cout << endl << endl;
+    cout << "New batch received from " + newBatch.boardmac() + " of size " + std::to_string(newBatch.messages_size())
+         << "." << endl;
 
-    /* If the board's MAC address appears for the first time */
-    if (lastRoundBoardMacs.find(newBatch.boardmac()) == lastRoundBoardMacs.end()) {
-
-        /* Insert it into the set of boards that have sent a message during the last round */
-        lastRoundBoardMacs.insert(newBatch.boardmac());
-    } else {
+    /* If the board's MAC address does not appear for the first time */
+    if (lastRoundBoardMacs.find(newBatch.boardmac()) != lastRoundBoardMacs.end()) {
 
         /* A new round begins.
          * The same board could otherwise announce the same frame at least twice during the same round,
          * and this is considered to be an error.
          */
-        newRound();
+        newRound("Board " + newBatch.boardmac() + " appears for the second time during this round.");
+    } else {
+
+        cout << "Board " << newBatch.boardmac() << " appears for the first time during this round." << endl;
     }
+
+    /* Insert it into the set of boards that have sent a message during the last round */
+    lastRoundBoardMacs.insert(newBatch.boardmac());
+
+    /* Printing received messages */
+    if (newBatch.messages_size() > 0) { // if there is at least one message in it
+        int messageCounter = 1;
+        for (const auto &newMessage : newBatch.messages()) { // print all messages
+            cout << messageCounter++ << ")\t" << logMessage(newMessage) << endl;
+        }
+    }
+    cout << endl << endl;
 
     /* True when all boards have sent the same frame, hence it's time for a new round */
     bool aFrameHasBeenSentByAllBoards = false;
@@ -106,6 +108,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
     if (lastRoundBoardMacs.size() == NUMBER_BOARDS) {
 
         /* Start a new round */
-        newRound();
+        newRound(std::to_string(lastRoundBoardMacs.size()) + " out of " + std::to_string(NUMBER_BOARDS) +
+                 " boards have sent their batch.");
     }
 }

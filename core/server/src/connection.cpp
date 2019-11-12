@@ -50,7 +50,11 @@ void connection::handle_read(const boost::system::error_code &error,
         database database;
 
         /* Verify buf contains more data beyond the delimiter. (e.g. async_read_until read beyond the delimiter) */
-        assert(buf.size() > bytes_transferred);
+        if (buf.size() < bytes_transferred) {
+            cerr << "Buffer size is " << buf.size() << ", while " << bytes_transferred
+                 << " bytes have been transferred. Terminating..." << endl;
+            exit(1);
+        }
 
         /* Extract up to the first delimiter */
         std::string data{
