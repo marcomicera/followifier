@@ -1,12 +1,9 @@
 import argparse
-import datetime
-import json
 import random
 import socket
 import string
-import time
 import sys
-from scapy.all import IP, TCP, send, sr1
+import time
 
 sys.path.insert(1, '../../server/gen')
 import message_pb2
@@ -15,28 +12,26 @@ from functools import wraps
 
 hexdigits = '0123456789abcdef'
 
+
 def gen_random_mac():
     return ':'.join([''.join(random.choices(population=hexdigits, k=2)) for _ in range(6)])
+
 
 def gen_random_ssid():
     return ''.join(random.choices(population=string.ascii_uppercase, k=8))
 
+
 def gen_random_timestamp():
     return random.randrange(sys.maxsize)
 
+
 def gen_random_hash():
-    return ''.join(random.choices(population=hexdigits, k=16))
+    return ''.join(random.choices(population=hexdigits, k=64)).encode('utf-8')
+
 
 def gen_random_rsi():
     return random.randrange(-90, 0)
 
-class DummyPacket(object):
-    def __init__(self, mac=None, ssid=None, timestamp=None, frame_hash=None, rsi=None):
-        self.apMac = mac or gen_random_mac()
-        self.ssid = ssid or gen_random_ssid()
-        self.timestamp = timestamp or gen_random_timestamp()
-        self.frame_hash = frame_hash or gen_random_hash()
-        self.rsi = rsi or gen_random_rsi()
 
 def timer(func):
     @wraps(func)
@@ -45,53 +40,92 @@ def timer(func):
         res = func(*args, **kwargs)
         print(f"Function call took {time.perf_counter() - start}")
         return res
+
     return wrapper
 
-def produce_protobuf_dummy_batch(batch_size):
+
+def gen_dummy_batch_base(batch_size):
     batch = message_pb2.Batch()
     for _ in range(batch_size):
         fill_message(batch.messages.add())
     return batch
 
-def produce_protobuf_batch(batch, mac):
+
+def gen_dummy_batch(batch, mac, common_hashes):
+    used_common_hashes = 0
     batch.boardMac = mac
     for message in batch.messages:
-        message.rsi = gen_random_rsi()
+
+        # Setting a random RSSI
+        message.metadata.rsi = gen_random_rsi()
+
+        # Introduce a common frame hash as long as there are some available
+        if len(common_hashes) > used_common_hashes:
+            message.frame_hash = common_hashes[used_common_hashes]
+            used_common_hashes += 1
+        else:
+            message.frame_hash = gen_random_hash()
+
     return batch
 
+
 def fill_message(message):
-    p = DummyPacket()
-    for k, v in p.__dict__.items():
-        setattr(message, k, v)
+    message.metadata.apMac = gen_random_mac()
+    message.metadata.ssid = gen_random_ssid()
+    message.metadata.timestamp = gen_random_timestamp()
+    # message.frame_hash = gen_random_hash()
+    message.metadata.rsi = gen_random_rsi()
+
 
 def main():
+
+    # Parsing arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('ip', action='store', help="server IP")
     parser.add_argument('port', action='store', type=int, help='server port')
     parser.add_argument('--batch_size', action='store', type=int, help='number of packets produced per batch',
-                        default=100)
+                        default=20)
     parser.add_argument('--batch_rate', action='store', type=int, help='period in seconds between subsequent batches',
-                        default=1)
+                        default=30)
     parser.add_argument('--boards_number', action='store', type=int, help='number of dummy boards',
                         default=1)
     args = parser.parse_args()
-    port = int(args.port)
-    macs = []
-    # UDP would probably be more suited
+
+    # Generating boards' MAC addresses
+    boards_mac_addresses = []
     for i in range(0, args.boards_number):
-        macs.append(gen_random_mac())
+        boards_mac_addresses.append(gen_random_mac())
+
+    # Packet generation loop
     while True:
-        dummy_batch = produce_protobuf_dummy_batch(args.batch_size)
-        for mac in macs:
-            batch = produce_protobuf_batch(dummy_batch, mac).SerializeToString()
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((args.ip, args.port))
-            #add '\0' because last byte is removed from server since board adds it
-            s.send(batch+b'\0')
-            s.send(b'\n\r\n\r')
-            print("Sent batch from board with mac " + mac)
-            s.close()
+
+        # Generate a batch base message on which batches will be generated
+        batch_base = gen_dummy_batch_base(args.batch_size)
+
+        # Generating a random number of common frame hashes for this round
+        num_common_hashes = random.randrange(args.batch_size)  # from 0 to `args.batch_size`
+        common_hashes = []
+        for _ in range(num_common_hashes):
+            common_hashes.append(gen_random_hash())
+        print("\nNew round, " + str(num_common_hashes) + " messages will be stored in the database.")
+
+        # Simulating multiple boards
+        for board_mac_address in boards_mac_addresses:
+
+            try:
+                batch = gen_dummy_batch(batch_base, board_mac_address, common_hashes).SerializeToString()
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.connect((args.ip, args.port))
+                s.send(batch)
+                s.send(b'\n\r\n\r')
+                print("Board " + board_mac_address + " has sent a batch.")
+                s.close()
+            except ConnectionRefusedError:
+                print("Server not available.")
+
+        # Simulating sniffing period
         time.sleep(args.batch_rate)
+
 
 if __name__ == '__main__':
     main()
