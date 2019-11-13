@@ -5,4 +5,5 @@ idf_component_register(SRCS "followifier.c"
         "components/wifi.c"
         "components/nvs.c"
         "util/misc.c"
+        "components/sync.c"
         INCLUDE_DIRS ".")

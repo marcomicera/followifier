@@ -17,6 +17,7 @@
 #include "components/wifi.h"
 #include "components/flusher.h"
 #include "components/nvs.h"
+#include "components/sync.h"
 #include "util/misc.h"
 
 /**
@@ -87,6 +88,9 @@ void init_all() {
 
     // Initialize the sniffer
     init_sniffer();
+
+    // Initialize SNTP module
+    init_sntp();
 }
 
 /**
