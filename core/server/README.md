@@ -16,24 +16,24 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
     $ sudo apt-get install jq
     ```
 1. Set up the configuration file [`config.json`](./config.json). Here is an example: 
+    ```json
+    {
+        "port": 12345,
+        "boards": [
+            {
+                "mac": "aa:aa:aa:aa:aa:aa",
+                "x": 0,
+                "y": 0 
+            }
+        ],
+        "room_coordinates":[
+            {"x": 0, "y": 0},
+            {"x": 0, "y": 90},
+            {"x": 90, "y": 0},
+            {"x": 90, "y": 90}
+        ]
+    }
     ```
-{
-    "port": 12345,
-    "boards": [
-        {
-            "mac": "aa:aa:aa:aa:aa:aa",
-            "x": 0,
-            "y": 0 
-        }
-    ],
-    "room_coordinates":[
-        {"x": 0, "y": 0},
-        {"x": 0, "y": 90},
-        {"x": 90, "y": 0},
-        {"x": 90, "y": 90}
-    ]
-}
-   ```
 1. Optionally, free the `core` server port:
     ```bash
    lsof -i tcp:12345 | grep LISTEN | awk '{print $2}' | xargs kill
