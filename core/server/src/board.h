@@ -5,19 +5,28 @@
 #include <string>
 
 class Board {
+
 public:
+
+    Board(const std::string &mac, const Point &coordinates);
+
     std::string getMac();
-    void setMac(std::string mac);
+
     Point getCoordinates();
-    void setCoordintes(Point coordinates);
 
     bool operator==(const Board &other) const;
 
-    // mac is returned as hash function
-    size_t operator()(const Board &b) const;
+    struct BoardHasher {
+        size_t operator()(const Board &b) const {
+            return std::hash<std::string>()(b.mac);
+        }
+    };
 
 private:
+
     std::string mac; //board mac
+
     Point coordinates; //board coordinates
 };
+
 #endif //CORE_BOARD_H

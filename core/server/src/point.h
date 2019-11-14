@@ -4,17 +4,29 @@
 #include <cstdint>
 
 class Point {
+
 public:
-    // id is returned as hash function
-    uint64_t operator()(const Point& p) const;
+
+    Point(int x, int y);
+
+// id is returned as hash function
     bool operator==(const Point &other) const;
 
+    struct PointHasher {
+        uint64_t operator()(const Point &p) const {
+            return ((uint64_t) p.x) << 32 | (uint64_t) p.y;
+        }
+    };
+
     int getX();
-    void setX(int);
+
     int getY();
-    void setY(int);
+
 private:
+
     int x;
+
     int y;
 };
+
 #endif //CORE_POINT_H
