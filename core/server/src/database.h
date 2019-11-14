@@ -15,6 +15,7 @@ public:
 
      void insert_message(followifier::ESP32Message message);
      void destroy_database_connection();
+     void insert_board(std::string mac, int x, int y);
 };
 
 #endif //CORE_DATABASE_H

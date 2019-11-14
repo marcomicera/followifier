@@ -97,6 +97,7 @@ def main():
         boards_mac_addresses.append(gen_random_mac())
 
     # Packet generation loop
+
     while True:
 
         # Generate a batch base message on which batches will be generated

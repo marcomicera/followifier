@@ -1,0 +1,38 @@
+<mat-sidenav-container>
+  <mat-sidenav #sidenav mode="over">
+    <mat-toolbar>
+      <mat-toolbar-row>
+        <h2> Menu </h2>
+      </mat-toolbar-row>
+    </mat-toolbar>
+
+    <mat-nav-list>
+
+      <a *ngFor="let item of menuRoutes"
+         mat-list-item
+         (click)="sidenav.close()"
+         [routerLink]="[item.route]">
+        {{item.title}}
+      </a>
+
+      <mat-divider></mat-divider>
+    </mat-nav-list>
+
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <app-toolbar
+      (toggleSidenav)="sidenav.toggle()">
+    </app-toolbar>
+
+    <mat-card class="container">
+      <mat-card-content>
+    <router-outlet></router-outlet>
+    <mat-card-footer>
+      Powered by Followifier Inc. &copy;
+    </mat-card-footer>
+    </mat-card-content>
+    </mat-card>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
