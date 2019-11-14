@@ -7,7 +7,7 @@ int main() {
         try{
             Settings::load("config.json");
         }catch(std::exception& e){
-            std::cerr << "Invalid configuration file" << std::endl;
+            std::cerr << "Invalid configuration file: " << e.what() << "." << std::endl;
             return -1;
         }
         boost::asio::io_service io_service;

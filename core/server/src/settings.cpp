@@ -25,8 +25,9 @@ void Settings::load(const std::string &filename) {
                     b.setCoordintes(coordinates);
                     configuration.boards.insert(b);
                 }
-    if (tree.get_child("room_coordinates").size() != 4)
-        throw std::invalid_argument("Invalid format");
+    if (tree.get_child("room_coordinates").size() != 4) {
+        throw std::invalid_argument("Room must have exactly 4 coordinates.");
+    }
 
 
     BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("room_coordinates")) {
