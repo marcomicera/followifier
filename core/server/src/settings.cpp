@@ -1,8 +1,8 @@
 #include "settings.h"
 
-Config settings::configuration;
+Config Settings::configuration;
 
-void settings::load(const std::string &filename) {
+void Settings::load(const std::string &filename) {
     pt::ptree tree;
 
     // Parse the XML into the property tree.
@@ -25,7 +25,6 @@ void settings::load(const std::string &filename) {
                     b.setCoordintes(coordinates);
                     configuration.boards.insert(b);
                 }
-
     if (tree.get_child("room_coordinates").size() != 4)
         throw std::invalid_argument("Invalid format");
 

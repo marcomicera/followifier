@@ -13,7 +13,7 @@
 
 class server {
 
-    const size_t port = settings::configuration.port;
+    const size_t port = Settings::configuration.port;
 
 public:
     explicit server(boost::asio::io_service&);

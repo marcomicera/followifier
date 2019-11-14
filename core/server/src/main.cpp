@@ -5,7 +5,7 @@
 int main() {
     try {
         try{
-            settings::load("config.json");
+            Settings::load("config.json");
         }catch(std::exception& e){
             std::cerr << "Invalid configuration file" << std::endl;
             return -1;

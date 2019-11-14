@@ -16,7 +16,7 @@ typedef struct {
     std::unordered_set<Point, Point> room_coordinates; //coordinates of room
 } Config;
 
-class settings {
+class Settings {
 public:
     static Config configuration;
     static void load(const std::string &);
