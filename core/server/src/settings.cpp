@@ -18,12 +18,12 @@ void settings::load(const std::string &filename) {
     BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("boards")) {
                     // The data function is used to access the data stored in a node.
                     Board b;
-                    b.mac = v.second.get<std::string>("mac");
+                    b.setMac(v.second.get<std::string>("mac"));
                     Point coordinates;
-                    coordinates.x = v.second.get<int>("x");
-                    coordinates.y = v.second.get<int>("y");
-                    b.coordinates = coordinates;
-                    configuration.boards.push_back(b);
+                    coordinates.setX(v.second.get<int>("x"));
+                    coordinates.setY(v.second.get<int>("y"));
+                    b.setCoordintes(coordinates);
+                    configuration.boards.insert(b);
                 }
 
     if (tree.get_child("room_coordinates").size() != 4)
@@ -31,8 +31,8 @@ void settings::load(const std::string &filename) {
 
     BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("room_coordinates")) {
                     Point p;
-                    p.x = v.second.get<int>("x");
-                    p.y = v.second.get<int>("y");
-                    configuration.room_coordinates.push_back(p);
+                    p.setX(v.second.get<int>("x"));
+                    p.setY(v.second.get<int>("y"));
+                    configuration.room_coordinates.insert(p);
                 }
 }

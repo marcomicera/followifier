@@ -7,19 +7,18 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
-#include <set>
+#include <bits/stdc++.h>
 
 namespace pt = boost::property_tree;
 typedef struct {
     size_t port; //server port number
-    std::vector<Board> boards; //set of boards
-    std::vector<Point> room_coordinates; //coordinates of room
+    std::unordered_set<Board, Board> boards; //set of boards
+    std::unordered_set<Point, Point> room_coordinates; //coordinates of room
 } Config;
 
 class settings {
 public:
     static Config configuration;
-
     static void load(const std::string &);
 };
 
