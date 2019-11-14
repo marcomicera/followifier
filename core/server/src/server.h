@@ -9,11 +9,11 @@
 #include <boost/asio.hpp>
 #include "connection.h"
 #include "database.h"
-
+#include "settings.h"
 
 class server {
 
-    const size_t port = 12345;
+    const size_t port = Settings::configuration.port;
 
 public:
     explicit server(boost::asio::io_service&);

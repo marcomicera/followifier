@@ -10,10 +10,10 @@
 #include <boost/uuid/detail/md5.hpp>
 #include <boost/algorithm/hex.hpp>
 #include "database.h"
-
+#include "settings.h"
 using boost::uuids::detail::md5;
 
-#define NUMBER_BOARDS 2
+#define NUMBER_BOARDS Settings::configuration.boards.size()
 
 /**
  * When true, it never deletes frames of previous rounds.
