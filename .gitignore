@@ -1,3 +1,6 @@
+# Configuration files
+core/server/config.json
+
 # Core and server executable file
 core/server/core
 core/server/server

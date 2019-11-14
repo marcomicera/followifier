@@ -15,7 +15,7 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
     ```bash
     $ sudo apt-get install jq
     ```
-1. Set up the configuration file [`config.json`](./config.json). Here is an example: 
+1. Create a configuration file `config.json` having the following format:
     ```json
     {
         "port": 12345,
