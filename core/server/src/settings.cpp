@@ -27,7 +27,8 @@ void settings::load(const std::string &filename) {
                 }
 
     if (tree.get_child("room_coordinates").size() != 4)
-        throw "Invalid setting file";
+        throw std::invalid_argument("Invalid format");
+
 
     BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("room_coordinates")) {
                     Point p;

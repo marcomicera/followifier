@@ -1,4 +1,5 @@
 #include "board.h"
+#include <regex>
 
 bool Board::operator==(const Board &other) const{
     return this->coordinates == other.coordinates &&
@@ -13,7 +14,13 @@ std::string Board::getMac() {
 }
 
 void Board::setMac(std::string mac) {
-    this->mac = mac;
+    std::smatch m;
+    std::regex e ("(([0-0a-fA-F]{2}):){5}([0-0a-fA-F]{2})");   // mac format
+    std::regex_match(mac, m, e);
+    if(m.size()!=0)
+        this->mac = mac;
+    else
+        throw std::invalid_argument("Invalid format");
 }
 
 Point Board::getCoordinates() {
