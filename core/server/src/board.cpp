@@ -16,7 +16,7 @@ Point Board::getCoordinates() {
 
 Board::Board(const std::string &mac, const Point &coordinates) : coordinates(coordinates) {
     std::smatch m;
-    std::regex e ("(([0-0a-fA-F]{2}):){5}([0-0a-fA-F]{2})");   // mac format
+    std::regex e ("(([0-9a-fA-F]{2}):){5}([0-9a-fA-F]{2})");   // mac format
     std::regex_match(mac, m, e);
     if(m.size()!=0) {
         this->mac = mac;
