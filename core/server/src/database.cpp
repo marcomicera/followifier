@@ -3,7 +3,7 @@
 //
 #include <stdio.h>
 #include "database.h"
-
+#include <iostream>
 database::database(){
     mongoc_init ();
     client = mongoc_client_new ("mongodb://localhost:27017/?appname=insert-example");
@@ -12,7 +12,7 @@ database::database(){
 
 
 
-void database::insert_message(followifier::ESP32Message message){
+void database::insert_message(followifier::ESP32Message message, Point position){
     collection = mongoc_client_get_collection (client, "followifier", "messages");
     bson_t *doc;
     bson_error_t error;
@@ -21,11 +21,11 @@ void database::insert_message(followifier::ESP32Message message){
     BSON_APPEND_UTF8 (doc, "hash",message.frame_hash().c_str());
     BSON_APPEND_UTF8 (doc, "mac",message.metadata().apmac().c_str());
     BSON_APPEND_INT64 (doc, "timestamp",message.metadata().timestamp());
+    BSON_APPEND_DOUBLE(doc, "x", position.getX());
+    BSON_APPEND_DOUBLE(doc, "y", position.getY());
 
-
-    if (!mongoc_collection_insert_one (collection, doc, NULL, NULL, &error)) {
-        fprintf (stderr, "%s\n", error.message);
-    }
+    if (!mongoc_collection_insert_one (collection, doc, NULL, NULL, &error))
+        std::cerr <<  error.message << std::endl;
     bson_destroy (doc);
 }
 

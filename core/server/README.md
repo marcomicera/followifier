@@ -21,10 +21,16 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
         "port": 12345,
         "boards": [
             {
-                "mac": "aa:aa:aa:aa:aa:aa",
+                "mac": "2e:c5:44:b4:7a:08",
                 "x": 0,
                 "y": 0 
+            },
+            {
+                "mac": "1a:dd:db:a7:b7:f5",
+                "x": 20,
+                "y": 0 
             }
+
         ],
         "room_coordinates":[
             {"x": 0, "y": 0},

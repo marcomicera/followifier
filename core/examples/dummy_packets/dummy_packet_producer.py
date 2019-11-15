@@ -57,7 +57,7 @@ def gen_dummy_batch(batch, mac, common_hashes):
     for message in batch.messages:
 
         # Setting a random RSSI
-        message.metadata.rsi = gen_random_rsi()
+        message.metadata.rsi = -10
 
         # Introduce a common frame hash as long as there are some available
         if len(common_hashes) > used_common_hashes:
@@ -74,7 +74,7 @@ def fill_message(message):
     message.metadata.ssid = gen_random_ssid()
     message.metadata.timestamp = gen_random_timestamp()
     # message.frame_hash = gen_random_hash()
-    message.metadata.rsi = gen_random_rsi()
+    message.metadata.rsi = -10;
 
 
 def main():

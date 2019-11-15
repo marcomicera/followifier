@@ -11,6 +11,7 @@
 #include <boost/algorithm/hex.hpp>
 #include "database.h"
 #include "settings.h"
+
 using boost::uuids::detail::md5;
 
 #define NUMBER_BOARDS Settings::configuration.boards.size()
@@ -62,7 +63,7 @@ public:
      *
      * @param cause     the cause that led the start of a new round.
      */
-    static void newRound(const std::string& cause) {
+    static void newRound(const std::string &cause) {
         std::cout << cause << " " << std::flush; // TODO glog
         std::cout << "Starting a new round..." << std::endl;
         if (lastRoundBoardMacs.size() == NUMBER_BOARDS) {
@@ -104,6 +105,8 @@ protected:
      * MAC addresses of boards that have sent a message during the last round.
      */
     static std::unordered_set<std::string> lastRoundBoardMacs;
+
+    static Point getPosition(std::string, std::unordered_map< std::string, followifier::ESP32Metadata>);
 };
 
 #endif //CORE_RECEIVER_H

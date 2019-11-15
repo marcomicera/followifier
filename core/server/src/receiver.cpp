@@ -1,5 +1,6 @@
 #include <src/connection.h>
 #include "receiver.h"
+#include "statistics.h"
 
 using std::cout;
 using std::cerr;
@@ -57,7 +58,8 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             /* Check whether the same board has sent the same frame already */
             auto messageInBuffer = messagesBuffer.find(newMessage.frame_hash());
             for_each(messageInBuffer->second.begin(), messageInBuffer->second.end(),
-                     [&newBatch, &newMessage](std::unordered_map<std::string, followifier::ESP32Metadata>::value_type &senderData) {
+                     [&newBatch, &newMessage](
+                             std::unordered_map<std::string, followifier::ESP32Metadata>::value_type &senderData) {
                          if (senderData.first == newBatch.boardmac()) {
                              /* Error: same board has announced the same frame twice */
                              cerr << "Board " << newBatch.boardmac() << " has announced frame "
@@ -70,8 +72,10 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
                      });
 
             /* Insert metadata*/
-            messageInBuffer->second.insert(std::pair<std::string, followifier::ESP32Metadata>(newBatch.boardmac(), newMessage.metadata()));
-        }else{
+            messageInBuffer->second.insert(
+                    std::pair<std::string, followifier::ESP32Metadata>(newBatch.boardmac(), newMessage.metadata()));
+        } else {
+            /* First time receiving the message */
             std::unordered_map<std::string, followifier::ESP32Metadata> tempBoardMap;
             tempBoardMap.insert(std::make_pair(newBatch.boardmac(), newMessage.metadata()));
             messagesBuffer.insert(std::make_pair(newMessage.frame_hash(), tempBoardMap));
@@ -83,11 +87,14 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
             aFrameHasBeenSentByAllBoards = true;
 
+            Point position = statistics::getPosition(newMessage.frame_hash(),
+                                                     messagesBuffer.find(newMessage.frame_hash())->second);
             /* Storing it into the database */
-            cout << "Message " << newMessage.frame_hash() << " has been sent by all boards." << endl;
-            // TODO Computing statistics (#33)
+            cout << "Message " << newMessage.frame_hash() << " has been sent by all boards from position "
+                 << position.getX() << "," << position.getY() << endl;
+            /* Compute position */
             // FIXME The following should store all these statistics
-            database.insert_message(newMessage); // TODO check object internal representation in MongoDB
+            database.insert_message(newMessage, position); // TODO check object internal representation in MongoDB
 
             /* Clearing the entry relative to this frame */
             messagesBuffer.erase(newMessage.frame_hash());

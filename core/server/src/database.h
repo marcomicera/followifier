@@ -4,6 +4,7 @@
 #include <bson/bson.h>
 #include <mongoc/mongoc.h>
 #include "../gen/message.pb.h"
+#include "point.h"
 #ifndef CORE_DATABASE_H
 #define CORE_DATABASE_H
 class database {
@@ -13,7 +14,7 @@ class database {
 public:
     explicit database();
 
-     void insert_message(followifier::ESP32Message message);
+     void insert_message(followifier::ESP32Message message, Point position);
      void destroy_database_connection();
      void insert_board(std::string mac, int x, int y);
 };
