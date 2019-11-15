@@ -7,7 +7,7 @@ class Point {
 
 public:
 
-    Point(int x, int y);
+    Point(double x, double y);
 
 // id is returned as hash function
     bool operator==(const Point &other) const;
@@ -18,15 +18,15 @@ public:
         }
     };
 
-    int getX();
+    double getX();
 
-    int getY();
+    double getY();
 
 private:
 
-    int x;
+    double x;
 
-    int y;
+    double y;
 };
 
 #endif //CORE_POINT_H

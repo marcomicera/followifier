@@ -55,11 +55,10 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             messagesBuffer.end()) { // lower complexity than `equal_range()`
 
             /* Check whether the same board has sent the same frame already */
-            auto sameFrameSendersRange = messagesBuffer.equal_range(newMessage.frame_hash());
-            for_each(sameFrameSendersRange.first, sameFrameSendersRange.second,
-                     [&newBatch, &newMessage](messages_map::value_type &senderData) {
+            auto messageInBuffer = messagesBuffer.find(newMessage.frame_hash());
+            for_each(messageInBuffer->second.begin(), messageInBuffer->second.end(),
+                     [&newBatch, &newMessage](std::unordered_map<std::string, followifier::ESP32Metadata>::value_type &senderData) {
                          if (senderData.first == newBatch.boardmac()) {
-
                              /* Error: same board has announced the same frame twice */
                              cerr << "Board " << newBatch.boardmac() << " has announced frame "
                                   << prettyHash(newMessage.frame_hash()) << " at least twice." << endl;
@@ -69,19 +68,23 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
                              }
                          }
                      });
+
+            /* Insert metadata*/
+            messageInBuffer->second.insert(std::pair<std::string, followifier::ESP32Metadata>(newBatch.boardmac(), newMessage.metadata()));
+        }else{
+            std::unordered_map<std::string, followifier::ESP32Metadata> tempBoardMap;
+            tempBoardMap.insert(std::make_pair(newBatch.boardmac(), newMessage.metadata()));
+            messagesBuffer.insert(std::make_pair(newMessage.frame_hash(), tempBoardMap));
         }
 
-        /* Insert it in the messages buffer */
-        messagesBuffer.insert(std::make_pair(newMessage.frame_hash(),
-                                             std::make_pair(newBatch.boardmac(), newMessage.metadata())));
 
         /* If this message has been sent by all other boards */
-        if (messagesBuffer.count(newMessage.frame_hash()) == NUMBER_BOARDS) {
+        if (messagesBuffer.find(newMessage.frame_hash())->second.size() == NUMBER_BOARDS) {
 
             aFrameHasBeenSentByAllBoards = true;
 
             /* Storing it into the database */
-            cout << "Message " << prettyHash(newMessage.frame_hash()) << " has been sent by all boards." << endl;
+            cout << "Message " << newMessage.frame_hash() << " has been sent by all boards." << endl;
             // TODO Computing statistics (#33)
             // FIXME The following should store all these statistics
             database.insert_message(newMessage); // TODO check object internal representation in MongoDB

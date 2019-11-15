@@ -24,9 +24,9 @@ using boost::uuids::detail::md5;
  */
 #define ROUNDLESS_MODE 0
 
-typedef std::unordered_multimap<
+typedef std::unordered_map<
         std::string, // frame hash
-        std::pair< // sender
+        std::unordered_map< // sender
                 std::string, // board's MAC address
                 followifier::ESP32Metadata
         >> messages_map;

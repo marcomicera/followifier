@@ -1,11 +1,11 @@
 #include "point.h"
 #include <stdexcept>
 
-int Point::getX() {
+double Point::getX() {
     return this->x;
 }
 
-int Point::getY() {
+double Point::getY() {
     return this->y;
 }
 
@@ -13,7 +13,7 @@ bool Point::operator==(const Point &other) const {
     return this->x == other.x && this->y == other.y;
 }
 
-Point::Point(int x, int y) {
+Point::Point(double x, double y) {
     if(x<0) {
         throw std::invalid_argument("Negative room x-coordinate (" + std::to_string(x) + ")");
     }

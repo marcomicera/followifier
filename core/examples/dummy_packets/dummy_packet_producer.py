@@ -87,14 +87,8 @@ def main():
                         default=20)
     parser.add_argument('--batch_rate', action='store', type=int, help='period in seconds between subsequent batches',
                         default=30)
-    parser.add_argument('--boards_number', action='store', type=int, help='number of dummy boards',
-                        default=1)
+    parser.add_argument('--boards_mac', nargs='+', help='mac of boards', required=True)
     args = parser.parse_args()
-
-    # Generating boards' MAC addresses
-    boards_mac_addresses = []
-    for i in range(0, args.boards_number):
-        boards_mac_addresses.append(gen_random_mac())
 
     # Packet generation loop
     while True:
@@ -110,8 +104,7 @@ def main():
         print("\nNew round, " + str(num_common_hashes) + " messages will be stored in the database.")
 
         # Simulating multiple boards
-        for board_mac_address in boards_mac_addresses:
-
+        for board_mac_address in args.boards_mac:
             try:
                 batch = gen_dummy_batch(batch_base, board_mac_address, common_hashes).SerializeToString()
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
