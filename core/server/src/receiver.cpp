@@ -62,7 +62,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
                              /* Error: same board has announced the same frame twice */
                              cerr << "Board " << newBatch.boardmac() << " has announced frame "
-                                  << newMessage.frame_hash() << " at least twice." << endl;
+                                  << prettyHash(newMessage.frame_hash()) << " at least twice." << endl;
                              if (!ROUNDLESS_MODE) {
                                  cerr << "Terminating since roundless mode is disabled." << endl;
                                  exit(1); // FIXME maybe there's a better way to handle this

@@ -76,6 +76,7 @@ public:
 
     /**
      * Pretty-prints a hash digest.
+     * Frame hashes are stored as a sequence of bytes, hence this function is needed to print a human-readable version.
      *
      * @param digest    digest to be printed.
      * @return          a pretty-printed digest.

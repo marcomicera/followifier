@@ -18,8 +18,6 @@ void database::insert_message(followifier::ESP32Message message){
     bson_error_t error;
     doc = bson_new ();
 
-    std::cerr << " hash: "<< message.frame_hash() << " mac." << message.metadata().apmac() << std::endl;
-
     BSON_APPEND_UTF8 (doc, "hash",message.frame_hash().c_str());
     BSON_APPEND_UTF8 (doc, "mac",message.metadata().apmac().c_str());
     BSON_APPEND_INT64 (doc, "timestamp",message.metadata().timestamp());
