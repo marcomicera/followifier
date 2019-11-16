@@ -3,7 +3,6 @@
 
 #include "board.h"
 #include "point.h"
-#include "database.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>

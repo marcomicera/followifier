@@ -25,7 +25,6 @@ void Settings::load(const std::string &filename) {
     // its children. If the path cannot be resolved, get_child throws.
     // A C++11 for-range loop would also work.
     BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("boards")) {
-                    database database;
                     // The data function is used to access the data stored in a node.
                     // TODO Check whether boards fit into the room or not
                     Point coordinates(v.second.get<double>("x"), v.second.get<double>("y"));
