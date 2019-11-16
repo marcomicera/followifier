@@ -21,6 +21,7 @@ public:
     double getX();
 
     double getY();
+    bool isValid();
 
 private:
 

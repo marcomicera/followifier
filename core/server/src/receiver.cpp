@@ -89,6 +89,10 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
             Point position = statistics::getPosition(newMessage.frame_hash(),
                                                      messagesBuffer.find(newMessage.frame_hash())->second);
+            if (!position.isValid()){
+                cerr << "Message " << newMessage.frame_hash() << " discarded for invalid position" << endl;
+                return;
+            }
             /* Storing it into the database */
             cout << "Message " << newMessage.frame_hash() << " has been sent by all boards from position "
                  << position.getX() << "," << position.getY() << endl;

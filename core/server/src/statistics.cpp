@@ -14,11 +14,10 @@ Point statistics::getPosition(std::string hash, std::unordered_map< std::string,
                              Settings::configuration.boards.find(j->first)->second.getCoordinates().getY(), 2));
 
             //l = r1^2-r2^2 + d^2 / 2d
-            double l = (std::pow(std::abs(i->second.rsi()), 2) - std::pow(std::abs(j->second.rsi()), 2) + std::pow(d, 2)) / (2 * d);
+            double l = (std::pow(statistics::estimatedDistance(i->second.rsi()), 2) - std::pow(statistics::estimatedDistance(j->second.rsi()), 2) + std::pow(d, 2)) / (2 * d);
 
             //h = sqrt(r1^2 - l^2)
-            double h = std::sqrt(std::pow(std::abs(i->second.rsi()), 2) - std::pow(l, 2));
-
+            double h = std::sqrt(std::pow(statistics::estimatedDistance(i->second.rsi()), 2) - std::pow(l, 2));
                  //x = l(x2 - x1) / d + -h(y2 - y1) / d + x1
             double x = (l * (Settings::configuration.boards.find(j->first)->second.getCoordinates().getX() -
                              Settings::configuration.boards.find(i->first)->second.getCoordinates().getX())) / d +
@@ -35,7 +34,6 @@ Point statistics::getPosition(std::string hash, std::unordered_map< std::string,
             if (checkPoint(std::round(x), std::round(y), messageBoardsAndMetadata)) {
                 listPossiblePoints.insert(Point(std::round(x), std::round(y)));
             }
-
         }
     }
 
@@ -50,15 +48,17 @@ Point statistics::getPosition(std::string hash, std::unordered_map< std::string,
     return center;
 }
 
+double statistics::estimatedDistance(double rssi){
+    //RSSI = -A - B log(d)
+    return std::exp((rssi-A)/B);
+}
 
 bool statistics::checkPoint(double x, double y,
                             std::unordered_map<std::string, followifier::ESP32Metadata> &boardsMedatada) {
     for (auto i = Settings::configuration.boards.begin(); i != Settings::configuration.boards.end(); i++) {
         if ((std::pow(x - i->second.getCoordinates().getX(), 2) + std::pow(y - i->second.getCoordinates().getY(), 2) -
-             std::pow(std::abs(boardsMedatada.find(i->first)->second.rsi()), 2)) > 0)
+             std::pow(statistics::estimatedDistance(boardsMedatada.find(i->first)->second.rsi()), 2)) > 0)
             return false;
     }
     return true;
 }
-
-#include <iostream>
