@@ -11,7 +11,7 @@ int main() {
             return -1;
         }
         boost::asio::io_service io_service;
-        server server(io_service); // TODO print server IP address
+        server server(io_service);
         io_service.run();
     }
     catch (std::exception &e) {
