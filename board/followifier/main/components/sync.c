@@ -4,17 +4,27 @@
 
 #include <esp_log.h>
 #include <esp_sntp.h>
+#include <util/conf.h>
 #include "util/misc.h"
-#include "sync.h"
 
 void time_sync_notification_cb(struct timeval *tv) {
-    // TODO Sync notification callback
-    ESP_LOGI(TAG, "Notification of a time synchronization event");
+
+    // Retrieving time
+    char strftime_buf[64];
+    time_t now = 0; // wait for time to be set
+    struct tm timeinfo = {0};
+    time(&now);
+    localtime_r(&now, &timeinfo);
+    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+    ESP_LOGI(TAG, "The current date/time is: %s", strftime_buf);
+    // TODO Notify the main thread if executed for the first time
+
+    // Sending another request
+    sntp_set_sync_status(SNTP_SYNC_STATUS_RESET); // reset the completion status
+    sntp_init();
 }
 
 void init_sntp() {
-
-    ESP_LOGI(TAG, "Initializing SNTP module...");
 
     /* Choices:
      *
@@ -23,10 +33,9 @@ void init_sntp() {
      */
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
 
-    // FIXME Use core name?
-    sntp_setservername(0, "pool.ntp.org");
+    sntp_setservername(0, SERVER_ADDRESS);
 
-    /* Sync notification callback */
+    /* Sync notification callback */ // TODO Sync time periodically
     sntp_set_time_sync_notification_cb(time_sync_notification_cb);
 
     /* SNTP time update mode:
@@ -41,18 +50,5 @@ void init_sntp() {
     /* Initializing module. Sends out request instantly or after SNTP_STARTUP_DELAY(_FUNC). */
     sntp_init();
 
-    ESP_LOGI(TAG, "...STP module initialized.");
-}
-
-void obtain_time() {
-    time_t now = 0; // wait for time to be set
-    struct tm timeinfo = { 0 };
-    short retry = 0;
-    const short retry_count = 10;
-    while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
-        ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-    }
-    time(&now);
-    localtime_r(&now, &timeinfo);
+    ESP_LOGI(TAG, "SNTP module initialized.");
 }

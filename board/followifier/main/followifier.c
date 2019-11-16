@@ -19,6 +19,7 @@
 #include "components/nvs.h"
 #include "components/sync.h"
 #include "util/misc.h"
+#include "util/conf.h"
 
 /**
  * Board event handler.
@@ -40,18 +41,10 @@ esp_err_t board_event_handler(void *ctx, system_event_t *event) {
 
             // Printing it
             ESP_LOGI(TAG, "Got IP: %s\n", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
-            hasGotIp = true;
 
-            // Obtain time
-            char strftime_buf[64];
-            time_t now = 0; // wait for time to be set
-            struct tm timeinfo = { 0 };
-            obtain_time();
-            while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
-            time(&now);
-            localtime_r(&now, &timeinfo);
-            strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-            ESP_LOGI(TAG, "The current date/time is: %s", strftime_buf);
+            // Waiting current date/time
+            ESP_LOGI(TAG, "Waiting to receive current date/time...");
+            // TODO Wait only for the first time
 
             // Board is ready to flush messages to the core server
             flush();
@@ -60,14 +53,11 @@ esp_err_t board_event_handler(void *ctx, system_event_t *event) {
 
         case SYSTEM_EVENT_STA_DISCONNECTED: // Board got disconnected from AP
 
-            hasGotIp = false;
             ESP_LOGI(TAG, "Board got disconnected from the \"%s\" Wi-Fi network.", WIFI_SSID);
             break;
 
-        case SYSTEM_EVENT_STA_STOP: // Board stops
-
-            hasGotIp = false;
-            break;
+        // case SYSTEM_EVENT_STA_STOP: // Board stops
+            // break;
 
         default:
             break;
@@ -80,9 +70,6 @@ esp_err_t board_event_handler(void *ctx, system_event_t *event) {
  * Initializing board components
  */
 void init_all() {
-
-    // Event loop handler
-    ESP_ERROR_CHECK(esp_event_loop_init(board_event_handler, NULL)); // FIXME deprecated
 
     // Initialize the flusher
     init_flusher();
@@ -105,9 +92,12 @@ void init_all() {
  */
 void app_main(void) {
 
+    // Event loop handler
+    ESP_ERROR_CHECK(esp_event_loop_init(board_event_handler, NULL)); // FIXME deprecated
+
     // Initialize board
     init_all();
 
-    // Start capturing packets
-    ESP_ERROR_CHECK(start_sniffer());
+    // Turn the Wi-Fi on
+    ESP_ERROR_CHECK(start_wifi());
 }

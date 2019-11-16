@@ -10,9 +10,4 @@
  */
 void init_sntp();
 
-/**
- * Obtains time from SNTP server.
- */
-void obtain_time();
-
 #endif //BOARD_SNTP_H

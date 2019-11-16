@@ -10,6 +10,7 @@
 #include "gen/message.pb-c.h"
 #include "flusher.h"
 #include "util/misc.h"
+#include "util/conf.h"
 #include "wifi.h"
 
 // Buffer
