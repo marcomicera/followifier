@@ -52,16 +52,6 @@ execute_process(COMMAND ${Protobuf_PROTOC_EXECUTABLE} ${PROTO_PYTHON_ARGS}
 message(STATUS "...done. ${output}")
 file(GLOB PROTOBUF_MODELS_INCLUDES "gen/message.pb.cc")
 
-# Allowing inbound and outbound TCP connections on the specified port
-execute_process(COMMAND jq .port config.json
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        OUTPUT_VARIABLE PORT)
-string(REGEX REPLACE "\n$" "" PORT "${PORT}")
-message(STATUS "Asking password to allow TCP inbound and outbound connections on port ${PORT} on this machine...")
-execute_process(COMMAND sudo iptables -A INPUT -p tcp --dport ${PORT} -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT)
-execute_process(COMMAND sudo iptables -A OUTPUT -p tcp --sport ${PORT} -m conntrack --ctstate ESTABLISHED -j ACCEPT)
-message(STATUS "...done. ${output}")
-
 # Building executable
 add_executable(${PROJECT_NAME} src/receiver.cpp src/receiver.h ${PROTOBUF_MODELS_INCLUDES}
         src/main.cpp
