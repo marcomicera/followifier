@@ -48,7 +48,10 @@ esp_err_t board_event_handler(void *ctx, system_event_t *event) {
                 // Send a request to the SNTP server
                 send_sntp_request();
 
-                // TODO Wait until time is set
+                // Wait until time is set
+                while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED) {
+                    vTaskDelay(2000 / portTICK_PERIOD_MS);
+                }
             }
 
             // Board is ready to flush messages to the core server
