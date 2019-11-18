@@ -17,7 +17,8 @@ void hash(const wifi_promiscuous_pkt_t *packet, unsigned char* result) {
     mbedtls_md_init(&ctx);
     mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 0);
     mbedtls_md_starts(&ctx);
-    mbedtls_md_update(&ctx, (const unsigned char *) packet->payload, payloadLength);
+    // Hashing without including CRC TODO Check whether this is right or not
+    mbedtls_md_update(&ctx, (const unsigned char *) packet->payload, payloadLength - 4);
     mbedtls_md_finish(&ctx, result);
     mbedtls_md_free(&ctx);
 }

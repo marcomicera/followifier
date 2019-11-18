@@ -22,7 +22,7 @@ using boost::uuids::detail::md5;
  *          (e.g., debugging, no synchronization between boards, etc.).
  *          This flag will cause a StackOverflow after a while.
  */
-#define ROUNDLESS_MODE 0
+#define ROUNDLESS_MODE 1
 
 typedef std::unordered_multimap<
         std::string, // frame hash

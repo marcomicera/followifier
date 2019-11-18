@@ -136,6 +136,51 @@ int sniffer_is_probe(unsigned short fctl) {
     return ((fctl & SUBTYPE_MASK) == PROBE_REQUEST);
 }
 
+void hexDump(char *desc, void *addr, int len) {
+    int i;
+    unsigned char buff[17];
+    unsigned char *pc = (unsigned char *) addr;
+
+    // Output description if given.
+    if (desc != NULL)
+        printf("%s:\n", desc);
+
+    // Process every byte in the data.
+    for (i = 0; i < len; i++) {
+        // Multiple of 16 means new line (with line offset).
+
+        if ((i % 16) == 0) {
+            // Just don't print ASCII for the zeroth line.
+            if (i != 0)
+                printf("  %s\n", buff);
+
+            // Output the offset.
+            printf("  %04x ", i);
+        }
+
+        // Now the hex code for the specific character.
+        printf(" %02x", pc[i]);
+
+        // And store a printable ASCII character for later.
+        if ((pc[i] < 0x20) || (pc[i] > 0x7e)) {
+            buff[i % 16] = '.';
+        } else {
+            buff[i % 16] = pc[i];
+        }
+
+        buff[(i % 16) + 1] = '\0';
+    }
+
+    // Pad out last line if not exactly 16 characters.
+    while ((i % 16) != 0) {
+        printf("   ");
+        i++;
+    }
+
+    // And print the final ASCII bit.
+    printf("  %s\n\n", buff);
+}
+
 /**
  * Handling PROBE_REQUEST Wi-Fi management packets.
  *
@@ -164,13 +209,17 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         hash(ppkt, hash_value);
         hash_value[32] = '\0';
 
-        ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d | RSSI=%02d\n"
+        time_t now = 0; // wait for time to be set
+        struct tm timeinfo = {0};
+        time(&now);
+        localtime_r(&now, &timeinfo);
+
+        ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d\n"
                               "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x | BSSID=%02x:%02x:%02x:%02x:%02x:%02x\n"
                               "HASH=%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n"
-                              "TIMESTAMP=%10d | RSSI=%d\n",
+                              "TIMESTAMP=%lu | RSSI=%d",
                  packet_subtype2str((wifi_ieee80211_mac_hdr_t *) hdr),
                  ppkt->rx_ctrl.channel,
-                 ppkt->rx_ctrl.rssi,
                  hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], // Source MAC address
                  hdr->addr2[3], hdr->addr2[4], hdr->addr2[5],
                  hdr->addr3[0], hdr->addr3[1], hdr->addr3[2], // BSSID
@@ -186,9 +235,10 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
                  hash_value[24], hash_value[25], hash_value[26],
                  hash_value[27], hash_value[28], hash_value[29],
                  hash_value[30], hash_value[31],
-                 ppkt->rx_ctrl.timestamp,
+                 now,
                  ppkt->rx_ctrl.rssi
         );
+        hexDump(NULL, ppkt->payload, ppkt->rx_ctrl.sig_len);
         Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
         Followifier__ESP32Metadata metadata = FOLLOWIFIER__ESP32_METADATA__INIT;
 
@@ -200,14 +250,14 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         message.frame_hash.len = sizeof(hash_value);
         message.frame_hash.data = (uint8_t *) malloc(sizeof(hash_value));
         for (unsigned long i = 0; i < sizeof(hash_value); ++i) {
-            message.frame_hash.data[i] = (uint8_t)hash_value[i];
+            message.frame_hash.data[i] = (uint8_t) hash_value[i];
         }
         metadata.apmac = malloc(sizeof(apMacString));
         sprintf(metadata.apmac, "%s", apMacString);
         metadata.rsi = ppkt->rx_ctrl.rssi;
         metadata.ssid = malloc(sizeof(WIFI_SSID));
         sprintf(metadata.ssid, "%s", WIFI_SSID);
-        metadata.timestamp = ppkt->rx_ctrl.timestamp;
+        metadata.timestamp = now;
 
         message.metadata = malloc(sizeof(metadata));
         memcpy(message.metadata, &metadata, sizeof(metadata));

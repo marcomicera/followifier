@@ -55,7 +55,7 @@ void send_sntp_request() {
 
 bool time_has_been_set() {
     time_t now;
-    struct tm timeinfo;
+    struct tm timeinfo = {0};
     time(&now);
     localtime_r(&now, &timeinfo);
     if (timeinfo.tm_year < (2018 - 1900)) { // Is time set? If not, tm_year will be (1970 - 1900).
