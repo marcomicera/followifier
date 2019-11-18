@@ -42,9 +42,14 @@ esp_err_t board_event_handler(void *ctx, system_event_t *event) {
             // Printing it
             ESP_LOGI(TAG, "Got IP: %s\n", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
 
-            // Waiting current date/time
-            ESP_LOGI(TAG, "Waiting to receive current date/time...");
-            // TODO Wait only for the first time
+            // If time has not been set already
+            if (!time_has_been_set()) {
+
+                // Send a request to the SNTP server
+                send_sntp_request();
+
+                // TODO Wait until time is set
+            }
 
             // Board is ready to flush messages to the core server
             flush();

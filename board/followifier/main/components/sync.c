@@ -17,11 +17,6 @@ void time_sync_notification_cb(struct timeval *tv) {
     localtime_r(&now, &timeinfo);
     strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
     ESP_LOGI(TAG, "The current date/time is: %s", strftime_buf);
-    // TODO Notify the main thread if executed for the first time
-
-    // Sending another request
-    sntp_set_sync_status(SNTP_SYNC_STATUS_RESET); // reset the completion status
-    sntp_init();
 }
 
 void init_sntp() {
@@ -47,8 +42,26 @@ void init_sntp() {
      */
     sntp_set_sync_mode(SNTP_SYNC_MODE_IMMED);
 
-    /* Initializing module. Sends out request instantly or after SNTP_STARTUP_DELAY(_FUNC). */
-    sntp_init();
-
     ESP_LOGI(TAG, "SNTP module initialized.");
+}
+
+void send_sntp_request() {
+
+    /* Initializing module.
+     * Sends out request instantly or after SNTP_STARTUP_DELAY(_FUNC).
+     */
+    sntp_init();
+}
+
+bool time_has_been_set() {
+    time_t now;
+    struct tm timeinfo;
+    time(&now);
+    localtime_r(&now, &timeinfo);
+    if (timeinfo.tm_year < (2018 - 1900)) { // Is time set? If not, tm_year will be (1970 - 1900).
+        ESP_LOGI(TAG, "Time is not set yet.");
+        return false;
+    }
+
+    return true;
 }
