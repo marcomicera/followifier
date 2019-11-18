@@ -11,10 +11,6 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
     ```bash
    $ sudo service mongod start 
    ```
-1. Install jq command if you don't have it.
-    ```bash
-    $ sudo apt-get install jq
-    ```
 1. Create a configuration file `config.json` having the following format:
     ```json
     {

@@ -8,15 +8,10 @@
 #include "sniffer.h"
 
 /**
- * Server info
- */
-#define SERVER_ADDRESS "192.168.13.153"  // FIXME
-#define SERVER_PORT 12345  // FIXME
-
-/**
  * How many messages should the sniffer store before sending those to
  * the core server.
  */
+// FIXME Implement timer + messages threshold flushing conditions (#43)
 #define FLUSH_THRESHOLD 3 // number of messages to be saved before flushing
 
 /**

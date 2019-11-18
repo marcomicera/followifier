@@ -4,6 +4,7 @@
 
 #include <tcpip_adapter.h>
 #include <esp_wifi.h>
+#include "util/conf.h"
 #include "wifi.h"
 
 bool hasGotIp = false;
@@ -13,7 +14,6 @@ bool hasGotIp = false;
  */
 void init_wifi(void) {
 
-    hasGotIp = false;
     tcpip_adapter_init();
 
     wifi_init_config_t wifi_init_config = WIFI_INIT_CONFIG_DEFAULT();

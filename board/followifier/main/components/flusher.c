@@ -10,6 +10,7 @@
 #include "gen/message.pb-c.h"
 #include "flusher.h"
 #include "util/misc.h"
+#include "util/conf.h"
 #include "wifi.h"
 
 // Buffer
@@ -40,7 +41,7 @@ void flushAsNewTask();
 void store_message(Followifier__ESP32Message *data) {
 
     // Storing the message into the buffer
-    messages = realloc(messages, sizeof(Followifier__ESP32Message *)*(items+1));
+    messages = realloc(messages, sizeof(Followifier__ESP32Message *) * (items + 1));
     messages[items] = malloc(sizeof(Followifier__ESP32Message));
     memcpy(messages[items], data, sizeof(Followifier__ESP32Message));
     ++items;
@@ -66,11 +67,11 @@ void prepare_to_flush(bool stop) {
     batch.n_messages = items;
 
     // Printing info
-    ESP_LOGI(TAG, "Time to flush the message buffer. Sending %d messages...", items);
+    ESP_LOGI(TAG, "Sending %d messages...", items);
     batch_length = followifier__batch__get_packed_size(&batch);
     buffer = malloc(batch_length + sizeof("\n\r\n\r"));
     followifier__batch__pack(&batch, buffer);
-    memcpy(buffer+batch_length, "\n\r\n\r", sizeof("\n\r\n\r"));
+    memcpy(buffer + batch_length, "\n\r\n\r", sizeof("\n\r\n\r"));
     ESP_LOGI(TAG, "Board's source MAC: %s", batch.boardmac);
     free(batch.boardmac);
 
@@ -85,56 +86,61 @@ void prepare_to_flush(bool stop) {
 
 void flush(void) {
 
-    // Server info
-    int tcp_socket;
-    struct sockaddr_in server_address;
-    char addr_str[128];
-    int ip_protocol = IPPROTO_IP; // `IPPROTO_IPV6` for IPv6
-    int addr_family = AF_INET; // `AF_INET6` for IPv6
-    server_address.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(SERVER_PORT);
-    inet_ntoa_r(server_address.sin_addr, addr_str, sizeof(addr_str) - 1);
+    // Flush only when there at least one message to send
+    if (items > 0) {
 
-    // Creating the socket
-    ESP_ERROR_CHECK_JUMP_LABEL((tcp_socket = socket(addr_family, SOCK_STREAM, ip_protocol)) >= 0,
-                               "socket() error: discarding local packets, re-enabling sniffing mode...",
-                               reactivate_sniffer);
-    ESP_LOGI(TAG, "Socket created, connecting to %s:%d...", SERVER_ADDRESS, SERVER_PORT);
+        // Server info
+        int tcp_socket;
+        struct sockaddr_in server_address;
+        char addr_str[128];
+        int ip_protocol = IPPROTO_IP; // `IPPROTO_IPV6` for IPv6
+        int addr_family = AF_INET; // `AF_INET6` for IPv6
+        server_address.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
+        server_address.sin_family = AF_INET;
+        server_address.sin_port = htons(SERVER_PORT);
+        inet_ntoa_r(server_address.sin_addr, addr_str, sizeof(addr_str) - 1);
 
-    // Creating connection to the server
-    ESP_ERROR_CHECK_JUMP_LABEL(!connect(tcp_socket, (struct sockaddr *) &server_address, sizeof(server_address)),
-                               "Error while connecting to the server: discarding local packets, re-enabling sniffing mode...",
-                               closing_socket);
+        // Creating the socket
+        ESP_ERROR_CHECK_JUMP_LABEL((tcp_socket = socket(addr_family, SOCK_STREAM, ip_protocol)) >= 0,
+                                   "socket() error: discarding local packets, re-enabling sniffing mode...",
+                                   reactivate_sniffer);
+        ESP_LOGI(TAG, "Socket created, connecting to %s:%d...", SERVER_ADDRESS, SERVER_PORT);
 
-    // Flushing the message buffer
-    ESP_LOGI(TAG, "Sending batch");
-    ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length + sizeof("\n\r\n\r"), 0) >= 0,
-                               "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
-                               closing_socket);
-    ESP_LOGI(TAG, "Sending delimiter...");
-    // Skipping until here in case connection towards the server was unsuccessful
-    closing_socket:
+        // Creating connection to the server
+        ESP_ERROR_CHECK_JUMP_LABEL(!connect(tcp_socket, (struct sockaddr *) &server_address, sizeof(server_address)),
+                                   "Error while connecting to the server: discarding local packets, re-enabling sniffing mode...",
+                                   closing_socket);
 
-    // Closing socket
-    ESP_LOGI(TAG, "Shutting down socket towards %s:%d...", SERVER_ADDRESS, SERVER_PORT);
-    shutdown(tcp_socket, SHUT_RDWR);
-    close(tcp_socket);
-    ESP_LOGI(TAG, "...socket towards %s:%d closed.", SERVER_ADDRESS, SERVER_PORT);
+        // Flushing the message buffer
+        ESP_LOGI(TAG, "Sending batch");
+        ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length + sizeof("\n\r\n\r"), 0) >= 0,
+                                   "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
+                                   closing_socket);
+        ESP_LOGI(TAG, "Sending delimiter...");
 
-    // Skipping until here in case of error while creating a socket towards the server
-    reactivate_sniffer:
+        // Skipping until here in case connection towards the server was unsuccessful
+        closing_socket:
 
-    // Deleting local buffer elements
-    free(buffer);
-    for(int i=0; i<items; i++){
-        free(messages[i]->frame_hash.data);
-        free(messages[i]->metadata->apmac);
-        free(messages[i]->metadata->ssid);
-        free(messages[i]->metadata);
-        free(messages[i]);
+        // Closing socket
+        ESP_LOGI(TAG, "Shutting down socket towards %s:%d...", SERVER_ADDRESS, SERVER_PORT);
+        shutdown(tcp_socket, SHUT_RDWR);
+        close(tcp_socket);
+        ESP_LOGI(TAG, "...socket towards %s:%d closed.", SERVER_ADDRESS, SERVER_PORT);
+
+        // Skipping until here in case of error while creating a socket towards the server
+        reactivate_sniffer:
+
+        // Deleting local buffer elements
+        free(buffer);
+        for (int i = 0; i < items; i++) {
+            free(messages[i]->frame_hash.data);
+            free(messages[i]->metadata->apmac);
+            free(messages[i]->metadata->ssid);
+            free(messages[i]->metadata);
+            free(messages[i]);
+        }
+        items = 0;
     }
-    items = 0;
 
     // Turning the Wi-Fi off
     ESP_ERROR_CHECK(stop_wifi());
