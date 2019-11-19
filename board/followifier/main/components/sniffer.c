@@ -178,7 +178,7 @@ void hexDump(char *desc, void *addr, int len) {
     }
 
     // And print the final ASCII bit.
-    printf("  %s\n\n", buff);
+    printf("  %s\n", buff);
 }
 
 /**
@@ -238,7 +238,8 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
                  now,
                  ppkt->rx_ctrl.rssi
         );
-        hexDump(NULL, ppkt->payload, ppkt->rx_ctrl.sig_len);
+        // hexDump(NULL, ppkt->payload, ppkt->rx_ctrl.sig_len);
+        printf("\n");
         Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
         Followifier__ESP32Metadata metadata = FOLLOWIFIER__ESP32_METADATA__INIT;
 
