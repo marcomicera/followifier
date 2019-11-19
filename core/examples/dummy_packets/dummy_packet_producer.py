@@ -51,13 +51,17 @@ def gen_dummy_batch_base(batch_size):
     return batch
 
 
-def gen_dummy_batch(batch, mac, common_hashes):
+def gen_dummy_batch(batch, mac, common_hashes, a):
     used_common_hashes = 0
     batch.boardMac = mac
     for message in batch.messages:
 
         # Setting a random RSSI
-        message.metadata.rsi = -24
+        if a:
+            message.metadata.rsi = -62;
+        else:
+            message.metadata.rsi = -51;
+        
 
         # Introduce a common frame hash as long as there are some available
         if len(common_hashes) > used_common_hashes:
@@ -74,7 +78,7 @@ def fill_message(message):
     message.metadata.ssid = gen_random_ssid()
     message.metadata.timestamp = gen_random_timestamp()
     # message.frame_hash = gen_random_hash()
-    message.metadata.rsi = -24;
+      
 
 
 def main():
@@ -104,15 +108,17 @@ def main():
         print("\nNew round, " + str(num_common_hashes) + " messages will be stored in the database.")
 
         # Simulating multiple boards
+        check = True
         for board_mac_address in args.boards_mac:
             try:
-                batch = gen_dummy_batch(batch_base, board_mac_address, common_hashes).SerializeToString()
+                batch = gen_dummy_batch(batch_base, board_mac_address, common_hashes, check).SerializeToString()
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.connect((args.ip, args.port))
                 s.send(batch)
                 s.send(b'\n\r\n\r')
                 print("Board " + board_mac_address + " has sent a batch.")
                 s.close()
+                check = not check
             except ConnectionRefusedError:
                 print("Server not available.")
 

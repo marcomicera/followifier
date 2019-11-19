@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include "../gen/message.pb.h"
 #include "receiver.h"
-#define ONE_METER_RSSI -67
+#define ONE_METER_RSSI -65
 
 class statistics {
 public:
