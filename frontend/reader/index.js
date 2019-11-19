@@ -30,8 +30,27 @@ const client = new MongoClient(url);
 // Use connect method to connect to the Server
 
 
-app.route('/api/boards').get((req, res) => {
+app.route('/api/device/number').get((req, res) => {
   var resultArray = [];
+  client.connect(function (err) {
+    assert.equal(null, err);
+
+    let date = Date.now()/1000;
+    date = parseInt(date);
+    const db = client.db(dbName);
+    var coll = db.collection("messages");
+    coll.distinct('mac', {timestamp:{$gt:date-5*60}},function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+
+        res.send(JSON.stringify(result.length));
+      }
+    })
+  });
+})
+
+app.route('/api/boards').get((req, res) => {
   client.connect(function(err) {
     assert.equal(null, err);
     console.log("Connected successfully to server db");

@@ -10,7 +10,7 @@ import {ApiService} from '../../service/api/api.service';
 })
 export class StatsComponent implements OnInit {
   // Radar
-  public variable;
+  number: string;
 
   constructor(private apiService: ApiService) {
 
@@ -18,7 +18,7 @@ export class StatsComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('LOG: OnInit');
-    this.apiService.getProva().subscribe(data => this.variable = data);
+    this.apiService.getDevicesNumber().subscribe(data => this.number = data);
   }
 
 }

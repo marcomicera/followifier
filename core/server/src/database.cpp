@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "database.h"
 #include <iostream>
+#include <ctime>
+
 database::database(){
     mongoc_init ();
     client = mongoc_client_new ("mongodb://localhost:27017/?appname=insert-example");
@@ -17,10 +19,13 @@ void database::insert_message(followifier::ESP32Message message, Point position)
     bson_t *doc;
     bson_error_t error;
     doc = bson_new ();
+    // current date/time based on current system
+    time_t now = time(0);
 
+    // convert now to string form
     BSON_APPEND_UTF8 (doc, "hash",message.frame_hash().c_str());
     BSON_APPEND_UTF8 (doc, "mac",message.metadata().devicemac().c_str());
-    BSON_APPEND_INT64 (doc, "timestamp",message.metadata().timestamp());
+    BSON_APPEND_DOUBLE(doc, "timestamp",now);
     BSON_APPEND_DOUBLE(doc, "x", position.getX());
     BSON_APPEND_DOUBLE(doc, "y", position.getY());
 
