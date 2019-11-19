@@ -9,7 +9,6 @@ Point statistics::getPosition(std::string hash, std::unordered_map< std::string,
             //calculate interception points
             double r1 = statistics::estimatedDistance(i->second.rsi());
             double r2 = statistics::estimatedDistance(j->second.rsi());
-
             //d = sqrt((x1-x2)^2 + (y1-y2)^2)
             double d = std::sqrt(
                     std::pow(Settings::configuration.boards.find(i->first)->second.getCoordinates().getX() -
@@ -45,11 +44,10 @@ Point statistics::getPosition(std::string hash, std::unordered_map< std::string,
                               Settings::configuration.boards.find(i->first)->second.getCoordinates().getX())) / d +
                         Settings::configuration.boards.find(i->first)->second.getCoordinates().getY();
 
-            std::cout << d << " " << l << " " << h << std::endl;
-            if (checkPoint(x1, y1, messageBoardsAndMetadata) && Point(x1,y1).isValid()) {
+            if (x1 >=0 && y1 >=0 && checkPoint(x1, y1, messageBoardsAndMetadata) && Point(x1,y1).isValid()) {
                 listPossiblePoints.insert(Point(std::round(x1), std::round(y1)));
             }
-            if (checkPoint(x2, y2, messageBoardsAndMetadata) && Point(x2,y2).isValid()) {
+            if (x2 >=0 && y2 >=0 && checkPoint(x2, y2, messageBoardsAndMetadata) && Point(x2,y2).isValid()) {
                 listPossiblePoints.insert(Point(std::round(x2), std::round(y2)));
             }
         }
@@ -75,13 +73,10 @@ double statistics::estimatedDistance(double rssi){
 
 bool statistics::checkPoint(double x, double y,
                             std::unordered_map<std::string, followifier::ESP32Metadata> &boardsMedatada) {
-    std::cout << "X: " << x << " Y:" << y << std::endl;
     for (auto & board : Settings::configuration.boards) {
-        if ((std::pow(x - board.second.getCoordinates().getX(), 2) + std::pow(y - board.second.getCoordinates().getY(), 2) -
-             std::pow(statistics::estimatedDistance(boardsMedatada.find(board.first)->second.rsi()), 2)) > 0)
+        if (std::sqrt(std::pow(x - board.second.getCoordinates().getX(), 2) + std::pow(y - board.second.getCoordinates().getY(), 2)) -
+             std::pow(statistics::estimatedDistance(boardsMedatada.find(board.first)->second.rsi()), 2) > 0)
             return false;
-        std::cout << "OK" << std::endl;
     }
-    std::cout << "YAY" << std::endl;
     return true;
 }
