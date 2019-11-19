@@ -54,9 +54,9 @@ double statistics::estimatedDistance(double rssi){
 
 bool statistics::checkPoint(double x, double y,
                             std::unordered_map<std::string, followifier::ESP32Metadata> &boardsMedatada) {
-    for (auto i = Settings::configuration.boards.begin(); i != Settings::configuration.boards.end(); i++) {
-        if ((std::pow(x - i->second.getCoordinates().getX(), 2) + std::pow(y - i->second.getCoordinates().getY(), 2) -
-             std::pow(statistics::estimatedDistance(boardsMedatada.find(i->first)->second.rsi()), 2)) > 0)
+    for (auto & board : Settings::configuration.boards) {
+        if ((std::pow(x - board.second.getCoordinates().getX(), 2) + std::pow(y - board.second.getCoordinates().getY(), 2) -
+             std::pow(statistics::estimatedDistance(boardsMedatada.find(board.first)->second.rsi()), 2)) > 0)
             return false;
     }
     return true;
