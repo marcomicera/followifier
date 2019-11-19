@@ -49,8 +49,7 @@ Point statistics::getPosition(std::string hash, std::unordered_map< std::string,
 }
 
 double statistics::estimatedDistance(double rssi){
-    //RSSI = -A - B log(d)
-    return std::exp((rssi-A)/B);
+    return std::pow(10, (ONE_METER_RSSI - rssi)/10*2);
 }
 
 bool statistics::checkPoint(double x, double y,
