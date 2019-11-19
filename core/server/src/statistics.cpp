@@ -1,5 +1,6 @@
 #include "statistics.h"
 #include "settings.h"
+#include <iostream>
 
 Point statistics::getPosition(std::string hash, std::unordered_map< std::string, followifier::ESP32Metadata> &messageBoardsAndMetadata) {
     std::unordered_set<Point, Point::PointHasher> listPossiblePoints;
@@ -49,7 +50,10 @@ Point statistics::getPosition(std::string hash, std::unordered_map< std::string,
 }
 
 double statistics::estimatedDistance(double rssi){
-    return std::pow(10, (ONE_METER_RSSI - rssi)/10*2);
+    double distance = std::pow(10, (ONE_METER_RSSI - rssi)/(10*2));
+    distance *= 1.1; // FIXME Make tolerance a variable
+    std::cout << "Estimated distance: " << distance << std::endl; // TODO glog
+    return distance * 100;
 }
 
 bool statistics::checkPoint(double x, double y,
