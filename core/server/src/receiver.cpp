@@ -95,7 +95,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             }
             /* Storing it into the database */
             cout << "Message " << prettyHash(newMessage.frame_hash()) << " has been sent by all boards from position "
-                 << position.getX() << "," << position.getY() << endl;
+                 << position.getX() << ", " << position.getY() << endl;
             /* Compute position */
             // FIXME The following should store all these statistics
             database.insert_message(newMessage, position); // TODO check object internal representation in MongoDB
