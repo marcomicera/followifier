@@ -19,7 +19,6 @@ export class StatsComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('LOG: OnInit');
-    this.apiService.getDevicesNumber().subscribe(data => this.number = data)
     this.apiService.getDevices().subscribe(data => data);
   }
 

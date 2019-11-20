@@ -21,7 +21,7 @@ export class ApiService {
   getDevicesNumber(): Observable<string> {
     return this.http.get<string>('http://localhost:8000/api/device/number');
   }
-  getDevices(): Observable<string> {
-    return this.http.get<string>('http://localhost:8000/api/devices');
+  getDevices(): Observable<Board[]> {
+    return this.http.get<Board[]>('http://localhost:8000/api/devices');
   }
 }

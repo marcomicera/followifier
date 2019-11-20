@@ -5,8 +5,11 @@
              [options]="scatterChartOptions"
              [chartType]="scatterChartType">
 </canvas>
+  <h2>numero dispositivi negli ultimi 5 minuti</h2>
+  <li> {{this.numberDevice}}</li>
 </div>
 <nav>
   <a routerLink="/chart" routerLinkActive="active">chart</a>
 </nav>
+
 <router-outlet></router-outlet>

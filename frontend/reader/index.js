@@ -56,7 +56,7 @@ app.route('/api/device/number').get((req, res) => {
     date = parseInt(date);
     const db = client.db(dbName);
     var coll = db.collection("messages");
-    coll.distinct('mac', {timestamp:{$gt:date-5*60}},function(err, result) {
+    coll.distinct('mac', {timestamp:{$gt:date-60}},function(err, result) {
       if (err) {
         res.send(err);
       } else {
@@ -76,7 +76,7 @@ app.route('/api/devices').get((req, res) => {
     const db = client.db(dbName);
     var coll = db.collection("messages");
     coll.aggregate([
-                    {$match:{timestamp:{$gt:date-5*60}}},
+                    {$match:{timestamp:{$gt:date-60}}},
                     {$group:{_id:"$mac",   x: {$addToSet: '$x'}, y: {$addToSet: '$y'}}},
                     {$sort: {total: -1}},
                     ]).toArray(function (err, result) {

@@ -2,6 +2,7 @@ import {Component, ElementRef, HostBinding, OnDestroy, OnInit, ViewChild} from '
 import {Chart, ChartDataSets, ChartOptions, ChartPoint, ChartScales, ChartTitleOptions, ChartType} from 'chart.js';
 import {ActivatedRoute} from '@angular/router';
 import {ApiService, Board} from '../../service/api/api.service';
+import {Observable, interval, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-chart',
@@ -11,6 +12,8 @@ import {ApiService, Board} from '../../service/api/api.service';
 export class ChartComponent implements OnInit {
   // Radar
   title: ChartScales;
+  numberDevice: number;
+  private updateSubscription: Subscription;
   public scatterChartOptions: ChartOptions = {
     responsive: true,
   };
@@ -21,9 +24,17 @@ export class ChartComponent implements OnInit {
     pointBackgroundColor: 'blue',
     backgroundColor: 'blue',
     hoverBackgroundColor: 'blue',
-    data: [{x: 3, y: 0}],
+    data: [{}],
+  },
+    {
+      label: 'Devices',
+      pointRadius: 10,
+      pointBackgroundColor: 'red',
+      backgroundColor: 'red',
+      hoverBackgroundColor: 'red',
+      data: [{}]
 
-  }]
+    }];
   public scatterChartType: ChartType = 'scatter';
 
 
@@ -31,16 +42,27 @@ export class ChartComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('LOG: OnInit');
-    this.apiService.getDevicesNumber().subscribe(data => {
-      console.log('Numero di messagi' + data);
-    });
-    this.apiService.getBoards().subscribe(data => {
+    this.updateSubscription = interval(10000).subscribe((val) => {
+      console.log('LOG: OnInit');
+      this.apiService.getDevicesNumber().subscribe(data => {
+          this.numberDevice = +data;
+        }
+      );
+      this.apiService.getBoards().subscribe(data => {
+        (this.scatterChartData[0].data as ChartPoint[]) = [];
+        data.forEach(d => {
+          console.log('board: x:' + d.x + ' y ' + d.y + ' t ' + d.mac);
+          (this.scatterChartData[0].data as ChartPoint[]).push({x: d.x, y: d.y});
 
-      data.forEach(d => {
-        console.log('board: x:' + d.x + ' y ' + d.y + ' t ' + d.mac);
-        (this.scatterChartData[1].data as ChartPoint[]).push({x: d.x, y: d.y});
+        });
+      });
+      this.apiService.getDevices().subscribe(data => {
+        (this.scatterChartData[1].data as ChartPoint[]) = [];
+        data.forEach(d => {
+          console.log('devices: x:' + d.x + ' y ' + d.y + ' t ' + d.mac);
+          (this.scatterChartData[1].data as ChartPoint[]).push({x: d.x, y: d.y});
 
+        });
       });
     });
   }
