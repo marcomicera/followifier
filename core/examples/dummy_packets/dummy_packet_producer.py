@@ -4,6 +4,7 @@ import socket
 import string
 import sys
 import time
+from datetime import datetime
 
 sys.path.insert(1, '../../server/gen')
 import message_pb2
@@ -21,16 +22,18 @@ def gen_random_ssid():
     return ''.join(random.choices(population=string.ascii_uppercase, k=8))
 
 
-def gen_random_timestamp():
-    return random.randrange(sys.maxsize)
-
-
 def gen_random_hash():
     return ''.join(random.choices(population=hexdigits, k=64)).encode('utf-8')
 
 
 def gen_random_rsi():
-    return random.randrange(-90, 0)
+    return random.randint(-90, 0)
+
+def gen_random_timestamp(rate):
+    now = datetime.now()
+    timestamp = datetime.timestamp(now) - random.randint(0, rate)
+    return (round(timestamp))
+
 
 
 def timer(func):
@@ -44,10 +47,10 @@ def timer(func):
     return wrapper
 
 
-def gen_dummy_batch_base(batch_size):
+def gen_dummy_batch_base(batch_size, rate):
     batch = message_pb2.Batch()
     for _ in range(batch_size):
-        fill_message(batch.messages.add())
+        fill_message(batch.messages.add(), rate)
     return batch
 
 
@@ -73,16 +76,15 @@ def gen_dummy_batch(batch, mac, common_hashes, a):
     return batch
 
 
-def fill_message(message):
+def fill_message(message, rate):
     message.metadata.apMac = gen_random_mac()
     message.metadata.ssid = gen_random_ssid()
-    message.metadata.timestamp = gen_random_timestamp()
+    message.metadata.timestamp = gen_random_timestamp(rate)
     # message.frame_hash = gen_random_hash()
       
 
 
 def main():
-
     # Parsing arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('ip', action='store', help="server IP")
@@ -98,7 +100,7 @@ def main():
     while True:
 
         # Generate a batch base message on which batches will be generated
-        batch_base = gen_dummy_batch_base(args.batch_size)
+        batch_base = gen_dummy_batch_base(args.batch_size, args.batch_rate)
 
         # Generating a random number of common frame hashes for this round
         num_common_hashes = random.randrange(args.batch_size)  # from 0 to `args.batch_size`

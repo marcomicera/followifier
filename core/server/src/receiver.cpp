@@ -129,3 +129,30 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
                  " boards have sent their batch.");
     }
 }
+
+void receiver::cleanBatch(){
+    struct timeval tp;
+    std::vector<std::string> messagesToDelete;
+
+    //get 5 minutes ago milliseconds
+    gettimeofday(&tp, NULL);
+    long int ms = (tp.tv_sec-5*60);
+
+
+    for(auto i : messagesBuffer){
+        if(i.second.begin()->second.timestamp() < ms){
+            //adds them to a vector to delete them later on
+            messagesToDelete.push_back(i.first);
+        }
+    }
+
+    //delete found messages
+    if(messagesToDelete.size()>0){
+        cout << "Deleting " << messagesToDelete.size() << " messages" << endl;
+        for(auto i : messagesToDelete){
+            messagesBuffer.erase(i);
+        }
+        cout << "Deleted old messages" << endl;
+    }
+    messagesToDelete.clear();
+}

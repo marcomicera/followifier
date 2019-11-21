@@ -47,6 +47,12 @@ public:
     static void addBatch(const followifier::Batch &newBatch, database &database);
 
     /**
+     * deletes old messages
+     *
+     */
+    static void cleanBatch();
+
+    /**
      * Logs a Proto message following its own format.
      *
      * @param message   message to be printed.
@@ -73,6 +79,8 @@ public:
             lastRoundBoardMacs.clear();
             messagesBuffer.clear();
         } else {
+            cleanBatch();
+            lastRoundBoardMacs.clear();
             std::cout << std::endl << std::endl;
         }
     }
