@@ -17,6 +17,19 @@ extern "C" {
 #define SNIFFER_DEFAULT_CHANNEL (1)
 
 /**
+ * When true, the board only prints out the RSSI of frames received by a specific device.
+ * It does not flush any data towards the core server.
+ * Used for debug purposes.
+ */
+#define DEBUG_ONE_DEVICE_TRACKING (0)
+
+/**
+ * MAC address of the device to be tracked in the "one device tracking" debug mode.
+ * Used only when `DEBUG_ONE_DEVICE_TRACKING` is true.
+ */
+#define DEBUG_TRACKED_DEVICE_MAC "01:23:45:67:89:ab"
+
+/**
  * Board flush rate in seconds.
  */
 #define FLUSH_RATE_IN_SECONDS (30)

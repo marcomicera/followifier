@@ -214,57 +214,73 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         time(&now);
         localtime_r(&now, &timeinfo);
 
-        ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d\n"
-                              "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x | BSSID=%02x:%02x:%02x:%02x:%02x:%02x\n"
-                              "HASH=%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n"
-                              "TIMESTAMP=%lu | RSSI=%d",
-                 packet_subtype2str((wifi_ieee80211_mac_hdr_t *) hdr),
-                 ppkt->rx_ctrl.channel,
-                 hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], // Source MAC address
-                 hdr->addr2[3], hdr->addr2[4], hdr->addr2[5],
-                 hdr->addr3[0], hdr->addr3[1], hdr->addr3[2], // BSSID
-                 hdr->addr3[3], hdr->addr3[4], hdr->addr3[5],
-                 hash_value[0], hash_value[1], hash_value[2], // frame hash
-                 hash_value[3], hash_value[4], hash_value[5],
-                 hash_value[6], hash_value[7], hash_value[8],
-                 hash_value[9], hash_value[10], hash_value[11],
-                 hash_value[12], hash_value[13], hash_value[14],
-                 hash_value[15], hash_value[16], hash_value[17],
-                 hash_value[18], hash_value[19], hash_value[20],
-                 hash_value[21], hash_value[22], hash_value[23],
-                 hash_value[24], hash_value[25], hash_value[26],
-                 hash_value[27], hash_value[28], hash_value[29],
-                 hash_value[30], hash_value[31],
-                 now,
-                 ppkt->rx_ctrl.rssi
-        );
-        // hexDump(NULL, ppkt->payload, ppkt->rx_ctrl.sig_len);
-        printf("\n");
-        Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
-        Followifier__ESP32Metadata metadata = FOLLOWIFIER__ESP32_METADATA__INIT;
+        /* "One device tracking" debugging mode */
+        if (DEBUG_ONE_DEVICE_TRACKING) {
+            char device_mac_address[48] = {'\0'};
+            sprintf(device_mac_address, "%02x:%02x:%02x:%02x:%02x:%02x",
+                     hdr->addr2[0], hdr->addr2[1], hdr->addr2[2],
+                     hdr->addr2[3], hdr->addr2[4], hdr->addr2[5]
+            );
+            if (strcmp(device_mac_address, DEBUG_TRACKED_DEVICE_MAC) == 0) {
+                ESP_LOGI(SNIFFER_TAG, "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x | RSSI=%d\n",
+                         hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], // Source MAC address
+                         hdr->addr2[3], hdr->addr2[4], hdr->addr2[5],
+                         ppkt->rx_ctrl.rssi
+                );
+            }
+        } else {
+            ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d\n"
+                                  "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x | BSSID=%02x:%02x:%02x:%02x:%02x:%02x\n"
+                                  "HASH=%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n"
+                                  "TIMESTAMP=%lu | RSSI=%d",
+                     packet_subtype2str((wifi_ieee80211_mac_hdr_t *) hdr),
+                     ppkt->rx_ctrl.channel,
+                     hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], // Source MAC address
+                     hdr->addr2[3], hdr->addr2[4], hdr->addr2[5],
+                     hdr->addr3[0], hdr->addr3[1], hdr->addr3[2], // BSSID
+                     hdr->addr3[3], hdr->addr3[4], hdr->addr3[5],
+                     hash_value[0], hash_value[1], hash_value[2], // frame hash
+                     hash_value[3], hash_value[4], hash_value[5],
+                     hash_value[6], hash_value[7], hash_value[8],
+                     hash_value[9], hash_value[10], hash_value[11],
+                     hash_value[12], hash_value[13], hash_value[14],
+                     hash_value[15], hash_value[16], hash_value[17],
+                     hash_value[18], hash_value[19], hash_value[20],
+                     hash_value[21], hash_value[22], hash_value[23],
+                     hash_value[24], hash_value[25], hash_value[26],
+                     hash_value[27], hash_value[28], hash_value[29],
+                     hash_value[30], hash_value[31],
+                     now,
+                     ppkt->rx_ctrl.rssi
+            );
+            // hexDump(NULL, ppkt->payload, ppkt->rx_ctrl.sig_len);
+            printf("\n");
+            Followifier__ESP32Message message = FOLLOWIFIER__ESP32_MESSAGE__INIT;
+            Followifier__ESP32Metadata metadata = FOLLOWIFIER__ESP32_METADATA__INIT;
 
-        // Forming the MAC source address string
-        char apMacString[18];
-        snprintf(apMacString, sizeof(apMacString), "%02x:%02x:%02x:%02x:%02x:%02x",
-                 hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], hdr->addr2[3], hdr->addr2[4], hdr->addr2[5]);
+            // Forming the MAC source address string
+            char apMacString[18];
+            snprintf(apMacString, sizeof(apMacString), "%02x:%02x:%02x:%02x:%02x:%02x",
+                     hdr->addr2[0], hdr->addr2[1], hdr->addr2[2], hdr->addr2[3], hdr->addr2[4], hdr->addr2[5]);
 
-        message.frame_hash.len = sizeof(hash_value);
-        message.frame_hash.data = (uint8_t *) malloc(sizeof(hash_value));
-        for (unsigned long i = 0; i < sizeof(hash_value); ++i) {
-            message.frame_hash.data[i] = (uint8_t) hash_value[i];
+            message.frame_hash.len = sizeof(hash_value);
+            message.frame_hash.data = (uint8_t *) malloc(sizeof(hash_value));
+            for (unsigned long i = 0; i < sizeof(hash_value); ++i) {
+                message.frame_hash.data[i] = (uint8_t) hash_value[i];
+            }
+            metadata.apmac = malloc(sizeof(apMacString));
+            sprintf(metadata.apmac, "%s", apMacString);
+            metadata.rsi = ppkt->rx_ctrl.rssi;
+            metadata.ssid = malloc(sizeof(WIFI_SSID));
+            sprintf(metadata.ssid, "%s", WIFI_SSID);
+            metadata.timestamp = now;
+
+            message.metadata = malloc(sizeof(metadata));
+            memcpy(message.metadata, &metadata, sizeof(metadata));
+
+            // Store this message
+            store_message(&message);
         }
-        metadata.apmac = malloc(sizeof(apMacString));
-        sprintf(metadata.apmac, "%s", apMacString);
-        metadata.rsi = ppkt->rx_ctrl.rssi;
-        metadata.ssid = malloc(sizeof(WIFI_SSID));
-        sprintf(metadata.ssid, "%s", WIFI_SSID);
-        metadata.timestamp = now;
-
-        message.metadata = malloc(sizeof(metadata));
-        memcpy(message.metadata, &metadata, sizeof(metadata));
-
-        // Store this message
-        store_message(&message);
     }
 }
 
