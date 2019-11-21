@@ -32,5 +32,5 @@ bool Point::isValid() {
 }
 
 std::ostream& operator<<(std::ostream &ostream, const Point &point) {
-    return ostream << "< x = " << point.x << ", y = " << point.y << ">";
+    return ostream << "<x = " << point.x << ", y = " << point.y << ">";
 }
