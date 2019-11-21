@@ -223,10 +223,10 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         );
         if (strcmp(device_mac_address, DEBUG_TRACKED_DEVICE_MAC) == 0) {
             signed rssi = ppkt->rx_ctrl.rssi;
-            if (rssi < min_rrsi_in_measure_period) {
+            if (rssi < min_rrsi_in_measure_period && rssi > DEBUG_TRACKED_DEVICE_OUTLIER_MIN_THRESHOLD) {
                 min_rrsi_in_measure_period = rssi;
             }
-            if (rssi > max_rrsi_in_measure_period) {
+            if (rssi > max_rrsi_in_measure_period && rssi < DEBUG_TRACKED_DEVICE_OUTLIER_MAX_THRESHOLD) {
                 max_rrsi_in_measure_period = rssi;
             }
             ESP_LOGI(SNIFFER_TAG, "Min. RSSI value: %d, max. RSSI value: %d.", min_rrsi_in_measure_period,

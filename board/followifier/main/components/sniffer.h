@@ -39,6 +39,14 @@ extern "C" {
 extern signed min_rrsi_in_measure_period;
 extern signed max_rrsi_in_measure_period;
 
+#include <limits.h>
+
+/**
+ * RSSI value under which measured are considered as outliers
+ */
+#define DEBUG_TRACKED_DEVICE_OUTLIER_MIN_THRESHOLD (INT_MIN)
+#define DEBUG_TRACKED_DEVICE_OUTLIER_MAX_THRESHOLD (0)
+
 #endif
 
 /**
