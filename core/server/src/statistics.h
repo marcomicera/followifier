@@ -7,7 +7,7 @@
 #include "../gen/message.pb.h"
 #include "receiver.h"
 
-#define ONE_METER_RSSI -65
+#define ONE_METER_RSSI -51
 
 /**
  * When true, only one device will generate printouts.
