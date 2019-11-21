@@ -6,11 +6,11 @@
 #include <unordered_map>
 #include "../gen/message.pb.h"
 #include "receiver.h"
-#define ONE_METER_RSSI -67
+#define ONE_METER_RSSI -65
 
 class statistics {
 public:
-    static Point getPosition(std::string, std::unordered_map <std::string, followifier::ESP32Metadata>&);
+    static Point getDevicePosition(std::unordered_map <std::string, followifier::ESP32Metadata> &boardMetadatas);
 
 private:
 

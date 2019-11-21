@@ -64,14 +64,16 @@ public:
      * @param cause     the cause that led the start of a new round.
      */
     static void newRound(const std::string &cause) {
-        std::cout << cause << " " << std::flush; // TODO glog
-        std::cout << "Starting a new round..." << std::endl;
-        if (lastRoundBoardMacs.size() == NUMBER_BOARDS) {
-            std::cout << std::endl << std::endl;
-        }
         if (!ROUNDLESS_MODE) {
+            std::cout << cause << " " << std::flush; // TODO glog
+            std::cout << "Starting a new round..." << std::endl;
+            if (lastRoundBoardMacs.size() == NUMBER_BOARDS) {
+                std::cout << std::endl << std::endl;
+            }
             lastRoundBoardMacs.clear();
             messagesBuffer.clear();
+        } else {
+            std::cout << std::endl << std::endl;
         }
     }
 

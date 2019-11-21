@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Building the project
-cmake .
-make
-
 # Allowing inbound and outbound TCP connections on the specified port
 PORT=$(python3 -c "import json; print(json.load(open('./config.json'))['port'])")
 echo Asking password to allow TCP inbound and outbound connections on port "$PORT" on this machine...
@@ -16,4 +12,4 @@ sudo apt-get install -y ntp
 /etc/init.d/ntp start
 
 # Launching the server
-./core
+cmake . && make && ./core

@@ -86,19 +86,21 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
         if (messagesBuffer.find(newMessage.frame_hash())->second.size() == NUMBER_BOARDS) {
 
             aFrameHasBeenSentByAllBoards = true;
+            cout << "Message " << prettyHash(newMessage.frame_hash()) << " has been sent by all boards." << endl;
 
-            Point position = statistics::getPosition(newMessage.frame_hash(),
-                                                     messagesBuffer.find(newMessage.frame_hash())->second);
-            if (!position.isValid()){
+            /* Computing device position */
+            Point devicePosition = statistics::getDevicePosition(messagesBuffer.find(newMessage.frame_hash())->second);
+            cout << "Device location: " << devicePosition << endl;
+            if (!devicePosition.isValid()){
                 cerr << "Message " << prettyHash(newMessage.frame_hash()) << " discarded for invalid position" << endl;
                 return;
             }
+            cout << endl;
+
             /* Storing it into the database */
-            cout << "Message " << prettyHash(newMessage.frame_hash()) << " has been sent by all boards from position "
-                 << position.getX() << "," << position.getY() << endl;
-            /* Compute position */
             // FIXME The following should store all these statistics
-            database.insert_message(newMessage, position); // TODO check object internal representation in MongoDB
+            // TODO check object internal representation in MongoDB
+            database.insert_message(newMessage, devicePosition);
 
             /* Clearing the entry relative to this frame */
             messagesBuffer.erase(newMessage.frame_hash());
