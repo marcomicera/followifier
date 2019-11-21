@@ -3,7 +3,7 @@ syntax = "proto2";
 package followifier;
 
 message ESP32Metadata {
-    required string apMac = 1;
+    required string apMac = 1; // FIXME change it into `deviceMac`
     required string ssid = 2;
     required int64 timestamp = 3;
     required int32 rsi = 5;
