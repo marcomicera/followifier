@@ -23,11 +23,23 @@ extern "C" {
  */
 #define DEBUG_ONE_DEVICE_TRACKING (0)
 
+#ifdef DEBUG_ONE_DEVICE_TRACKING
+
 /**
  * MAC address of the device to be tracked in the "one device tracking" debug mode.
  * Used only when `DEBUG_ONE_DEVICE_TRACKING` is true.
  */
 #define DEBUG_TRACKED_DEVICE_MAC "01:23:45:67:89:ab"
+
+/**
+ * Minimum and maximum RSSI values measured in a measurement period, i.e., a time interval
+ * during which the distance between the device and the board is constant.
+ * These value are only displayed on standard output.
+ */
+extern signed min_rrsi_in_measure_period;
+extern signed max_rrsi_in_measure_period;
+
+#endif
 
 /**
  * Board flush rate in seconds.
