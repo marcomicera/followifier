@@ -95,6 +95,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
                 cerr << "Message " << prettyHash(newMessage.frame_hash()) << " discarded for invalid position" << endl;
                 return;
             }
+            cout << endl;
 
             /* Storing it into the database */
             // FIXME The following should store all these statistics
