@@ -10,7 +10,7 @@
 
 class statistics {
 public:
-    static Point getPosition(std::string, std::unordered_map <std::string, followifier::ESP32Metadata>&);
+    static Point getDevicePosition(std::unordered_map <std::string, followifier::ESP32Metadata> &boardMetadatas);
 
 private:
 

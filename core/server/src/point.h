@@ -2,6 +2,7 @@
 #define CORE_POINT_H
 
 #include <cstdint>
+#include <ostream>
 
 class Point {
 
@@ -9,7 +10,7 @@ public:
 
     Point(double x, double y);
 
-// id is returned as hash function
+    // id is returned as hash function
     bool operator==(const Point &other) const;
 
     struct PointHasher {
@@ -22,6 +23,8 @@ public:
 
     double getY();
     bool isValid();
+
+    friend std::ostream& operator<<(std::ostream&, const Point&);
 
 private:
 

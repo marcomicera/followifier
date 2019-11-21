@@ -2,11 +2,12 @@
 #include "settings.h"
 #include <iostream>
 
-Point statistics::getPosition(std::string hash,
-                              std::unordered_map<std::string, followifier::ESP32Metadata> &messageBoardsAndMetadata) {
+Point statistics::getDevicePosition(std::unordered_map<std::string, followifier::ESP32Metadata> &boardMetadatas) {
+
     std::unordered_set<Point, Point::PointHasher> listPossiblePoints;
-    for (auto i = messageBoardsAndMetadata.begin(); i != messageBoardsAndMetadata.end(); ++i) {
-        for (auto j = std::next(i, 1); j != messageBoardsAndMetadata.end(); ++j) {
+
+    for (auto i = boardMetadatas.begin(); i != boardMetadatas.end(); ++i) {
+        for (auto j = std::next(i, 1); j != boardMetadatas.end(); ++j) {
 
             double x1 = Settings::configuration.boards.find(i->first)->second.getCoordinates().getX();
             double x2 = Settings::configuration.boards.find(j->first)->second.getCoordinates().getX();
@@ -16,6 +17,10 @@ Point statistics::getPosition(std::string hash,
             // Interception points
             double r1 = statistics::estimatedDistance(i->second.rsi());
             double r2 = statistics::estimatedDistance(j->second.rsi());
+            std::cout << "Board " << i->first << " announced device " << i->second.apmac() << " at distance " << r1
+                      << '.' << std::endl;
+            std::cout << "Board " << j->first << " announced device " << j->second.apmac() << " at distance " << r2
+                      << '.' << std::endl;
 
             // d = sqrt((x1-x2)^2 + (y1-y2)^2)
             double d = std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
@@ -38,10 +43,10 @@ Point statistics::getPosition(std::string hash,
             double yr1 = l * (y2 - y1) / d - h * (x2 - x1) / d + y1;
             double yr2 = l * (y2 - y1) / d + h * (x2 - x1) / d + y1;
 
-            if (xr1 >= 0 && yr1 >= 0 && checkPoint(xr1, yr1, messageBoardsAndMetadata) && Point(xr1, yr1).isValid()) {
+            if (xr1 >= 0 && yr1 >= 0 && checkPoint(xr1, yr1, boardMetadatas) && Point(xr1, yr1).isValid()) {
                 listPossiblePoints.insert(Point(std::round(xr1), std::round(yr1)));
             }
-            if (xr2 >= 0 && yr2 >= 0 && checkPoint(xr2, yr2, messageBoardsAndMetadata) && Point(xr2, yr2).isValid()) {
+            if (xr2 >= 0 && yr2 >= 0 && checkPoint(xr2, yr2, boardMetadatas) && Point(xr2, yr2).isValid()) {
                 listPossiblePoints.insert(Point(std::round(xr2), std::round(yr2)));
             }
         }
@@ -64,12 +69,16 @@ double statistics::estimatedDistance(double rssi) {
 }
 
 bool statistics::checkPoint(double x, double y,
-                            std::unordered_map<std::string, followifier::ESP32Metadata> &boardsMedatada) {
+                            std::unordered_map<std::string, followifier::ESP32Metadata> &boardMetadatas) {
+
     for (auto &board : Settings::configuration.boards) {
+
         if (std::sqrt(std::pow(x - board.second.getCoordinates().getX(), 2) +
                       std::pow(y - board.second.getCoordinates().getY(), 2)) -
-            std::pow(statistics::estimatedDistance(boardsMedatada.find(board.first)->second.rsi()), 2) > 0)
+            std::pow(statistics::estimatedDistance(boardMetadatas.find(board.first)->second.rsi()), 2) > 0) {
+
             return false;
+        }
     }
     return true;
 }

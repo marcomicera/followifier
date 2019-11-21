@@ -1,6 +1,7 @@
 #include "point.h"
 #include <stdexcept>
 #include <cmath>
+
 double Point::getX() {
     return this->x;
 }
@@ -28,4 +29,8 @@ bool Point::isValid() {
     if(!std::isnan(x) && !std::isnan(y))
         return true;
     return false;
+}
+
+std::ostream& operator<<(std::ostream &ostream, const Point &point) {
+    return ostream << "< x = " << point.x << ", y = " << point.y << ">";
 }
