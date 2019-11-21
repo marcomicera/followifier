@@ -93,7 +93,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             cout << "Device location: " << devicePosition << endl;
             if (!devicePosition.isValid()){
                 cerr << "Message " << prettyHash(newMessage.frame_hash()) << " discarded for invalid position" << endl;
-                return;
+                continue;
             }
             cout << endl;
 
