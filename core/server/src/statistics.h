@@ -40,14 +40,19 @@ public:
      * debug mode is active (`DEBUG_ONE_DEVICE_TRACKING` set to true).
      *
      * @param boardMac          the board MAC address which is announcing the distance.
-     * @param deviceMac         the device distance with respect to the announcing board.
+     * @param metadata          TODO
      * @param deviceDistance    the distance announced by the board.
      */
     static void
-    logDeviceDistanceAnnouncement(const std::string &boardMac, const std::string &deviceMac, double deviceDistance) {
+    logDeviceDistanceAnnouncement(const std::string &boardMac, const followifier::ESP32Metadata &metadata,
+                                  double deviceDistance) {
+
+        std::string deviceMac = metadata.apmac();
+        int rssi = metadata.rsi();
+
         if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && deviceMac == DEBUG_TRACKED_DEVICE_MAC)) {
             std::cout << "Board " << boardMac << " announced device " << deviceMac << " at a distance of "
-                      << deviceDistance << " cm." << std::endl;
+                      << deviceDistance << " cm (RSSI: " << rssi << ")." << std::endl;
         }
     }
 
@@ -77,7 +82,7 @@ public:
     static void
     logInvalidDeviceLocation(const std::string &frameHash, const std::string deviceMac, const Point &deviceLocation) {
         if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && deviceMac == DEBUG_TRACKED_DEVICE_MAC)) {
-            std::cerr << "Frame" << frameHash << " discarded since announcing device " << deviceMac
+            std::cerr << "Frame " << frameHash << " discarded since announcing device " << deviceMac
                       << " is located in an invalid position (" << deviceLocation << ")." << std::endl;
         }
     }

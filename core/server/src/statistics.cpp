@@ -17,8 +17,8 @@ Point statistics::getDevicePosition(std::unordered_map<std::string, followifier:
             // Interception points
             double r1 = statistics::estimatedDistance(i->second.rsi());
             double r2 = statistics::estimatedDistance(j->second.rsi());
-            logDeviceDistanceAnnouncement(i->first, i->second.apmac(), r1);
-            logDeviceDistanceAnnouncement(j->first, j->second.apmac(), r2);
+            logDeviceDistanceAnnouncement(i->first, i->second, r1);
+            logDeviceDistanceAnnouncement(j->first, j->second, r2);
 
             // d = sqrt((x1-x2)^2 + (y1-y2)^2)
             double d = std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
