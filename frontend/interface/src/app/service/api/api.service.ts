@@ -7,7 +7,11 @@ export interface Board {
   x: string;
   y: string;
 }
-
+export interface Device {
+  _id: string;
+  x: string;
+  y: string;
+}
 @Injectable()
 export class ApiService {
 
@@ -21,7 +25,7 @@ export class ApiService {
   getDevicesNumber(): Observable<string> {
     return this.http.get<string>('http://localhost:8000/api/device/number');
   }
-  getDevices(): Observable<Board[]> {
-    return this.http.get<Board[]>('http://localhost:8000/api/devices');
+  getDevices(): Observable<Device[]> {
+    return this.http.get<Device[]>('http://localhost:8000/api/devices');
   }
 }
