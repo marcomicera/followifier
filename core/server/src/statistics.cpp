@@ -63,7 +63,7 @@ Point statistics::getDevicePosition(std::unordered_map<std::string, followifier:
 
 double statistics::estimatedDistance(double rssi) {
     double distance = std::pow(10, (ONE_METER_RSSI - rssi) / (10 * 2)) * 100;
-    return distance * 1.1; // FIXME Make tolerance a variable
+    return distance * 1.0; // FIXME Make tolerance a variable
 }
 
 bool statistics::checkPoint(double x, double y,
