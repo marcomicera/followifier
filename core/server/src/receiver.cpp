@@ -1,5 +1,6 @@
 #include <src/connection.h>
 #include "receiver.h"
+#include "statistics.h"
 
 using std::cout;
 using std::cerr;
@@ -55,11 +56,11 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             messagesBuffer.end()) { // lower complexity than `equal_range()`
 
             /* Check whether the same board has sent the same frame already */
-            auto sameFrameSendersRange = messagesBuffer.equal_range(newMessage.frame_hash());
-            for_each(sameFrameSendersRange.first, sameFrameSendersRange.second,
-                     [&newBatch, &newMessage](messages_map::value_type &senderData) {
+            auto messageInBuffer = messagesBuffer.find(newMessage.frame_hash());
+            for_each(messageInBuffer->second.begin(), messageInBuffer->second.end(),
+                     [&newBatch, &newMessage](
+                             std::unordered_map<std::string, followifier::ESP32Metadata>::value_type &senderData) {
                          if (senderData.first == newBatch.boardmac()) {
-
                              /* Error: same board has announced the same frame twice */
                              cerr << "Board " << newBatch.boardmac() << " has announced frame "
                                   << prettyHash(newMessage.frame_hash()) << " at least twice." << endl;
@@ -69,22 +70,38 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
                              }
                          }
                      });
+
+            /* Insert metadata*/
+            messageInBuffer->second.insert(
+                    std::pair<std::string, followifier::ESP32Metadata>(newBatch.boardmac(), newMessage.metadata()));
+        } else {
+            /* First time receiving the message */
+            std::unordered_map<std::string, followifier::ESP32Metadata> tempBoardMap;
+            tempBoardMap.insert(std::make_pair(newBatch.boardmac(), newMessage.metadata()));
+            messagesBuffer.insert(std::make_pair(newMessage.frame_hash(), tempBoardMap));
         }
 
-        /* Insert it in the messages buffer */
-        messagesBuffer.insert(std::make_pair(newMessage.frame_hash(),
-                                             std::make_pair(newBatch.boardmac(), newMessage.metadata())));
 
         /* If this message has been sent by all other boards */
-        if (messagesBuffer.count(newMessage.frame_hash()) == NUMBER_BOARDS) {
+        if (messagesBuffer.find(newMessage.frame_hash())->second.size() == NUMBER_BOARDS) {
 
             aFrameHasBeenSentByAllBoards = true;
+            cout << "Message " << prettyHash(newMessage.frame_hash()) << " has been sent by all boards." << endl;
+
+            /* Computing device position */
+            Point devicePosition = statistics::getDevicePosition(messagesBuffer.find(newMessage.frame_hash())->second);
+            statistics::logDeviceLocation(newMessage.metadata().apmac(), devicePosition);
+            if (!devicePosition.isValid()) {
+                statistics::logInvalidDeviceLocation(prettyHash(newMessage.frame_hash()), newMessage.metadata().apmac(),
+                                                     devicePosition);
+                continue;
+            }
+            cout << endl;
 
             /* Storing it into the database */
-            cout << "Message " << prettyHash(newMessage.frame_hash()) << " has been sent by all boards." << endl;
-            // TODO Computing statistics (#33)
             // FIXME The following should store all these statistics
-            database.insert_message(newMessage); // TODO check object internal representation in MongoDB
+            // TODO check object internal representation in MongoDB
+            database.insert_message(newMessage, devicePosition);
 
             /* Clearing the entry relative to this frame */
             messagesBuffer.erase(newMessage.frame_hash());
@@ -111,4 +128,31 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
         newRound(std::to_string(lastRoundBoardMacs.size()) + " out of " + std::to_string(NUMBER_BOARDS) +
                  " boards have sent their batch.");
     }
+}
+
+void receiver::cleanBatch(){
+    struct timeval tp;
+    std::vector<std::string> messagesToDelete;
+
+    //get 5 minutes ago milliseconds
+    gettimeofday(&tp, NULL);
+    long int ms = (tp.tv_sec-5*60);
+
+
+    for(auto i : messagesBuffer){
+        if(i.second.begin()->second.timestamp() < ms){
+            //adds them to a vector to delete them later on
+            messagesToDelete.push_back(i.first);
+        }
+    }
+
+    //delete found messages
+    if(messagesToDelete.size()>0){
+        cout << "Deleting " << messagesToDelete.size() << " messages" << endl;
+        for(auto i : messagesToDelete){
+            messagesBuffer.erase(i);
+        }
+        cout << "Deleted old messages" << endl;
+    }
+    messagesToDelete.clear();
 }

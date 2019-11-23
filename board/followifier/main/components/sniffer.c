@@ -32,6 +32,17 @@
 
 const char *SNIFFER_TAG = "followifier";
 
+#ifdef DEBUG_ONE_DEVICE_TRACKING
+
+#include <limits.h>
+
+signed min_rrsi_in_measure_period = INT_MAX;
+signed max_rrsi_in_measure_period = INT_MIN;
+
+pthread_t measurement_timer_thread_id;
+
+#endif
+
 typedef struct {
     unsigned frame_ctrl:16;
     unsigned duration_id:16;
@@ -200,11 +211,28 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
     const wifi_ieee80211_packet_t *ipkt = (wifi_ieee80211_packet_t *) ppkt->payload;
     const wifi_ieee80211_mac_hdr_t *hdr = &ipkt->hdr;
 
-    ESP_LOGD(SNIFFER_TAG, "Masked:unmasked frame control of packet has value %04x:%04x\n",
+    ESP_LOGD(SNIFFER_TAG, "Masked: unmasked frame control of packet has value %04x:%04x\n",
              (hdr->frame_ctrl & SUBTYPE_MASK), hdr->frame_ctrl);
 
     if (sniffer_is_probe((unsigned short) hdr->frame_ctrl)) {
-
+#ifdef DEBUG_ONE_DEVICE_TRACKING
+        char device_mac_address[48] = {'\0'};
+        sprintf(device_mac_address, "%02x:%02x:%02x:%02x:%02x:%02x",
+                hdr->addr2[0], hdr->addr2[1], hdr->addr2[2],
+                hdr->addr2[3], hdr->addr2[4], hdr->addr2[5]
+        );
+        if (strcmp(device_mac_address, DEBUG_TRACKED_DEVICE_MAC) == 0) {
+            signed rssi = ppkt->rx_ctrl.rssi;
+            if (rssi < min_rrsi_in_measure_period && rssi > DEBUG_TRACKED_DEVICE_OUTLIER_MIN_THRESHOLD) {
+                min_rrsi_in_measure_period = rssi;
+            }
+            if (rssi > max_rrsi_in_measure_period && rssi < DEBUG_TRACKED_DEVICE_OUTLIER_MAX_THRESHOLD) {
+                max_rrsi_in_measure_period = rssi;
+            }
+            ESP_LOGI(SNIFFER_TAG, "Min. RSSI value: %d, max. RSSI value: %d.", min_rrsi_in_measure_period,
+                     max_rrsi_in_measure_period);
+        }
+#else
         unsigned char hash_value[33];
         hash(ppkt, hash_value);
         hash_value[32] = '\0';
@@ -265,12 +293,26 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
 
         // Store this message
         store_message(&message);
+#endif
     }
 }
 
 void *sniffer_timer(void *args) {
+
+#ifdef DEBUG_ONE_DEVICE_TRACKING
+    ESP_LOGI(TAG, "Measurement started.");
+#endif
+
     ESP_LOGI(TAG, "Flush timer started.");
     vTaskDelay(portTICK_PERIOD_MS * FLUSH_RATE_IN_SECONDS * 10); // in deci-seconds (0.1 seconds)
+
+#ifdef DEBUG_ONE_DEVICE_TRACKING
+    ESP_LOGI(TAG, "Measurement is over: please re-adjust the distance between the testing device and this board "
+                  "and take note of the distance.");
+    min_rrsi_in_measure_period = INT_MAX;
+    max_rrsi_in_measure_period = INT_MIN;
+#endif
+
     ESP_LOGI(TAG, "Flush timer expired (%d seconds): time to flush the batch.", FLUSH_RATE_IN_SECONDS);
     prepare_to_flush(true);
     return NULL;

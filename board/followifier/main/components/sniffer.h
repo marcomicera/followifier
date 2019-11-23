@@ -17,6 +17,40 @@ extern "C" {
 #define SNIFFER_DEFAULT_CHANNEL (1)
 
 /**
+ * When defined, the board only prints out the RSSI of frames received by a specific device.
+ * It does not flush any data towards the core server.
+ * Used for debug purposes.
+ * Uncomment the following line to enable it.
+ */
+// #define DEBUG_ONE_DEVICE_TRACKING
+
+#ifdef DEBUG_ONE_DEVICE_TRACKING
+
+/**
+ * MAC address of the device to be tracked in the "one device tracking" debug mode.
+ * Used only when `DEBUG_ONE_DEVICE_TRACKING` is true.
+ */
+#define DEBUG_TRACKED_DEVICE_MAC "01:23:45:67:89:ab"
+
+/**
+ * Minimum and maximum RSSI values measured in a measurement period, i.e., a time interval
+ * during which the distance between the device and the board is constant.
+ * These value are only displayed on standard output.
+ */
+extern signed min_rrsi_in_measure_period;
+extern signed max_rrsi_in_measure_period;
+
+#include <limits.h>
+
+/**
+ * RSSI value under which measured are considered as outliers
+ */
+#define DEBUG_TRACKED_DEVICE_OUTLIER_MIN_THRESHOLD (INT_MIN)
+#define DEBUG_TRACKED_DEVICE_OUTLIER_MAX_THRESHOLD (0)
+
+#endif
+
+/**
  * Board flush rate in seconds.
  */
 #define FLUSH_RATE_IN_SECONDS (30)

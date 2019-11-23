@@ -11,7 +11,7 @@
 namespace pt = boost::property_tree;
 typedef struct {
     size_t port; //server port number
-    std::unordered_set<Board, Board::BoardHasher> boards; //set of boards
+    std::unordered_map<std::string, Board> boards; //set of boards
     std::unordered_set<Point, Point::PointHasher> room_coordinates; //coordinates of room
 } Config;
 

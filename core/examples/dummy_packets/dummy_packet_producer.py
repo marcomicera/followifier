@@ -4,6 +4,7 @@ import socket
 import string
 import sys
 import time
+from datetime import datetime
 
 sys.path.insert(1, '../../server/gen')
 import message_pb2
@@ -21,16 +22,18 @@ def gen_random_ssid():
     return ''.join(random.choices(population=string.ascii_uppercase, k=8))
 
 
-def gen_random_timestamp():
-    return random.randrange(sys.maxsize)
-
-
 def gen_random_hash():
     return ''.join(random.choices(population=hexdigits, k=64)).encode('utf-8')
 
 
 def gen_random_rsi():
-    return random.randrange(-90, 0)
+    return random.randint(-90, 0)
+
+def gen_random_timestamp(rate):
+    now = datetime.now()
+    timestamp = datetime.timestamp(now) - random.randint(0, rate)
+    return (round(timestamp))
+
 
 
 def timer(func):
@@ -44,20 +47,24 @@ def timer(func):
     return wrapper
 
 
-def gen_dummy_batch_base(batch_size):
+def gen_dummy_batch_base(batch_size, rate):
     batch = message_pb2.Batch()
     for _ in range(batch_size):
-        fill_message(batch.messages.add())
+        fill_message(batch.messages.add(), rate)
     return batch
 
 
-def gen_dummy_batch(batch, mac, common_hashes):
+def gen_dummy_batch(batch, mac, common_hashes, a):
     used_common_hashes = 0
     batch.boardMac = mac
     for message in batch.messages:
 
         # Setting a random RSSI
-        message.metadata.rsi = gen_random_rsi()
+        if a:
+            message.metadata.rsi = -62;
+        else:
+            message.metadata.rsi = -51;
+        
 
         # Introduce a common frame hash as long as there are some available
         if len(common_hashes) > used_common_hashes:
@@ -69,16 +76,15 @@ def gen_dummy_batch(batch, mac, common_hashes):
     return batch
 
 
-def fill_message(message):
+def fill_message(message, rate):
     message.metadata.apMac = gen_random_mac()
     message.metadata.ssid = gen_random_ssid()
-    message.metadata.timestamp = gen_random_timestamp()
+    message.metadata.timestamp = gen_random_timestamp(rate)
     # message.frame_hash = gen_random_hash()
-    message.metadata.rsi = gen_random_rsi()
+      
 
 
 def main():
-
     # Parsing arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('ip', action='store', help="server IP")
@@ -87,20 +93,14 @@ def main():
                         default=20)
     parser.add_argument('--batch_rate', action='store', type=int, help='period in seconds between subsequent batches',
                         default=30)
-    parser.add_argument('--boards_number', action='store', type=int, help='number of dummy boards',
-                        default=1)
+    parser.add_argument('--boards_mac', nargs='+', help='mac of boards', required=True)
     args = parser.parse_args()
-
-    # Generating boards' MAC addresses
-    boards_mac_addresses = []
-    for i in range(0, args.boards_number):
-        boards_mac_addresses.append(gen_random_mac())
 
     # Packet generation loop
     while True:
 
         # Generate a batch base message on which batches will be generated
-        batch_base = gen_dummy_batch_base(args.batch_size)
+        batch_base = gen_dummy_batch_base(args.batch_size, args.batch_rate)
 
         # Generating a random number of common frame hashes for this round
         num_common_hashes = random.randrange(args.batch_size)  # from 0 to `args.batch_size`
@@ -110,16 +110,17 @@ def main():
         print("\nNew round, " + str(num_common_hashes) + " messages will be stored in the database.")
 
         # Simulating multiple boards
-        for board_mac_address in boards_mac_addresses:
-
+        check = True
+        for board_mac_address in args.boards_mac:
             try:
-                batch = gen_dummy_batch(batch_base, board_mac_address, common_hashes).SerializeToString()
+                batch = gen_dummy_batch(batch_base, board_mac_address, common_hashes, check).SerializeToString()
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.connect((args.ip, args.port))
                 s.send(batch)
                 s.send(b'\n\r\n\r')
                 print("Board " + board_mac_address + " has sent a batch.")
                 s.close()
+                check = not check
             except ConnectionRefusedError:
                 print("Server not available.")
 

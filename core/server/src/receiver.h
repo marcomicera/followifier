@@ -11,6 +11,7 @@
 #include <boost/algorithm/hex.hpp>
 #include "database.h"
 #include "settings.h"
+
 using boost::uuids::detail::md5;
 
 #define NUMBER_BOARDS Settings::configuration.boards.size()
@@ -24,9 +25,9 @@ using boost::uuids::detail::md5;
  */
 #define ROUNDLESS_MODE 1
 
-typedef std::unordered_multimap<
+typedef std::unordered_map<
         std::string, // frame hash
-        std::pair< // sender
+        std::unordered_map< // sender
                 std::string, // board's MAC address
                 followifier::ESP32Metadata
         >> messages_map;
@@ -44,6 +45,12 @@ public:
      * @param newBatch the just-received batch to be added to the buffer.
      */
     static void addBatch(const followifier::Batch &newBatch, database &database);
+
+    /**
+     * deletes old messages
+     *
+     */
+    static void cleanBatch();
 
     /**
      * Logs a Proto message following its own format.
@@ -72,6 +79,8 @@ public:
             lastRoundBoardMacs.clear();
             messagesBuffer.clear();
         } else {
+            cleanBatch();
+            lastRoundBoardMacs.clear();
             std::cout << std::endl << std::endl;
         }
     }
@@ -106,6 +115,8 @@ protected:
      * MAC addresses of boards that have sent a message during the last round.
      */
     static std::unordered_set<std::string> lastRoundBoardMacs;
+
+    static Point getPosition(std::string, std::unordered_map< std::string, followifier::ESP32Metadata>);
 };
 
 #endif //CORE_RECEIVER_H

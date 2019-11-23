@@ -14,7 +14,7 @@ void Settings::load(const std::string &filename) {
     configuration.port = tree.get<size_t>("port");
 
     BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("room_coordinates")) {
-                    Point p(v.second.get<int>("x"), v.second.get<int>("y"));
+                    Point p(v.second.get<double>("x"), v.second.get<double>("y"));
                     configuration.room_coordinates.insert(p);
                 }
     if (configuration.room_coordinates.size() != 4) {
@@ -27,11 +27,11 @@ void Settings::load(const std::string &filename) {
     BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("boards")) {
                     // The data function is used to access the data stored in a node.
                     // TODO Check whether boards fit into the room or not
-                    Point coordinates(v.second.get<int>("x"), v.second.get<int>("y"));
+                    Point coordinates(v.second.get<double>("x"), v.second.get<double>("y"));
                     Board b(v.second.get<std::string>("mac"), coordinates);
-                    configuration.boards.insert(b);
+                    configuration.boards.insert(std::make_pair(b.getMac(), b));
                 }
-    if (tree.get_child("room_coordinates").size() != 4) {
-        throw std::invalid_argument("Room must have exactly 4 coordinates");
+    if (Settings::configuration.boards.size() <=1) {
+        throw std::invalid_argument("At least 2 boards must be configured");
     }
 }
