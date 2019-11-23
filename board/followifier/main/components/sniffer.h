@@ -17,11 +17,12 @@ extern "C" {
 #define SNIFFER_DEFAULT_CHANNEL (1)
 
 /**
- * When true, the board only prints out the RSSI of frames received by a specific device.
+ * When defined, the board only prints out the RSSI of frames received by a specific device.
  * It does not flush any data towards the core server.
  * Used for debug purposes.
+ * Uncomment the following line to enable it.
  */
-#define DEBUG_ONE_DEVICE_TRACKING (0)
+// #define DEBUG_ONE_DEVICE_TRACKING
 
 #ifdef DEBUG_ONE_DEVICE_TRACKING
 
