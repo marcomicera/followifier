@@ -69,8 +69,8 @@ void connection::handle_read(const boost::system::error_code &error,
             cerr << "Couldn't parse a batch of size " << data.length() << "." << endl;
             return;
         }
-        if(Settings::configuration.boards.find(batch.boardmac()) == Settings::configuration.boards.end()){
-            cerr << "Unknown source" << endl;
+        if (Settings::configuration.boards.find(batch.boardmac()) == Settings::configuration.boards.end()) {
+            // cerr << "Unknown source" << endl;
             return;
         }
         receiver::addBatch(batch, database);

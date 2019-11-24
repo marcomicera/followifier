@@ -122,7 +122,7 @@ def main():
                 s.close()
                 check = not check
             except ConnectionRefusedError:
-                print("Server not available.")
+                print("Board " + board_mac_address + " couldn't contact server.")
 
         # Simulating sniffing period
         time.sleep(args.batch_rate)
