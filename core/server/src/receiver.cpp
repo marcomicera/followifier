@@ -143,7 +143,6 @@ void receiver::cleanBatch() {
     gettimeofday(&tp, nullptr);
     long int ms = (tp.tv_sec - 5 * 60);
 
-
     for (auto i : messagesBuffer) {
         if (i.second.begin()->second.timestamp() < ms) {
             //adds them to a vector to delete them later on
@@ -154,10 +153,10 @@ void receiver::cleanBatch() {
     //delete found messages
     if (!messagesToDelete.empty()) {
         cout << "Deleting " << messagesToDelete.size() << " messages" << endl;
-        for (auto i : messagesToDelete) {
+        for (const auto& i : messagesToDelete) {
             messagesBuffer.erase(i);
         }
-        cout << "Deleted old messages" << endl;
+        // cout << "Deleted old messages" << endl;
     }
     messagesToDelete.clear();
 }
