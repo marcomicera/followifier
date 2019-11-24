@@ -104,6 +104,20 @@ void flush(void) {
         ESP_ERROR_CHECK_JUMP_LABEL((tcp_socket = socket(addr_family, SOCK_STREAM, ip_protocol)) >= 0,
                                    "socket() error: discarding local packets, re-enabling sniffing mode...",
                                    reactivate_sniffer);
+        struct timeval timeout;
+        timeout.tv_sec = 10;
+        timeout.tv_usec = 0;
+
+        ESP_ERROR_CHECK_JUMP_LABEL (
+                setsockopt(tcp_socket, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout)) >= 0,
+                "setsockopt failed\n",
+                reactivate_sniffer);
+
+        ESP_ERROR_CHECK_JUMP_LABEL (
+                setsockopt(tcp_socket, SOL_SOCKET, SO_SNDTIMEO, (char *) &timeout, sizeof(timeout)) >= 0,
+                "setsockopt failed\n",
+                reactivate_sniffer);
+
         ESP_LOGI(TAG, "Socket created, connecting to %s:%d...", SERVER_ADDRESS, SERVER_PORT);
 
         // Creating connection to the server
