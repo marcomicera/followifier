@@ -16,12 +16,6 @@ public:
 
     bool operator==(const Board &other) const;
 
-    struct BoardHasher {
-        size_t operator()(const Board &b) const {
-            return std::hash<std::string>()(b.mac);
-        }
-    };
-
 private:
 
     std::string mac; //board mac

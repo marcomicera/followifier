@@ -31,7 +31,7 @@ void Settings::load(const std::string &filename) {
                     Board b(v.second.get<std::string>("mac"), coordinates);
                     configuration.boards.insert(std::make_pair(b.getMac(), b));
                 }
-    if (Settings::configuration.boards.size() <=1) {
+    if (Settings::get_num_boards() <=1) {
         throw std::invalid_argument("At least 2 boards must be configured");
     }
 }

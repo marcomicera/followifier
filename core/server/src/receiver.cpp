@@ -85,7 +85,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
 
         /* If this message has been sent by all other boards */
-        if (messagesBuffer.find(newMessage.frame_hash())->second.size() == NUMBER_BOARDS) {
+        if (messagesBuffer.find(newMessage.frame_hash())->second.size() == Settings::get_num_boards()) {
 
             aFrameHasBeenSentByAllBoards = true;
             cout << "Message " << prettyHash(newMessage.frame_hash()) << " has been sent by all boards." << endl;
@@ -116,7 +116,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
     }
 
     /* Number of boards seen during this round assertion */
-    if (aFrameHasBeenSentByAllBoards && (lastRoundBoardMacs.size() != NUMBER_BOARDS)) {
+    if (aFrameHasBeenSentByAllBoards && (lastRoundBoardMacs.size() != Settings::get_num_boards())) {
         cout << "A frame has been sent by all boards, but during different rounds." << endl;
         if (!ROUNDLESS_MODE) {
             cerr << "Server should not consider frames belonging to previous round since roundless mode is disabled."
@@ -126,10 +126,10 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
     }
 
     /* If all boards have sent their batch */
-    if (lastRoundBoardMacs.size() == NUMBER_BOARDS) {
+    if (lastRoundBoardMacs.size() == Settings::get_num_boards()) {
 
         /* Start a new round */
-        newRound(std::to_string(lastRoundBoardMacs.size()) + " out of " + std::to_string(NUMBER_BOARDS) +
+        newRound(std::to_string(lastRoundBoardMacs.size()) + " out of " + std::to_string(Settings::get_num_boards()) +
                  " boards have sent their batch.");
     }
 }
