@@ -19,7 +19,7 @@ void database::insert_message(followifier::ESP32Message message, Point position)
     doc = bson_new ();
 
     BSON_APPEND_UTF8 (doc, "hash",message.frame_hash().c_str());
-    BSON_APPEND_UTF8 (doc, "mac",message.metadata().apmac().c_str());
+    BSON_APPEND_UTF8 (doc, "mac",message.metadata().devicemac().c_str());
     BSON_APPEND_INT64 (doc, "timestamp",message.metadata().timestamp());
     BSON_APPEND_DOUBLE(doc, "x", position.getX());
     BSON_APPEND_DOUBLE(doc, "y", position.getY());

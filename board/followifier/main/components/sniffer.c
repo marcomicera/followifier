@@ -281,9 +281,9 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         for (unsigned long i = 0; i < sizeof(hash_value); ++i) {
             message.frame_hash.data[i] = (uint8_t) hash_value[i];
         }
-        metadata.apmac = malloc(sizeof(apMacString));
-        sprintf(metadata.apmac, "%s", apMacString);
-        metadata.rsi = ppkt->rx_ctrl.rssi;
+        metadata.devicemac = malloc(sizeof(apMacString));
+        sprintf(metadata.devicemac, "%s", apMacString);
+        metadata.rssi = ppkt->rx_ctrl.rssi;
         metadata.ssid = malloc(sizeof(WIFI_SSID));
         sprintf(metadata.ssid, "%s", WIFI_SSID);
         metadata.timestamp = now;

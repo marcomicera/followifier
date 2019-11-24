@@ -28,10 +28,10 @@ typedef struct _Followifier__Batch Followifier__Batch;
 struct  _Followifier__ESP32Metadata
 {
   ProtobufCMessage base;
-  char *apmac;
+  char *devicemac;
   char *ssid;
   int64_t timestamp;
-  int32_t rsi;
+  int32_t rssi;
 };
 #define FOLLOWIFIER__ESP32_METADATA__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&followifier__esp32_metadata__descriptor) \

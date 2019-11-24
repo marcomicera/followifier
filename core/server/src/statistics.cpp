@@ -15,8 +15,8 @@ Point statistics::getDevicePosition(std::unordered_map<std::string, followifier:
             double y2 = Settings::configuration.boards.find(j->first)->second.getCoordinates().getY();
 
             // Interception points
-            double r1 = statistics::estimatedDistance(i->second.rsi());
-            double r2 = statistics::estimatedDistance(j->second.rsi());
+            double r1 = statistics::estimatedDistance(i->second.rssi());
+            double r2 = statistics::estimatedDistance(j->second.rssi());
             logDeviceDistanceAnnouncement(i->first, i->second, r1);
             logDeviceDistanceAnnouncement(j->first, j->second, r2);
 
@@ -73,7 +73,7 @@ bool statistics::checkPoint(double x, double y,
 
         if (std::sqrt(std::pow(x - board.second.getCoordinates().getX(), 2) +
                       std::pow(y - board.second.getCoordinates().getY(), 2)) -
-            std::pow(statistics::estimatedDistance(boardMetadatas.find(board.first)->second.rsi()), 2) > 0) {
+            std::pow(statistics::estimatedDistance(boardMetadatas.find(board.first)->second.rssi()), 2) > 0) {
 
             return false;
         }

@@ -161,20 +161,20 @@ class ESP32Metadata : public ::google::protobuf::Message /* @@protoc_insertion_p
 
   // accessors -------------------------------------------------------
 
-  // required string apMac = 1;
-  bool has_apmac() const;
-  void clear_apmac();
-  static const int kApMacFieldNumber = 1;
-  const ::std::string& apmac() const;
-  void set_apmac(const ::std::string& value);
+  // required string deviceMac = 1;
+  bool has_devicemac() const;
+  void clear_devicemac();
+  static const int kDeviceMacFieldNumber = 1;
+  const ::std::string& devicemac() const;
+  void set_devicemac(const ::std::string& value);
   #if LANG_CXX11
-  void set_apmac(::std::string&& value);
+  void set_devicemac(::std::string&& value);
   #endif
-  void set_apmac(const char* value);
-  void set_apmac(const char* value, size_t size);
-  ::std::string* mutable_apmac();
-  ::std::string* release_apmac();
-  void set_allocated_apmac(::std::string* apmac);
+  void set_devicemac(const char* value);
+  void set_devicemac(const char* value, size_t size);
+  ::std::string* mutable_devicemac();
+  ::std::string* release_devicemac();
+  void set_allocated_devicemac(::std::string* devicemac);
 
   // required string ssid = 2;
   bool has_ssid() const;
@@ -198,23 +198,23 @@ class ESP32Metadata : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::google::protobuf::int64 timestamp() const;
   void set_timestamp(::google::protobuf::int64 value);
 
-  // required int32 rsi = 5;
-  bool has_rsi() const;
-  void clear_rsi();
-  static const int kRsiFieldNumber = 5;
-  ::google::protobuf::int32 rsi() const;
-  void set_rsi(::google::protobuf::int32 value);
+  // required int32 rssi = 5;
+  bool has_rssi() const;
+  void clear_rssi();
+  static const int kRssiFieldNumber = 5;
+  ::google::protobuf::int32 rssi() const;
+  void set_rssi(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:followifier.ESP32Metadata)
  private:
-  void set_has_apmac();
-  void clear_has_apmac();
+  void set_has_devicemac();
+  void clear_has_devicemac();
   void set_has_ssid();
   void clear_has_ssid();
   void set_has_timestamp();
   void clear_has_timestamp();
-  void set_has_rsi();
-  void clear_has_rsi();
+  void set_has_rssi();
+  void clear_has_rssi();
 
   // helper for ByteSizeLong()
   size_t RequiredFieldsByteSizeFallback() const;
@@ -222,10 +222,10 @@ class ESP32Metadata : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::HasBits<1> _has_bits_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  ::google::protobuf::internal::ArenaStringPtr apmac_;
+  ::google::protobuf::internal::ArenaStringPtr devicemac_;
   ::google::protobuf::internal::ArenaStringPtr ssid_;
   ::google::protobuf::int64 timestamp_;
-  ::google::protobuf::int32 rsi_;
+  ::google::protobuf::int32 rssi_;
   friend struct ::protobuf_message_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
@@ -514,70 +514,70 @@ class Batch : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 #endif  // __GNUC__
 // ESP32Metadata
 
-// required string apMac = 1;
-inline bool ESP32Metadata::has_apmac() const {
+// required string deviceMac = 1;
+inline bool ESP32Metadata::has_devicemac() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void ESP32Metadata::set_has_apmac() {
+inline void ESP32Metadata::set_has_devicemac() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void ESP32Metadata::clear_has_apmac() {
+inline void ESP32Metadata::clear_has_devicemac() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void ESP32Metadata::clear_apmac() {
-  apmac_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clear_has_apmac();
+inline void ESP32Metadata::clear_devicemac() {
+  devicemac_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_devicemac();
 }
-inline const ::std::string& ESP32Metadata::apmac() const {
-  // @@protoc_insertion_point(field_get:followifier.ESP32Metadata.apMac)
-  return apmac_.GetNoArena();
+inline const ::std::string& ESP32Metadata::devicemac() const {
+  // @@protoc_insertion_point(field_get:followifier.ESP32Metadata.deviceMac)
+  return devicemac_.GetNoArena();
 }
-inline void ESP32Metadata::set_apmac(const ::std::string& value) {
-  set_has_apmac();
-  apmac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:followifier.ESP32Metadata.apMac)
+inline void ESP32Metadata::set_devicemac(const ::std::string& value) {
+  set_has_devicemac();
+  devicemac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:followifier.ESP32Metadata.deviceMac)
 }
 #if LANG_CXX11
-inline void ESP32Metadata::set_apmac(::std::string&& value) {
-  set_has_apmac();
-  apmac_.SetNoArena(
+inline void ESP32Metadata::set_devicemac(::std::string&& value) {
+  set_has_devicemac();
+  devicemac_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:followifier.ESP32Metadata.apMac)
+  // @@protoc_insertion_point(field_set_rvalue:followifier.ESP32Metadata.deviceMac)
 }
 #endif
-inline void ESP32Metadata::set_apmac(const char* value) {
+inline void ESP32Metadata::set_devicemac(const char* value) {
   GOOGLE_DCHECK(value != NULL);
-  set_has_apmac();
-  apmac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:followifier.ESP32Metadata.apMac)
+  set_has_devicemac();
+  devicemac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:followifier.ESP32Metadata.deviceMac)
 }
-inline void ESP32Metadata::set_apmac(const char* value, size_t size) {
-  set_has_apmac();
-  apmac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+inline void ESP32Metadata::set_devicemac(const char* value, size_t size) {
+  set_has_devicemac();
+  devicemac_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:followifier.ESP32Metadata.apMac)
+  // @@protoc_insertion_point(field_set_pointer:followifier.ESP32Metadata.deviceMac)
 }
-inline ::std::string* ESP32Metadata::mutable_apmac() {
-  set_has_apmac();
-  // @@protoc_insertion_point(field_mutable:followifier.ESP32Metadata.apMac)
-  return apmac_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::std::string* ESP32Metadata::mutable_devicemac() {
+  set_has_devicemac();
+  // @@protoc_insertion_point(field_mutable:followifier.ESP32Metadata.deviceMac)
+  return devicemac_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* ESP32Metadata::release_apmac() {
-  // @@protoc_insertion_point(field_release:followifier.ESP32Metadata.apMac)
-  if (!has_apmac()) {
+inline ::std::string* ESP32Metadata::release_devicemac() {
+  // @@protoc_insertion_point(field_release:followifier.ESP32Metadata.deviceMac)
+  if (!has_devicemac()) {
     return NULL;
   }
-  clear_has_apmac();
-  return apmac_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_devicemac();
+  return devicemac_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void ESP32Metadata::set_allocated_apmac(::std::string* apmac) {
-  if (apmac != NULL) {
-    set_has_apmac();
+inline void ESP32Metadata::set_allocated_devicemac(::std::string* devicemac) {
+  if (devicemac != NULL) {
+    set_has_devicemac();
   } else {
-    clear_has_apmac();
+    clear_has_devicemac();
   }
-  apmac_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), apmac);
-  // @@protoc_insertion_point(field_set_allocated:followifier.ESP32Metadata.apMac)
+  devicemac_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), devicemac);
+  // @@protoc_insertion_point(field_set_allocated:followifier.ESP32Metadata.deviceMac)
 }
 
 // required string ssid = 2;
@@ -670,28 +670,28 @@ inline void ESP32Metadata::set_timestamp(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:followifier.ESP32Metadata.timestamp)
 }
 
-// required int32 rsi = 5;
-inline bool ESP32Metadata::has_rsi() const {
+// required int32 rssi = 5;
+inline bool ESP32Metadata::has_rssi() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void ESP32Metadata::set_has_rsi() {
+inline void ESP32Metadata::set_has_rssi() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void ESP32Metadata::clear_has_rsi() {
+inline void ESP32Metadata::clear_has_rssi() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void ESP32Metadata::clear_rsi() {
-  rsi_ = 0;
-  clear_has_rsi();
+inline void ESP32Metadata::clear_rssi() {
+  rssi_ = 0;
+  clear_has_rssi();
 }
-inline ::google::protobuf::int32 ESP32Metadata::rsi() const {
-  // @@protoc_insertion_point(field_get:followifier.ESP32Metadata.rsi)
-  return rsi_;
+inline ::google::protobuf::int32 ESP32Metadata::rssi() const {
+  // @@protoc_insertion_point(field_get:followifier.ESP32Metadata.rssi)
+  return rssi_;
 }
-inline void ESP32Metadata::set_rsi(::google::protobuf::int32 value) {
-  set_has_rsi();
-  rsi_ = value;
-  // @@protoc_insertion_point(field_set:followifier.ESP32Metadata.rsi)
+inline void ESP32Metadata::set_rssi(::google::protobuf::int32 value) {
+  set_has_rssi();
+  rssi_ = value;
+  // @@protoc_insertion_point(field_set:followifier.ESP32Metadata.rssi)
 }
 
 // -------------------------------------------------------------------

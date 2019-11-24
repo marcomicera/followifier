@@ -47,8 +47,8 @@ public:
     logDeviceDistanceAnnouncement(const std::string &boardMac, const followifier::ESP32Metadata &metadata,
                                   double deviceDistance) {
 
-        std::string deviceMac = metadata.apmac();
-        int rssi = metadata.rsi();
+        std::string deviceMac = metadata.devicemac();
+        int rssi = metadata.rssi();
 
         if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && deviceMac == DEBUG_TRACKED_DEVICE_MAC)) {
             std::cout << "Board " << boardMac << " announced device " << deviceMac << " at a distance of "

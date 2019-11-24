@@ -26,7 +26,7 @@ def gen_random_hash():
     return ''.join(random.choices(population=hexdigits, k=64)).encode('utf-8')
 
 
-def gen_random_rsi():
+def gen_random_rssi():
     return random.randint(-90, 0)
 
 def gen_random_timestamp(rate):
@@ -61,9 +61,9 @@ def gen_dummy_batch(batch, mac, common_hashes, a):
 
         # Setting a random RSSI
         if a:
-            message.metadata.rsi = -62;
+            message.metadata.rssi = -62;
         else:
-            message.metadata.rsi = -51;
+            message.metadata.rssi = -51;
         
 
         # Introduce a common frame hash as long as there are some available
@@ -77,7 +77,7 @@ def gen_dummy_batch(batch, mac, common_hashes, a):
 
 
 def fill_message(message, rate):
-    message.metadata.apMac = gen_random_mac()
+    message.metadata.deviceMac = gen_random_mac()
     message.metadata.ssid = gen_random_ssid()
     message.metadata.timestamp = gen_random_timestamp(rate)
     # message.frame_hash = gen_random_hash()

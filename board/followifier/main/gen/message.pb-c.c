@@ -145,12 +145,12 @@ void   followifier__batch__free_unpacked
 static const ProtobufCFieldDescriptor followifier__esp32_metadata__field_descriptors[4] =
 {
   {
-    "apMac",
+    "deviceMac",
     1,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
-    offsetof(Followifier__ESP32Metadata, apmac),
+    offsetof(Followifier__ESP32Metadata, devicemac),
     NULL,
     NULL,
     0,             /* flags */
@@ -181,12 +181,12 @@ static const ProtobufCFieldDescriptor followifier__esp32_metadata__field_descrip
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
-    "rsi",
+    "rssi",
     5,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_INT32,
     0,   /* quantifier_offset */
-    offsetof(Followifier__ESP32Metadata, rsi),
+    offsetof(Followifier__ESP32Metadata, rssi),
     NULL,
     NULL,
     0,             /* flags */
@@ -194,8 +194,8 @@ static const ProtobufCFieldDescriptor followifier__esp32_metadata__field_descrip
   },
 };
 static const unsigned followifier__esp32_metadata__field_indices_by_name[] = {
-  0,   /* field[0] = apMac */
-  3,   /* field[3] = rsi */
+  0,   /* field[0] = deviceMac */
+  3,   /* field[3] = rssi */
   1,   /* field[1] = ssid */
   2,   /* field[2] = timestamp */
 };

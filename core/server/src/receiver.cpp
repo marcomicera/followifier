@@ -90,9 +90,9 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
             /* Computing device position */
             Point devicePosition = statistics::getDevicePosition(messagesBuffer.find(newMessage.frame_hash())->second);
-            statistics::logDeviceLocation(newMessage.metadata().apmac(), devicePosition);
+            statistics::logDeviceLocation(newMessage.metadata().devicemac(), devicePosition);
             if (!devicePosition.isValid()) {
-                statistics::logInvalidDeviceLocation(prettyHash(newMessage.frame_hash()), newMessage.metadata().apmac(),
+                statistics::logInvalidDeviceLocation(prettyHash(newMessage.frame_hash()), newMessage.metadata().devicemac(),
                                                      devicePosition);
                 continue;
             }
