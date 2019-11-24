@@ -30,7 +30,9 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
         newRound("Board " + newBatch.boardmac() + " appears for the second time during this round.");
     } else {
 
-        cout << "Board " << newBatch.boardmac() << " appears for the first time during this round." << endl;
+        if (!ROUNDLESS_MODE) {
+            cout << "Board " << newBatch.boardmac() << " appears for the first time during this round." << endl;
+        }
     }
 
     /* Insert it into the set of boards that have sent a message during the last round */
@@ -92,8 +94,10 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             Point devicePosition = statistics::getDevicePosition(messagesBuffer.find(newMessage.frame_hash())->second);
             statistics::logDeviceLocation(newMessage.metadata().devicemac(), devicePosition);
             if (!devicePosition.isValid()) {
-                statistics::logInvalidDeviceLocation(prettyHash(newMessage.frame_hash()), newMessage.metadata().devicemac(),
+                statistics::logInvalidDeviceLocation(prettyHash(newMessage.frame_hash()),
+                                                     newMessage.metadata().devicemac(),
                                                      devicePosition);
+                cout << endl;
                 continue;
             }
             cout << endl;
@@ -130,26 +134,27 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
     }
 }
 
-void receiver::cleanBatch(){
-    struct timeval tp;
+void receiver::cleanBatch() {
+
+    struct timeval tp{};
     std::vector<std::string> messagesToDelete;
 
     //get 5 minutes ago milliseconds
-    gettimeofday(&tp, NULL);
-    long int ms = (tp.tv_sec-5*60);
+    gettimeofday(&tp, nullptr);
+    long int ms = (tp.tv_sec - 5 * 60);
 
 
-    for(auto i : messagesBuffer){
-        if(i.second.begin()->second.timestamp() < ms){
+    for (auto i : messagesBuffer) {
+        if (i.second.begin()->second.timestamp() < ms) {
             //adds them to a vector to delete them later on
             messagesToDelete.push_back(i.first);
         }
     }
 
     //delete found messages
-    if(messagesToDelete.size()>0){
+    if (!messagesToDelete.empty()) {
         cout << "Deleting " << messagesToDelete.size() << " messages" << endl;
-        for(auto i : messagesToDelete){
+        for (auto i : messagesToDelete) {
             messagesBuffer.erase(i);
         }
         cout << "Deleted old messages" << endl;

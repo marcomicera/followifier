@@ -81,7 +81,6 @@ public:
         } else {
             cleanBatch();
             lastRoundBoardMacs.clear();
-            std::cout << std::endl << std::endl;
         }
     }
 
