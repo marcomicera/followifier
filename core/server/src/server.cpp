@@ -116,7 +116,7 @@ void server::compute_average_one_meter_rssi(const std::string &board_mac) {
                 Settings::configuration.min_num_calibration_messages);
 
         /* Store the average 1-meter-distance RSSI value */
-        statistics::boards_one_meter_distance_rssi_values.insert(std::make_pair(board_mac, average_rssi));
+        statistics::insert_one_meter_rssi(board_mac, average_rssi);
         std::cout << "Board " << board_mac << " detected an average RSSI of " << average_rssi << " from device "
                   << Settings::configuration.calibration_device_mac_address.value() << "." << std::endl; // Debugging
 
