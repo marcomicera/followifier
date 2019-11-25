@@ -11,7 +11,7 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
     ```bash
    $ sudo service mongod start 
    ```
-1. Create a configuration file `config.json` having the following format:
+1. Create a configuration file `config.json` having the following format: <!-- TODO add missing fields -->
     ```json
     {
         "port": 12345,

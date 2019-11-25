@@ -26,7 +26,47 @@ void connection::start() {
                                                   boost::asio::placeholders::error,
                                                   boost::asio::placeholders::bytes_transferred));
     } catch (const std::exception &e) {
-        cerr << "Failure while parsing a batch." << endl;
+        cerr << "Failure while parsing a batch: " << e.what() << endl;
+    }
+}
+
+followifier::Batch connection::sync_read() {
+
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
+    boost::system::error_code error_code;
+    size_t bytes_transferred = boost::asio::read_until(socket_, buf, delimiter, error_code);
+    if (!error_code && bytes_transferred != 0) {
+
+        // FIXME Duplicate code
+        followifier::Batch batch;
+
+        /* Verify buf contains more data beyond the delimiter. (e.g. async_read_until read beyond the delimiter) */
+        if (buf.size() < bytes_transferred) {
+            cerr << "Buffer size is " << buf.size() << ", while " << bytes_transferred
+                 << " bytes have been transferred. Terminating..." << endl;
+            exit(1);
+        }
+
+        /* Extract up to the first delimiter */
+        std::string data{
+                buffers_begin(buf.data()),
+                buffers_begin(buf.data()) + bytes_transferred - delimiter.size()
+        };
+
+        /* Consume through the first delimiter so that subsequent async_read_until will not reiterate over the same data. */
+        buf.consume(bytes_transferred);
+
+        if (!batch.ParseFromString(data)) {
+            throw std::runtime_error("Couldn't parse a batch of size " + std::to_string(data.length()) + ".");
+        }
+
+        return batch;
+
+    } else { // an error occurred
+        throw std::runtime_error(
+                "Something went wrong while receiving a calibration batch: (error code " +
+                std::to_string(error_code.value()) + " " + error_code.message() + ", number of transferred bytes: " +
+                std::to_string(bytes_transferred) + ")");
     }
 }
 
@@ -42,8 +82,8 @@ void connection::handle_read(const boost::system::error_code &error,
 
     /* If the batch has not been received correctly */
     if (bytes_transferred == 0) {
-        cerr << "Something went wrong while receiving a batch (" << error.message() << ", " << bytes_transferred
-             << " bytes transferred)." << endl << endl;
+        cerr << "Something went wrong while receiving a calibration batch: (error code " << error.value() << " "
+             << error.message() << ", number of transferred bytes: " << bytes_transferred << ")." << endl << endl;
     } else {
 
         followifier::Batch batch;
@@ -78,3 +118,8 @@ void connection::handle_read(const boost::system::error_code &error,
 }
 
 connection::connection(boost::asio::io_service &io_service) : socket_(io_service) {}
+
+connection::~connection() {
+    // TODO Is there something else to take care of?
+    socket_.close();
+}

@@ -9,6 +9,17 @@ void Settings::load(const std::string &filename) {
     // Parse the XML into the property tree.
     pt::read_json(filename, tree);
 
+    // MAC address of the device that will be used for calibration. This field is optional.
+    configuration.calibration_device_mac_address = tree.get_optional<std::string>("calibration_device");
+
+    // Minimum number of calibration messages needed to compute the average 1-meter-distance RSSI value of all boards.
+    configuration.min_num_calibration_messages = tree.get_optional<int>("min_num_calibration_messages");
+    if (!configuration.min_num_calibration_messages) {
+
+        // This field is optional, so a default value will be used in case it is missing in the configuration file.
+        configuration.min_num_calibration_messages = DEFAULT_MIN_NUM_CALIBRATION_MESSAGES;
+    }
+
     // Use the throwing version of get to find the port.
     // If the port cannot be resolved, an exception is thrown.
     configuration.port = tree.get<size_t>("port");
@@ -31,7 +42,7 @@ void Settings::load(const std::string &filename) {
                     Board b(v.second.get<std::string>("mac"), coordinates);
                     configuration.boards.insert(std::make_pair(b.getMac(), b));
                 }
-    if (Settings::get_num_boards() <=1) {
+    if (Settings::get_num_boards() <= 1) {
         throw std::invalid_argument("At least 2 boards must be configured");
     }
 }

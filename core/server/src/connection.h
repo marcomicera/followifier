@@ -18,9 +18,18 @@ public:
 
     tcp::socket &socket();
 
+    // TODO Documentation
+    // TODO Refractor name
     void start();
 
+    // TODO Documentation
+    followifier::Batch sync_read();
+
+    // TODO Documentation
+    // TODO Refractor name
     void handle_read(const boost::system::error_code &, size_t);
+
+    virtual ~connection();
 
 private:
 

@@ -14,6 +14,7 @@
  * How many seconds does the user have to place boards at 1 meter
  * distance from this server, one at the time.
  */
+// TODO Make it a configuration parameter
 #define INITIALIZATION_BOARD_PLACEMENT_WAITING_TIME 10
 
 class server {
@@ -23,6 +24,8 @@ class server {
 public:
 
     explicit server(boost::asio::io_service &);
+
+    virtual ~server();
 
 protected:
 
@@ -48,6 +51,14 @@ private:
      * @param board_counter     indicates how many boards have completed this process (printing purposes only).
      */
     static void wait_positioning(const std::string& board_mac, short board_counter);
+
+    /**
+     * Waits for a "calibration batch" and computes the average 1-meter-distance RSSI based on messages contained
+     * in it. Messages in this batch will be then discarded.
+     *
+     * @param board_mac         MAC address of the board being calibrated.
+     */
+    void compute_average_one_meter_rssi(const std::string& board_mac);
 };
 
 

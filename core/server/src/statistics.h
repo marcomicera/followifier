@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "../gen/message.pb.h"
 #include "receiver.h"
+#include <boost/algorithm/string/predicate.hpp>
 
 #define ONE_METER_RSSI -51
 
@@ -31,8 +32,13 @@ protected:
 
 public:
 
-    static Point getDevicePosition(std::unordered_map<std::string, followifier::ESP32Metadata> &boardMetadatas);
+    /**
+     * Map of boards' MAC addresses to their average 1-meter-distance RSSI value,
+     * derived during the initial calibration phase.
+     */
+    static std::unordered_map<std::string, double> boards_one_meter_distance_rssi_values;
 
+    static Point getDevicePosition(std::unordered_map<std::string, followifier::ESP32Metadata> &boardMetadatas);
 
     /**
      * Prints out the announcement of a device location from a board.
@@ -50,7 +56,8 @@ public:
         std::string deviceMac = metadata.devicemac();
         int rssi = metadata.rssi();
 
-        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && deviceMac == DEBUG_TRACKED_DEVICE_MAC)) {
+        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && boost::iequals(deviceMac,
+                                                                                       DEBUG_TRACKED_DEVICE_MAC))) { // case-insensitive comparison
             std::cout << "Board " << boardMac << " announced device " << deviceMac << " at a distance of "
                       << deviceDistance << " cm (RSSI: " << rssi << ")." << std::endl;
         }
@@ -65,7 +72,8 @@ public:
      * @param deviceLocation    the device location.
      */
     static void logDeviceLocation(const std::string deviceMac, const Point &deviceLocation) {
-        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && deviceMac == DEBUG_TRACKED_DEVICE_MAC)) {
+        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && boost::iequals(deviceMac,
+                                                                                       DEBUG_TRACKED_DEVICE_MAC))) { // case-insensitive comparison
             std::cout << "Device " << deviceMac << " located at: " << deviceLocation << "." << std::endl;
         }
     }
@@ -81,7 +89,8 @@ public:
      */
     static void
     logInvalidDeviceLocation(const std::string &frameHash, const std::string deviceMac, const Point &deviceLocation) {
-        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && deviceMac == DEBUG_TRACKED_DEVICE_MAC)) {
+        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && boost::iequals(deviceMac,
+                                                                                       DEBUG_TRACKED_DEVICE_MAC))) { // case-insensitive comparison
             std::cerr << "Frame " << frameHash << " discarded since announcing device " << deviceMac
                       << " is located in an invalid position (" << deviceLocation << ")." << std::endl;
         }

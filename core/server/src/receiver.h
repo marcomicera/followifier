@@ -14,8 +14,6 @@
 
 using boost::uuids::detail::md5;
 
-#define NUMBER_BOARDS Settings::get_num_boards()
-
 /**
  * When true, it never deletes frames of previous rounds.
  *

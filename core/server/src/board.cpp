@@ -1,9 +1,10 @@
 #include "board.h"
 #include <regex>
+#include <boost/algorithm/string/predicate.hpp>
 
 bool Board::operator==(const Board &other) const{
     return this->coordinates == other.coordinates &&
-        this->mac == other.mac;
+        boost::iequals(this->mac, other.mac); // case-insensitive comparison
 }
 
 std::string Board::getMac() {
