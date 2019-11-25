@@ -4,7 +4,7 @@ import {
   ChartDataSets,
   ChartOptions,
   ChartPoint,
-  ChartScales,
+  ChartScales, ChartSize,
   ChartTitleOptions, ChartTooltipCallback, ChartTooltipItem,
   ChartTooltipOptions,
   ChartType
@@ -22,7 +22,6 @@ export class ChartComponent implements OnInit {
   // Radar
   numberDevice: number;
   private updateSubscription: Subscription;
-
   public scatterChartDataSet: ChartDataSets[] = [{
     label: 'Boards',
     pointRadius: 10,
@@ -60,7 +59,10 @@ export class ChartComponent implements OnInit {
     responsive: true,
     tooltips: this.scatterToolTipOptions,
   };
-
+  public scatterChartSize: ChartSize = {
+    height: 180,
+    width: 180,
+  };
   constructor(private route: ActivatedRoute, private apiService: ApiService) {
   }
 

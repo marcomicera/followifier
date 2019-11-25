@@ -11,7 +11,6 @@ const dbName = 'followifier';
 const app = express();
 
 
-
 app.listen(8000, () => {
   console.log('Server started!')
 })
@@ -20,8 +19,6 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
-
 
 
 // Create a new MongoClient
@@ -56,7 +53,7 @@ app.route('/api/device/number').get((req, res) => {
     date = parseInt(date);
     const db = client.db(dbName);
     var coll = db.collection("messages");
-    coll.distinct('mac', {timestamp:{$gt:date-60}},function(err, result) {
+    coll.distinct('mac', {timestamp:{$gt:date-1*60}},function(err, result) {
       if (err) {
         res.send(err);
       } else {
@@ -65,7 +62,7 @@ app.route('/api/device/number').get((req, res) => {
       }
     })
   });
-})
+});
 app.route('/api/devices').get((req, res) => {
   var resultArray = [];
   client.connect(function (err) {
@@ -88,8 +85,31 @@ app.route('/api/devices').get((req, res) => {
       }
     })
   });
-})
+});
+app.route('/api/devices/historical').get((req, res)  => {
+  client.connect(function (err) {
+    assert.equal(null, err);
+    let date = Date.now() / 1000;
+    date = parseInt(date);
+    const db = client.db(dbName);
+    var coll = db.collection("messages");
+    coll.aggregate([
+      {$match: {timestamp: {$gt: date - req.query.minutes*60}}},
+      {$unwind: "$mac"
+      },
+      {$group: {mac: "$mac",  n: { $sum: 1}}},
+    ]).toArray(function (err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        console.log('minutes:' + req.query.minutes);
+        console.log('devices: ' + JSON.stringify(result));
+        res.send(JSON.stringify(result));
+      }
 
+    })
+  });
+});
 app.route('/api/boards').get((req, res) => {
   client.connect(function(err) {
     assert.equal(null, err);

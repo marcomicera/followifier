@@ -1,4 +1,38 @@
-<div style="display: block;">
-  <h2>numero dispositivi negli ultimi 5 minuti</h2>
-<li> {{number}}</li>
+<div style="display: block;" align="center">
+  <mat-form-field class="example-full-width" >
+    <input matInput placeholder="Insert value" [(ngModel)]="value" name="value" >
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label >Time interval</mat-label>
+    <mat-select [(value)]="selected">
+      <mat-option *ngFor="let food of timeInterval" [value]="food">
+        {{food}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-button color="primary"(click)="button()">Send</button>
+
+  <table mat-table [dataSource]="this.devicesHistorical" class="mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="mac">
+      <th mat-header-cell *matHeaderCellDef> Mac </th>
+      <td mat-cell *matCellDef="let element"> {{element._id}} </td>
+    </ng-container>
+
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="appearance">
+      <th mat-header-cell *matHeaderCellDef> Appearance </th>
+      <td mat-cell *matCellDef="let element"> {{element.n}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+
 </div>

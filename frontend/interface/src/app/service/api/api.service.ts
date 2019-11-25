@@ -12,6 +12,10 @@ export interface Device {
   x: string;
   y: string;
 }
+export interface DeviceHistorical {
+  _id: string;
+  n: string;
+}
 @Injectable()
 export class ApiService {
 
@@ -27,5 +31,10 @@ export class ApiService {
   }
   getDevices(): Observable<Device[]> {
     return this.http.get<Device[]>('http://localhost:8000/api/devices');
+  }
+  getDevicesHistorical(minutes: string): Observable<DeviceHistorical[]> {
+    console.log('Minute: ' + minutes);
+    return this.http.get<DeviceHistorical[]>('http://localhost:8000/api/devices/historical?' + 'minutes=' + minutes);
+
   }
 }
