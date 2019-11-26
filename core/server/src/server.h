@@ -10,13 +10,6 @@
 #include "database.h"
 #include "settings.h"
 
-/**
- * How many seconds does the user have to place boards at 1 meter
- * distance from this server, one at the time.
- */
-// TODO Make it a configuration parameter
-#define INITIALIZATION_BOARD_PLACEMENT_WAITING_TIME 10
-
 class server {
 
     const size_t port = Settings::configuration.port;

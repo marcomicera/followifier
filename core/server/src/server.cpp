@@ -43,7 +43,7 @@ void server::handle_accept(const connection::pointer &new_connection,
 void server::wait_positioning(const std::string &board_mac, short board_counter) {
 
     /* How many seconds are left for the user so s/he can place the board at 1 meter distance */
-    short board_placements_seconds_left = INITIALIZATION_BOARD_PLACEMENT_WAITING_TIME;
+    int board_placements_seconds_left = Settings::configuration.calibration_duration_in_seconds.value();
 
     std::cout << "Please place device " << Settings::configuration.calibration_device_mac_address.value()
               << " at 1 meter distance from board " << board_mac << " (" << (board_counter + 1) << "/"
@@ -118,7 +118,7 @@ void server::compute_average_one_meter_rssi(const std::string &board_mac) {
         /* Store the average 1-meter-distance RSSI value */
         statistics::insert_one_meter_rssi(board_mac, average_rssi);
         std::cout << "Board " << board_mac << " detected an average RSSI of " << average_rssi << " from device "
-                  << Settings::configuration.calibration_device_mac_address.value() << "." << std::endl; // Debugging
+                  << Settings::configuration.calibration_device_mac_address.value() << "." << std::endl;
 
     } catch (const std::exception &e) {
         std::cerr << "Failure while parsing a batch: " << e.what() << std::endl;

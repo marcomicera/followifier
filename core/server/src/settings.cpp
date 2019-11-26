@@ -2,6 +2,67 @@
 
 Config Settings::configuration;
 
+void Settings::load_calibration_settings(const pt::ptree &tree) {
+
+    /* Looking for the 'calibration' object */
+    boost::property_tree::ptree::const_assoc_iterator calibration_iterator = tree.find("calibration");
+    if (calibration_iterator == tree.not_found()) { // calibration settings have not been found
+        std::cout << "Calibration settings have not been found: boards calibration will not be performed." << std::endl;
+    } else { // calibration settings have been found
+
+        /* Retrieving the calibration object */
+        std::cout << "Calibration settings have been found." << std::endl;
+        const boost::property_tree::ptree &calibration_settings = (*calibration_iterator).second;
+
+        /* MAC address of the device that will be used for calibration. This field is optional. */
+        configuration.calibration_device_mac_address = calibration_settings.get_optional<std::string>(
+                "calibration_device");
+        if (!configuration.calibration_device_mac_address) { // if the calibration device has not been specified
+            std::cout << "Calibration device has not been specified: boards calibration will not be performed."
+                      << std::endl;
+            return;
+        } else {
+            std::cout << "Calibration device is " << configuration.calibration_device_mac_address.value() << "."
+                      << std::endl;
+        }
+
+        /* Minimum number of calibration messages needed to compute the
+         * average 1-meter-distance RSSI value of all boards
+         */
+        configuration.min_num_calibration_messages = calibration_settings.get_optional<int>(
+                "min_num_calibration_messages");
+        if (!configuration.min_num_calibration_messages) {
+
+            /* This field is optional, so a default value will be used in case
+             * it is missing in the configuration file
+             */
+            std::cout << "Setting the minimum number of messaged needed to perform calibration to "
+                      << DEFAULT_MIN_NUM_CALIBRATION_MESSAGES << "." << std::endl;
+            configuration.min_num_calibration_messages = DEFAULT_MIN_NUM_CALIBRATION_MESSAGES;
+        } else {
+            std::cout << "The minimum number of messaged needed to perform calibration is "
+                      << configuration.min_num_calibration_messages.value() << "." << std::endl;
+        }
+
+        /* How many seconds does the user have to place boards at 1 meter
+         * distance from this server, one at the time.
+         */
+        configuration.calibration_duration_in_seconds = calibration_settings.get_optional<int>("duration_in_seconds");
+        if (!configuration.calibration_duration_in_seconds) {
+
+            /* This field is optional, so a default value will be used in case
+             * it is missing in the configuration file
+             */
+            std::cout << "Setting the each board calibration duration to "
+                      << DEFAULT_CALIBRATION_DURATION_IN_SECONDS << " seconds." << std::endl;
+            configuration.calibration_duration_in_seconds = DEFAULT_CALIBRATION_DURATION_IN_SECONDS;
+        } else {
+            std::cout << "Each board calibration will take "
+                      << configuration.calibration_duration_in_seconds.value() << " seconds." << std::endl;
+        }
+    }
+}
+
 void Settings::load(const std::string &filename) {
 
     pt::ptree tree;
@@ -9,16 +70,8 @@ void Settings::load(const std::string &filename) {
     // Parse the XML into the property tree.
     pt::read_json(filename, tree);
 
-    // MAC address of the device that will be used for calibration. This field is optional.
-    configuration.calibration_device_mac_address = tree.get_optional<std::string>("calibration_device");
-
-    // Minimum number of calibration messages needed to compute the average 1-meter-distance RSSI value of all boards.
-    configuration.min_num_calibration_messages = tree.get_optional<int>("min_num_calibration_messages");
-    if (!configuration.min_num_calibration_messages) {
-
-        // This field is optional, so a default value will be used in case it is missing in the configuration file.
-        configuration.min_num_calibration_messages = DEFAULT_MIN_NUM_CALIBRATION_MESSAGES;
-    }
+    // Loading calibration settings
+    Settings::load_calibration_settings(tree);
 
     // Use the throwing version of get to find the port.
     // If the port cannot be resolved, an exception is thrown.

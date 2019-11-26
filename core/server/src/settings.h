@@ -16,6 +16,11 @@
  */
 #define DEFAULT_MIN_NUM_CALIBRATION_MESSAGES 3
 
+/*
+ * Default board calibration duration in seconds.
+ */
+#define DEFAULT_CALIBRATION_DURATION_IN_SECONDS 10
+
 namespace pt = boost::property_tree;
 
 typedef struct {
@@ -48,6 +53,12 @@ typedef struct {
      */
     boost::optional<int> min_num_calibration_messages;
 
+    /**
+     * How many seconds does the user have to place boards at 1 meter
+     * distance from this server, one at the time.
+     */
+    boost::optional<int> calibration_duration_in_seconds;
+
 } Config;
 
 class Settings {
@@ -61,6 +72,16 @@ public:
     static size_t get_num_boards() {
         return configuration.boards.size();
     }
+
+private:
+
+    /**
+     * Loads settings regarding the initial calibration phase during which a mobile device
+     * must be placed at 1 meter from each board, one at the time.
+     *
+     * @param root_config_tree  JSON root tree of the whole configuration file.
+     */
+    static void load_calibration_settings(const pt::ptree& root_config_tree);
 };
 
 #endif //CORE_SETTINGS_H
