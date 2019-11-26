@@ -60,7 +60,7 @@ void server::start_calibration() {
         if (!statistics::has_been_calibrated(Settings::board_to_calibrate)) {
             /* Wait for the user to place this board */
             if(board_has_sent_calibration_batch){
-                server::wait_placement(Settings::board_to_calibrate, board_counter++);
+                calibration::wait_placement(Settings::board_to_calibrate, board_counter++);
                 board_has_sent_calibration_batch = false;
             }
 
@@ -74,6 +74,7 @@ void server::start_calibration() {
         }
         board_counter++;
     }
+    std::cout << "Calibration has been completed. Statistics may not be calculated right away" << std::endl;
     /* All boards have been calibrated */
     start_statistics();
 }

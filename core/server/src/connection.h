@@ -7,7 +7,7 @@
 #include "server.h"
 #include "receiver.h"
 #include "statistics.h"
-
+#include "calibration.h"
 using boost::asio::ip::tcp;
 
 #ifndef CORE_CONNECTION_H
@@ -104,6 +104,21 @@ protected:
 
             /* Waking up the server thread */
             board_has_sent_calibration_batch = true;
+            size_t board_counter = 0;
+            for (auto &board : Settings::configuration.boards) {
+
+                /* This board's MAC address */
+                Settings::board_to_calibrate = board.first;
+
+                if (!statistics::has_been_calibrated(Settings::board_to_calibrate)) {
+                    /* Wait for the user to place this board */
+                    if(board_has_sent_calibration_batch){
+                        calibration::wait_placement(Settings::board_to_calibrate, board_counter++);
+                        board_has_sent_calibration_batch = false;
+                    }
+                }
+                board_counter++;
+            }
         }
     }
 
