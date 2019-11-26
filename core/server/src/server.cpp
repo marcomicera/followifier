@@ -40,7 +40,7 @@ void server::handle_accept(const connection::pointer &new_connection,
     start_accept();
 }
 
-void server::wait_positioning(const std::string &board_mac, short board_counter) {
+void server::wait_placement(const std::string &board_mac, short board_counter) {
 
     /* How many seconds are left for the user so s/he can place the board at 1 meter distance */
     int board_placements_seconds_left = Settings::configuration.calibration_placement_duration_in_seconds.value();
@@ -135,7 +135,7 @@ void server::start_calibration() {
         std::string board_mac_address = board.first;
 
         /* Wait for the user to place this board */
-        server::wait_positioning(board_mac_address, board_counter++);
+        server::wait_placement(board_mac_address, board_counter++);
 
         /* Wait for a batch from this board */
         // TODO Do something if calibration fails for a board

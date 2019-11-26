@@ -43,7 +43,7 @@ private:
      * @param board_mac         MAC address of the board to be placed.
      * @param board_counter     indicates how many boards have completed this process (printing purposes only).
      */
-    static void wait_positioning(const std::string& board_mac, short board_counter);
+    static void wait_placement(const std::string& board_mac, short board_counter);
 
     /**
      * Waits for a "calibration batch" and computes the average 1-meter-distance RSSI based on messages contained
