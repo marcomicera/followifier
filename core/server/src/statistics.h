@@ -127,6 +127,15 @@ public:
             return it->second;
         }
     }
+
+    static bool has_been_calibrated(const std::string& board_mac){
+        auto it = statistics::boards_one_meter_distance_rssi_values.find(board_mac);
+        if (it == statistics::boards_one_meter_distance_rssi_values.end()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 };
 
 

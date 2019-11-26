@@ -14,13 +14,13 @@ server::server(boost::asio::io_service &io_service) : acceptor_(io_service, tcp:
 
     /* If a calibration device is set */
     if (Settings::configuration.calibration_device_mac_address) {
-
         /* Start calibrating boards one at the time */
+        board_has_sent_calibration_batch = true;
         start_calibration();
+    }else{
+        /* Start accepting connections from boards */
+        start_statistics();
     }
-
-    /* Start accepting connections from boards */
-    start_statistics();
 }
 
 void server::statistics_accept_handler(const connection::pointer &new_connection,
@@ -40,13 +40,12 @@ void server::start_statistics() {
 }
 
 void server::calibration_accept_handler(const connection::pointer &new_connection,
-                                        const boost::system::error_code &error,
-                                        const std::string &board_to_calibrate) {
+                                        const boost::system::error_code &error) {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
-    std::cout << "Calibration: new connection." << std::endl;
     if (!error) {
-        new_connection->async_batch_read_for_calibration(board_to_calibrate);
+        new_connection->async_batch_read_for_calibration();
     }
+    start_calibration();
 }
 
 void server::start_calibration() {
@@ -56,24 +55,27 @@ void server::start_calibration() {
     for (auto &board : Settings::configuration.boards) {
 
         /* This board's MAC address */
-        std::string board_to_calibrate = board.first;
+        Settings::board_to_calibrate = board.first;
 
-        /* Wait for the user to place this board */
-        server::wait_placement(board_to_calibrate, board_counter++);
+        if (!statistics::has_been_calibrated(Settings::board_to_calibrate)) {
+            /* Wait for the user to place this board */
+            if(board_has_sent_calibration_batch){
+                server::wait_placement(Settings::board_to_calibrate, board_counter++);
+                board_has_sent_calibration_batch = false;
+            }
 
-        /* Wait for a batch from this board */
-        // TODO Do something if calibration fails for a board
-        connection::pointer calibration_connection = connection::create(
-                acceptor_.get_io_service()); // connection needed to calibrate this board
-        acceptor_.async_accept(calibration_connection->socket(),
-                               boost::bind(&::server::calibration_accept_handler, this, calibration_connection,
-                                           boost::asio::placeholders::error, board_to_calibrate));
-
-        /* Wait for the board to send the calibration batch */
-        std::unique_lock<std::mutex> lk(calibration_connection->calibration_mutex);
-        calibration_connection->calibration_batch_received.wait(lk, [calibration_connection] { return calibration_connection->get_board_calibration_status(); });
+            /* Wait for the board to send the calibration batch */
+            connection::pointer calibration_connection = connection::create(
+                    acceptor_.get_io_service()); // connection needed to calibrate this board
+            acceptor_.async_accept(calibration_connection->socket(),
+                                   boost::bind(&::server::calibration_accept_handler, this, calibration_connection,
+                                               boost::asio::placeholders::error));
+            return;
+        }
+        board_counter++;
     }
-    std::cout << std::endl;
+    /* All boards have been calibrated */
+    start_statistics();
 }
 
 server::~server() {

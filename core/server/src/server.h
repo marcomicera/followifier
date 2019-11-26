@@ -35,8 +35,7 @@ protected:
      */
     void start_calibration();
 
-    void calibration_accept_handler(const connection::pointer &new_connection, const boost::system::error_code &error,
-                                    const std::string &board_to_calibrate);
+    void calibration_accept_handler(const connection::pointer &new_connection, const boost::system::error_code &error);
 
     /**
      * Waits for the user to place the specified board at 1 meter distance from the server.

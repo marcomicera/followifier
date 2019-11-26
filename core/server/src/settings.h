@@ -67,6 +67,8 @@ public:
 
     static Config configuration;
 
+    static std::string board_to_calibrate;
+
     static void load(const std::string &);
 
     static size_t get_num_boards() {
