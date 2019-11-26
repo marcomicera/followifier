@@ -83,29 +83,6 @@ void server::compute_average_one_meter_rssi(const std::string &board_mac) {
                 std::cerr << "Error upon accepting a connection: retrying..." << std::endl;
             }
 
-            /* Count the number of messages sent by the calibration device and also
-             * compute the average RSSI in the meantime
-             */
-            for (const auto &message: batch.messages()) {
-
-                /* Filtering messages that are not being sent by the calibration device */
-                if (boost::iequals(message.metadata().devicemac(),
-                                   Settings::configuration.calibration_device_mac_address.value())) {
-                    ++number_of_messages_sent_by_calibration_device;
-                    average_rssi += message.metadata().rssi();
-                }
-            }
-            average_rssi /= batch.messages().size();
-
-            /* Logging */
-            if (boost::iequals(batch.boardmac(), board_mac) && number_of_messages_sent_by_calibration_device <
-                                                               Settings::configuration.min_num_calibration_messages.value()) {
-                std::cout << "Device " << Settings::configuration.calibration_device_mac_address.value() << " has sent "
-                          << number_of_messages_sent_by_calibration_device << " calibration messages. At least "
-                          << Settings::configuration.min_num_calibration_messages.value()
-                          << " are required to compute a meaningful average. Waiting for another batch..." << std::endl;
-            }
-
         } while (/* Case-insensitive comparison */
                 !boost::iequals(batch.boardmac(), board_mac) ||
 
@@ -114,6 +91,29 @@ void server::compute_average_one_meter_rssi(const std::string &board_mac) {
                  */
                 number_of_messages_sent_by_calibration_device <
                 Settings::configuration.min_num_calibration_messages);
+
+        /* Count the number of messages sent by the calibration device and also
+             * compute the average RSSI in the meantime
+             */
+        for (const auto &message: batch.messages()) {
+
+            /* Filtering messages that are not being sent by the calibration device */
+            if (boost::iequals(message.metadata().devicemac(),
+                               Settings::configuration.calibration_device_mac_address.value())) {
+                ++number_of_messages_sent_by_calibration_device;
+                average_rssi += message.metadata().rssi();
+            }
+        }
+        average_rssi /= batch.messages().size();
+
+        /* Logging */
+        if (boost::iequals(batch.boardmac(), board_mac) && number_of_messages_sent_by_calibration_device <
+                                                           Settings::configuration.min_num_calibration_messages.value()) {
+            std::cout << "Device " << Settings::configuration.calibration_device_mac_address.value() << " has sent "
+                      << number_of_messages_sent_by_calibration_device << " calibration messages. At least "
+                      << Settings::configuration.min_num_calibration_messages.value()
+                      << " are required to compute a meaningful average. Waiting for another batch..." << std::endl;
+        }
 
         /* Store the average 1-meter-distance RSSI value */
         statistics::insert_one_meter_rssi(board_mac, average_rssi);
