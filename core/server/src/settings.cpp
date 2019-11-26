@@ -47,19 +47,18 @@ void Settings::load_calibration_settings(const pt::ptree &tree) {
         /* How many seconds does the user have to place boards at 1 meter
          * distance from this server, one at the time.
          */
-        configuration.calibration_duration_in_seconds = calibration_settings.get_optional<int>("duration_in_seconds");
-        if (!configuration.calibration_duration_in_seconds) {
+        configuration.calibration_placement_duration_in_seconds = calibration_settings.get_optional<int>(
+                "placement_duration_in_seconds");
+        if (!configuration.calibration_placement_duration_in_seconds) {
 
             /* This field is optional, so a default value will be used in case
              * it is missing in the configuration file
              */
-            std::cout << "Setting the each board calibration duration to "
-                      << DEFAULT_CALIBRATION_DURATION_IN_SECONDS << " seconds." << std::endl;
-            configuration.calibration_duration_in_seconds = DEFAULT_CALIBRATION_DURATION_IN_SECONDS;
-        } else {
-            std::cout << "Each board calibration will take "
-                      << configuration.calibration_duration_in_seconds.value() << " seconds." << std::endl;
+            configuration.calibration_placement_duration_in_seconds = DEFAULT_CALIBRATION_PLACEMENT_DURATION_IN_SECONDS;
         }
+        std::cout << "The user will have " << configuration.calibration_placement_duration_in_seconds.value()
+                  << " seconds to place the mobile device at 1 meter from a board, before its calibration phase begins."
+                  << std::endl;
     }
 }
 

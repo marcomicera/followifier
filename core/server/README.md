@@ -37,7 +37,7 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
         "calibration": {
             "calibration_device": "cc:61:e5:13:1a:d1",
             "min_num_calibration_messages": 2,
-            "duration_in_seconds": 15
+            "placement_duration_in_seconds": 15
         }
     }
     ```
@@ -49,7 +49,8 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
         - `min_num_calibration_messages` represents the minimum number of messages that the calibration device needs
         to send in a batch in order for the calibration to make sense.\
         If missing, a default value will be used.
-        - `duration_in_seconds` represents the duration in seconds of each board calibration.\
+        - `placement_duration_in_seconds` represents the number of seconds that the user has at her/his disposal 
+        in order to place the mobile device at one meter for boards, one at the time.
         If missing, a default value will be used.
 1. Optionally, free the `core` server port:
     ```bash

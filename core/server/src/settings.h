@@ -17,9 +17,9 @@
 #define DEFAULT_MIN_NUM_CALIBRATION_MESSAGES 3
 
 /*
- * Default board calibration duration in seconds.
+ * Default board calibration placement duration in seconds.
  */
-#define DEFAULT_CALIBRATION_DURATION_IN_SECONDS 10
+#define DEFAULT_CALIBRATION_PLACEMENT_DURATION_IN_SECONDS 10
 
 namespace pt = boost::property_tree;
 
@@ -54,10 +54,10 @@ typedef struct {
     boost::optional<int> min_num_calibration_messages;
 
     /**
-     * How many seconds does the user have to place boards at 1 meter
-     * distance from this server, one at the time.
+     * How many seconds does the user have to place the mobile device at 1 meter
+     * distance from boards, one at the time.
      */
-    boost::optional<int> calibration_duration_in_seconds;
+    boost::optional<int> calibration_placement_duration_in_seconds;
 
 } Config;
 

@@ -43,7 +43,7 @@ void server::handle_accept(const connection::pointer &new_connection,
 void server::wait_positioning(const std::string &board_mac, short board_counter) {
 
     /* How many seconds are left for the user so s/he can place the board at 1 meter distance */
-    int board_placements_seconds_left = Settings::configuration.calibration_duration_in_seconds.value();
+    int board_placements_seconds_left = Settings::configuration.calibration_placement_duration_in_seconds.value();
 
     std::cout << "Please place device " << Settings::configuration.calibration_device_mac_address.value()
               << " at 1 meter distance from board " << board_mac << " (" << (board_counter + 1) << "/"
