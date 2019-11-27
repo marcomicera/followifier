@@ -35,9 +35,11 @@ void init_wifi(void) {
 }
 
 esp_err_t start_wifi(void) {
+    wifi_stopped = false;
     return esp_wifi_start();
 }
 
 esp_err_t stop_wifi(void) {
+    wifi_stopped = true;
     return esp_wifi_stop();
 }

@@ -8,10 +8,13 @@
 
 #include <string>
 #include "settings.h"
+#include <ctime>
 
 class calibration {
 public:
-/**
+    static std::string board_to_calibrate;
+    static long int starting_timestamp;
+    /**
  * Waits for the user to place the specified board at 1 meter distance from the server.
  *
  * @param board_mac         MAC address of the board to be placed.
@@ -35,6 +38,7 @@ public:
         }
         std::cout << "\rReady to calibrate board " << board_mac << ". Please do not move the device any further."
                   << std::endl;
+        starting_timestamp =  std::time(0);
     }
 };
 

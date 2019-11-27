@@ -55,12 +55,12 @@ void server::start_calibration() {
     for (auto &board : Settings::configuration.boards) {
 
         /* This board's MAC address */
-        Settings::board_to_calibrate = board.first;
+        calibration::board_to_calibrate = board.first;
 
-        if (!statistics::has_been_calibrated(Settings::board_to_calibrate)) {
+        if (!statistics::has_been_calibrated(calibration::board_to_calibrate)) {
             /* Wait for the user to place this board */
             if(board_has_sent_calibration_batch){
-                calibration::wait_placement(Settings::board_to_calibrate, board_counter++);
+                calibration::wait_placement(calibration::board_to_calibrate, board_counter++);
                 board_has_sent_calibration_batch = false;
             }
 

@@ -73,31 +73,38 @@ protected:
 
             /* Filtering messages that are not being sent by the calibration device */
             if (boost::iequals(message.metadata().devicemac(),
-                               Settings::configuration.calibration_device_mac_address.value())) {
+                               Settings::configuration.calibration_device_mac_address.value()) &&
+                message.metadata().timestamp() >= calibration::starting_timestamp) {
                 ++number_of_messages_sent_by_calibration_device;
                 average_rssi += message.metadata().rssi();
+            }else{
+                std::cout << message.metadata().timestamp() << " " << calibration::starting_timestamp << std::endl;
             }
         }
-        average_rssi /= batch.messages().size();
+        average_rssi /= number_of_messages_sent_by_calibration_device;
 
         /* If this batch is not suitable for the calibration */
         if (    /* Case-insensitive comparison */
-                !boost::iequals(batch.boardmac(), Settings::board_to_calibrate) ||
-
-                /* There needs to be at least `Settings::configuration.min_num_calibration_messages` messages
-                   in the batch in order to compute a meaningful RSSI average */
+                !boost::iequals(batch.boardmac(), calibration::board_to_calibrate)) {}
+            //batch received from another board
+        else if (
+            /* There needs to be at least `Settings::configuration.min_num_calibration_messages` messages
+               in the batch in order to compute a meaningful RSSI average */
                 number_of_messages_sent_by_calibration_device <
                 Settings::configuration.min_num_calibration_messages) {
-            //Batch not interesting
+            std::cout << "Device " << Settings::configuration.calibration_device_mac_address.value() << " has sent "
+                      << number_of_messages_sent_by_calibration_device << " calibration messages after timestamp " <<
+                      calibration::starting_timestamp << ". More messages are needed" << std::endl;
         } else { // batch was good
 
             /* Logging */
             std::cout << "Device " << Settings::configuration.calibration_device_mac_address.value() << " has sent "
-                      << number_of_messages_sent_by_calibration_device << " calibration messages." << std::endl;
+                      << number_of_messages_sent_by_calibration_device << " calibration messages after timestamp " <<
+                      calibration::starting_timestamp << std::endl;
 
             /* Store the average 1-meter-distance RSSI value */
-            statistics::insert_one_meter_rssi(Settings::board_to_calibrate, average_rssi);
-            std::cout << "Board " << Settings::board_to_calibrate << " detected an average RSSI of " << average_rssi
+            statistics::insert_one_meter_rssi(calibration::board_to_calibrate, average_rssi);
+            std::cout << "Board " << calibration::board_to_calibrate << " detected an average RSSI of " << average_rssi
                       << " from device "
                       << Settings::configuration.calibration_device_mac_address.value() << "." << std::endl;
 
@@ -107,12 +114,12 @@ protected:
             for (auto &board : Settings::configuration.boards) {
 
                 /* This board's MAC address */
-                Settings::board_to_calibrate = board.first;
+                calibration::board_to_calibrate = board.first;
 
-                if (!statistics::has_been_calibrated(Settings::board_to_calibrate)) {
+                if (!statistics::has_been_calibrated(calibration::board_to_calibrate)) {
                     /* Wait for the user to place this board */
-                    if(board_has_sent_calibration_batch){
-                        calibration::wait_placement(Settings::board_to_calibrate, board_counter++);
+                    if (board_has_sent_calibration_batch) {
+                        calibration::wait_placement(calibration::board_to_calibrate, board_counter++);
                         board_has_sent_calibration_batch = false;
                     }
                 }

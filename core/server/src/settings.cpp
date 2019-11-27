@@ -1,7 +1,6 @@
 #include "settings.h"
 
 Config Settings::configuration;
-std::string Settings::board_to_calibrate;
 
 void Settings::load_calibration_settings(const pt::ptree &tree) {
 

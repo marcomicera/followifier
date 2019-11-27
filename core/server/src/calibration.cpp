@@ -1,5 +1,4 @@
-//
-// Created by simona on 26/11/19.
-//
-
 #include "calibration.h"
+
+std::string calibration::board_to_calibrate;
+long int calibration::starting_timestamp;

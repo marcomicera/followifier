@@ -43,4 +43,9 @@ esp_err_t start_wifi();
  */
 esp_err_t stop_wifi();
 
+
+/**
+ * Check if wifi was stopped voluntary
+ */
+static bool wifi_stopped = true;
 #endif //FOLLOWIFIER_WIFI_H

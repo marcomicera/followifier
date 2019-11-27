@@ -132,7 +132,7 @@ void flush(void) {
         do {
             if(sent>0)
                 ESP_LOGI(TAG, "Resending missing bytes");
-            size_t sent_now = send(tcp_socket, (char *) buffer + sent, to_send - sent, SO_LINGER);
+            int sent_now = send(tcp_socket, (char *) buffer + sent, to_send - sent, SO_LINGER);
             ESP_ERROR_CHECK_JUMP_LABEL( sent_now >= 0,
                                        "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
                                        closing_socket);
@@ -145,11 +145,9 @@ void flush(void) {
         // Closing socket
         ESP_LOGI(TAG, "Shutting down socket towards %s:%d...", SERVER_ADDRESS, SERVER_PORT);
         shutdown(tcp_socket, SHUT_WR);
-        for(;;) {
+        for(int i=0; i<5; i++) {
+            //5 was decided to avoid looping
             size_t res=read(tcp_socket, buffer, 4000);
-            if(res < 0) {
-                ESP_LOGI(TAG, "reading");
-            }
             if(!res)
                 break;
             ESP_LOGI(TAG, "looping");
