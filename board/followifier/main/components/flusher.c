@@ -127,11 +127,18 @@ void flush(void) {
 
         // Flushing the message buffer
         ESP_LOGI(TAG, "Sending batch");
-        ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length + sizeof("\n\r\n\r"), 0) >= 0,
-                                   "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
-                                   closing_socket);
-        ESP_LOGI(TAG, "Sending delimiter...");
-
+        size_t to_send = batch_length + sizeof("\n\r\n\r");
+        size_t sent = 0;
+        do {
+            if(sent>0)
+                ESP_LOGI(TAG, "Resending missing bytes");
+            size_t sent_now = send(tcp_socket, (char *) buffer + sent, to_send - sent, 0);
+            ESP_ERROR_CHECK_JUMP_LABEL( sent_now >= 0,
+                                       "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
+                                       closing_socket);
+            sent += sent_now;
+            ESP_LOGI(TAG, "%d", sent);
+        }while(sent<to_send);
         // Skipping until here in case connection towards the server was unsuccessful
         closing_socket:
 

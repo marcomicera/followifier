@@ -4,7 +4,6 @@
 #include <boost/asio.hpp>
 #include <gen/message.pb.h>
 #include "settings.h"
-#include "server.h"
 #include "receiver.h"
 #include "statistics.h"
 #include "calibration.h"
