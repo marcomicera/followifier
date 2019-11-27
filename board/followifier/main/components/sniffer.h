@@ -50,10 +50,7 @@ extern signed max_rrsi_in_measure_period;
 
 #endif
 
-/**
- * Board flush rate in seconds.
- */
-#define FLUSH_RATE_IN_SECONDS (60)
+extern const char *SNIFFER_TAG;
 
 /**
  * @brief Supported Sniffer Interface
