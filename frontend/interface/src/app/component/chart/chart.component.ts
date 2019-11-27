@@ -12,6 +12,7 @@ import {
 import {ActivatedRoute} from '@angular/router';
 import {ApiService, Board} from '../../service/api/api.service';
 import {Observable, interval, Subscription} from 'rxjs';
+import {Color, Label} from "ng2-charts";
 
 @Component({
   selector: 'app-chart',
@@ -63,6 +64,26 @@ export class ChartComponent implements OnInit {
     height: 180,
     width: 180,
   };
+  public lineChartData: ChartDataSets[] = [
+    { data: [], label: 'Devices' },
+  ];
+
+  lineChartLabels: Label[] = [];
+
+  lineChartOptions = {
+    responsive: true,
+  };
+
+  lineChartColors: Color[] = [
+    {
+      borderColor: 'black',
+      backgroundColor: 'rgba(255,255,0,0.28)',
+    },
+  ];
+
+  lineChartLegend = true;
+  lineChartPlugins = [];
+  lineChartType = 'line';
   constructor(private route: ActivatedRoute, private apiService: ApiService) {
   }
 
@@ -71,6 +92,8 @@ export class ChartComponent implements OnInit {
       console.log('LOG: OnInit');
       this.apiService.getDevicesNumber().subscribe(data => {
           this.numberDevice = +data;
+          this.lineChartData[0].data.push(this.numberDevice);
+          this.lineChartLabels.push(String(new Date().getMinutes()));
         }
       );
       this.scatterToolTipItem  = [];

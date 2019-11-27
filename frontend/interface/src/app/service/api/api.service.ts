@@ -16,6 +16,9 @@ export interface DeviceHistorical {
   _id: string;
   n: string;
 }
+export interface DeviceMac {
+  _id: string;
+}
 @Injectable()
 export class ApiService {
 
@@ -29,12 +32,21 @@ export class ApiService {
   getDevicesNumber(): Observable<string> {
     return this.http.get<string>('http://localhost:8000/api/device/number');
   }
+
+  getAllDevicesNumber(): Observable<Device[]> {
+    return this.http.get<Device[]>('http://localhost:8000/api/devices/all');
+  }
   getDevices(): Observable<Device[]> {
     return this.http.get<Device[]>('http://localhost:8000/api/devices');
   }
   getDevicesHistorical(minutes: string): Observable<DeviceHistorical[]> {
     console.log('Minute: ' + minutes);
     return this.http.get<DeviceHistorical[]>('http://localhost:8000/api/devices/historical?' + 'minutes=' + minutes);
-
+  }
+  getAllMacDevices(): Observable<DeviceMac[]> {
+    return this.http.get<DeviceMac[]>('http://localhost:8000/api/devices/all');
+  }
+  getAllMacPosition(mac: string): Observable<Device[]> {
+    return this.http.get<Device[]>('http://localhost:8000/api/devices/position?' + 'mac=' + mac);
   }
 }

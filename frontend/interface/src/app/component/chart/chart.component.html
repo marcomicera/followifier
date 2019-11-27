@@ -1,15 +1,23 @@
+<div style="display: block;" align="center">
 <div class="wrap">
 
-   <canvas baseChart
-             [datasets]="scatterChartDataSet"
-             [options]="scatterChartOptions"
-             [chartType]="scatterChartType" >
-</canvas>
-  <h2>numero dispositivi negli ultimi 5 minuti</h2>
-  <li> {{this.numberDevice}}</li>
-</div>
-<nav>
-  <a routerLink="/chart" routerLinkActive="active">chart</a>
-</nav>
+      <canvas baseChart
+              [datasets]="scatterChartDataSet"
+              [options]="scatterChartOptions"
+              [chartType]="scatterChartType">
+      </canvas>
 
-<router-outlet></router-outlet>
+    </div>
+    <div class="chart-wrapper">
+
+      <canvas baseChart
+              [datasets]="lineChartData"
+              [labels]="lineChartLabels"
+              [options]="lineChartOptions"
+              [colors]="lineChartColors"
+              [legend]="lineChartLegend"
+              [chartType]="lineChartType"
+              [plugins]="lineChartPlugins">
+      </canvas>
+    </div>
+</div>
