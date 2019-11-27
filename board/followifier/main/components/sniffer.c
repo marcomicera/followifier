@@ -304,7 +304,14 @@ void *sniffer_timer(void *args) {
 #endif
 
     ESP_LOGI(TAG, "Flush timer started.");
-    vTaskDelay(portTICK_PERIOD_MS * FLUSH_RATE_IN_SECONDS * 10); // in deci-seconds (0.1 seconds)
+    //calculate seconds needed to reach 00 seconds
+    time_t now;
+    struct tm *tm;
+    now = time(0);
+    tm = localtime (&now);
+    int seconds = 60 - tm->tm_sec;
+    ESP_LOGI(TAG, "Flush will be in %d seconds", seconds);
+    vTaskDelay(portTICK_PERIOD_MS * seconds * 10); // in deci-seconds (0.1 seconds)
 
 #ifdef DEBUG_ONE_DEVICE_TRACKING
     ESP_LOGI(TAG, "Measurement is over: please re-adjust the distance between the testing device and this board "
@@ -312,8 +319,7 @@ void *sniffer_timer(void *args) {
     min_rrsi_in_measure_period = INT_MAX;
     max_rrsi_in_measure_period = INT_MIN;
 #endif
-
-    ESP_LOGI(TAG, "Flush timer expired (%d seconds): time to flush the batch.", FLUSH_RATE_IN_SECONDS);
+    ESP_LOGI(TAG, "Flush timer expired (%d seconds): time to flush the batch.", seconds);
     prepare_to_flush(true);
     return NULL;
 }
