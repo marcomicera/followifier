@@ -32,6 +32,11 @@ void init_flusher() {
     ESP_LOGI("Wi-Fi station MAC address", "%02x:%02x:%02x:%02x:%02x:%02x",
              mac_address[0], mac_address[1], mac_address[2],
              mac_address[3], mac_address[4], mac_address[5]);
+
+    // Last two digits in board's TAG
+    char boards_last_two_digits[4];
+    snprintf(boards_last_two_digits, sizeof(boards_last_two_digits), " %02x", mac_address[5]);
+    strncat(BOARD_TAG, boards_last_two_digits, sizeof(BOARD_TAG) - strlen(BOARD_TAG) - 1);
 }
 
 void flush();
@@ -67,12 +72,12 @@ void prepare_to_flush(bool stop) {
     batch.n_messages = items;
 
     // Printing info
-    ESP_LOGI(TAG, "Sending %d messages...", items);
+    ESP_LOGI(BOARD_TAG, "Sending %d messages...", items);
     batch_length = followifier__batch__get_packed_size(&batch);
     buffer = malloc(batch_length + sizeof("\n\r\n\r"));
     followifier__batch__pack(&batch, buffer);
     memcpy(buffer + batch_length, "\n\r\n\r", sizeof("\n\r\n\r"));
-    ESP_LOGI(TAG, "Board's source MAC: %s", batch.boardmac);
+    ESP_LOGI(BOARD_TAG, "Board's source MAC: %s", batch.boardmac);
     free(batch.boardmac);
 
     // Stopping the sniffer
@@ -118,7 +123,7 @@ void flush(void) {
                 "setsockopt failed\n",
                 reactivate_sniffer);
 
-        ESP_LOGI(TAG, "Socket created, connecting to %s:%d...", SERVER_ADDRESS, SERVER_PORT);
+        ESP_LOGI(BOARD_TAG, "Socket created, connecting to %s:%d...", SERVER_ADDRESS, SERVER_PORT);
 
         // Creating connection to the server
         ESP_ERROR_CHECK_JUMP_LABEL(!connect(tcp_socket, (struct sockaddr *) &server_address, sizeof(server_address)),
@@ -126,35 +131,35 @@ void flush(void) {
                                    closing_socket);
 
         // Flushing the message buffer
-        ESP_LOGI(TAG, "Sending batch");
+        ESP_LOGI(BOARD_TAG, "Sending batch");
         size_t to_send = batch_length + sizeof("\n\r\n\r");
         size_t sent = 0;
         do {
-            if(sent>0)
-                ESP_LOGI(TAG, "Resending missing bytes");
+            if (sent > 0)
+                ESP_LOGI(BOARD_TAG, "Resending missing bytes");
             int sent_now = send(tcp_socket, (char *) buffer + sent, to_send - sent, SO_LINGER);
-            ESP_ERROR_CHECK_JUMP_LABEL( sent_now >= 0,
+            ESP_ERROR_CHECK_JUMP_LABEL(sent_now >= 0,
                                        "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
                                        closing_socket);
             sent += sent_now;
-            ESP_LOGI(TAG, "%d", sent);
-        }while(sent<to_send);
+            ESP_LOGI(BOARD_TAG, "%d", sent);
+        } while (sent < to_send);
         // Skipping until here in case connection towards the server was unsuccessful
         closing_socket:
 
         // Closing socket
-        ESP_LOGI(TAG, "Shutting down socket towards %s:%d...", SERVER_ADDRESS, SERVER_PORT);
+        ESP_LOGI(BOARD_TAG, "Shutting down socket towards %s:%d...", SERVER_ADDRESS, SERVER_PORT);
         shutdown(tcp_socket, SHUT_WR);
-        for(int i=0; i<5; i++) {
+        for (int i = 0; i < 5; i++) {
             //5 was decided to avoid looping
-            size_t res=read(tcp_socket, buffer, 4000);
-            if(!res)
+            size_t res = read(tcp_socket, buffer, 4000);
+            if (!res)
                 break;
-            ESP_LOGI(TAG, "looping");
+            ESP_LOGI(BOARD_TAG, "looping");
         }
 
         close(tcp_socket);
-        ESP_LOGI(TAG, "...socket towards %s:%d closed.", SERVER_ADDRESS, SERVER_PORT);
+        ESP_LOGI(BOARD_TAG, "...socket towards %s:%d closed.", SERVER_ADDRESS, SERVER_PORT);
 
         // Skipping until here in case of error while creating a socket towards the server
         reactivate_sniffer:

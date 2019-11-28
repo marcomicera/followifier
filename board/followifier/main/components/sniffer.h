@@ -50,8 +50,6 @@ extern signed max_rrsi_in_measure_period;
 
 #endif
 
-extern const char *SNIFFER_TAG;
-
 /**
  * @brief Supported Sniffer Interface
  *

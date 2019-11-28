@@ -30,8 +30,6 @@
 #define PROBE_REQUEST    0x0040
 #define SUBTYPE_MASK 0x00F0
 
-const char *SNIFFER_TAG = "followifier";
-
 #ifdef DEBUG_ONE_DEVICE_TRACKING
 
 #include <limits.h>
@@ -80,10 +78,10 @@ static void sniffer_task(void *);
 static void *sniffer_timer(void *);
 
 esp_err_t start_sniffer(void) {
-    esp_log_level_set(SNIFFER_TAG, ESP_LOG_VERBOSE);
+    esp_log_level_set(BOARD_TAG, ESP_LOG_VERBOSE);
     wifi_promiscuous_filter_t wifi_filter;
     snf_rt.is_running = true;
-    ESP_LOGI(SNIFFER_TAG, "Sniffer started.");
+    ESP_LOGI(BOARD_TAG, "Sniffer started.");
     snf_rt.work_queue = xQueueCreate(CONFIG_SNIFFER_WORK_QUEUE_LEN, sizeof(sniffer_packet_info_t));
     ESP_ERROR_CHECK_JUMP_LABEL(snf_rt.work_queue, "create work queue failed", err_queue);
     snf_rt.sem_task_over = xSemaphoreCreateBinary();
@@ -102,7 +100,7 @@ esp_err_t start_sniffer(void) {
             ESP_ERROR_CHECK_JUMP_LABEL(esp_wifi_set_promiscuous(true) == ESP_OK, "start wifi promiscuous failed",
                                        err_start);
             esp_wifi_set_channel(snf_rt.channel, WIFI_SECOND_CHAN_NONE);
-            ESP_LOGI(SNIFFER_TAG, "Wi-Fi promiscuous mode started.");
+            ESP_LOGI(BOARD_TAG, "Wi-Fi promiscuous mode started.");
             pthread_t thread_id;
             pthread_create(&thread_id, NULL, sniffer_timer, NULL); // starting flush timer
 
@@ -123,7 +121,7 @@ esp_err_t start_sniffer(void) {
     snf_rt.work_queue = NULL;
     err_queue:
     snf_rt.is_running = false;
-    ESP_LOGI(SNIFFER_TAG, "Sniffer stopped.");
+    ESP_LOGI(BOARD_TAG, "Sniffer stopped.");
 
     return ESP_FAIL;
 }
@@ -211,7 +209,7 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
     const wifi_ieee80211_packet_t *ipkt = (wifi_ieee80211_packet_t *) ppkt->payload;
     const wifi_ieee80211_mac_hdr_t *hdr = &ipkt->hdr;
 
-    ESP_LOGD(SNIFFER_TAG, "Masked: unmasked frame control of packet has value %04x:%04x\n",
+    ESP_LOGD(BOARD_TAG, "Masked: unmasked frame control of packet has value %04x:%04x\n",
              (hdr->frame_ctrl & SUBTYPE_MASK), hdr->frame_ctrl);
 
     if (sniffer_is_probe((unsigned short) hdr->frame_ctrl)) {
@@ -229,7 +227,7 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
             if (rssi > max_rrsi_in_measure_period && rssi < DEBUG_TRACKED_DEVICE_OUTLIER_MAX_THRESHOLD) {
                 max_rrsi_in_measure_period = rssi;
             }
-            ESP_LOGI(SNIFFER_TAG, "Min. RSSI value: %d, max. RSSI value: %d.", min_rrsi_in_measure_period,
+            ESP_LOGI(BOARD_TAG, "Min. RSSI value: %d, max. RSSI value: %d.", min_rrsi_in_measure_period,
                      max_rrsi_in_measure_period);
         }
 #else
@@ -242,7 +240,7 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
         time(&now);
         localtime_r(&now, &timeinfo);
 
-        ESP_LOGI(SNIFFER_TAG, "PACKET TYPE=%s | CHAN=%02d\n"
+        ESP_LOGI(BOARD_TAG, "PACKET TYPE=%s | CHAN=%02d\n"
                               "TransmADDR=%02x:%02x:%02x:%02x:%02x:%02x | BSSID=%02x:%02x:%02x:%02x:%02x:%02x\n"
                               "HASH=%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n"
                               "TIMESTAMP=%lu | RSSI=%d",
@@ -300,26 +298,26 @@ void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
 void *sniffer_timer(void *args) {
 
 #ifdef DEBUG_ONE_DEVICE_TRACKING
-    ESP_LOGI(TAG, "Measurement started.");
+    ESP_LOGI(BOARD_TAG, "Measurement started.");
 #endif
 
-    ESP_LOGI(TAG, "Flush timer started.");
+    ESP_LOGI(BOARD_TAG, "Flush timer started.");
     //calculate seconds needed to reach 00 seconds
     time_t now;
     struct tm *tm;
     now = time(0);
     tm = localtime (&now);
     int seconds = 60 - tm->tm_sec;
-    ESP_LOGI(TAG, "Flush will be in %d seconds", seconds);
+    ESP_LOGI(BOARD_TAG, "Flush will be in %d seconds", seconds);
     vTaskDelay(portTICK_PERIOD_MS * seconds * 10); // in deci-seconds (0.1 seconds)
 
 #ifdef DEBUG_ONE_DEVICE_TRACKING
-    ESP_LOGI(TAG, "Measurement is over: please re-adjust the distance between the testing device and this board "
+    ESP_LOGI(BOARD_TAG, "Measurement is over: please re-adjust the distance between the testing device and this board "
                   "and take note of the distance.");
     min_rrsi_in_measure_period = INT_MAX;
     max_rrsi_in_measure_period = INT_MIN;
 #endif
-    ESP_LOGI(TAG, "Flush timer expired (%d seconds): time to flush the batch.", seconds);
+    ESP_LOGI(BOARD_TAG, "Flush timer expired (%d seconds): time to flush the batch.", seconds);
     prepare_to_flush(true);
     return NULL;
 }
@@ -353,11 +351,11 @@ esp_err_t stop_sniffer(void) {
             ESP_ERROR_CHECK_JUMP_LABEL(false, "unsupported interface", err);
             break;
     }
-    ESP_LOGI(SNIFFER_TAG, "Wi-Fi promiscuous mode stopped.");
+    ESP_LOGI(BOARD_TAG, "Wi-Fi promiscuous mode stopped.");
 
     /* stop sniffer local task */
     snf_rt.is_running = false;
-    ESP_LOGI(SNIFFER_TAG, "Sniffer stopped.");
+    ESP_LOGI(BOARD_TAG, "Sniffer stopped.");
     /* wait for task over */
     xSemaphoreTake(snf_rt.sem_task_over, portMAX_DELAY);
     vSemaphoreDelete(snf_rt.sem_task_over);

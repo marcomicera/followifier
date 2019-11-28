@@ -8,7 +8,7 @@
 #include <esp_log.h>
 #include <esp_wifi_types.h>
 
-const char *TAG = "followifier";
+char BOARD_TAG[9] = "Board";
 
 void hash(const wifi_promiscuous_pkt_t *packet, unsigned char* result) {
     mbedtls_md_context_t ctx;
