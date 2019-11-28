@@ -32,15 +32,15 @@ esp_err_t board_event_handler(void *ctx, system_event_t *event) {
         case SYSTEM_EVENT_STA_START: // Board started
 
             // Connecting it to the Wi-Fi network
-            ESP_LOGI(TAG, "Board in station mode. Connecting it to the \"%s\" Wi-Fi network...", WIFI_SSID);
+            ESP_LOGI(BOARD_TAG, "Board in station mode. Connecting it to the \"%s\" Wi-Fi network...", WIFI_SSID);
             ESP_ERROR_CHECK(esp_wifi_connect());
-            ESP_LOGI(TAG, "...board connected to the \"%s\" Wi-Fi network.", WIFI_SSID);
+            ESP_LOGI(BOARD_TAG, "...board connected to the \"%s\" Wi-Fi network.", WIFI_SSID);
             break;
 
         case SYSTEM_EVENT_STA_GOT_IP: // Board got IP from connected AP
 
             // Printing it
-            ESP_LOGI(TAG, "Got IP: %s\n", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+            ESP_LOGI(BOARD_TAG, "Got IP: %s\n", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
 
             // If time has not been set already
             if (!time_has_been_set()) {
@@ -61,7 +61,7 @@ esp_err_t board_event_handler(void *ctx, system_event_t *event) {
 
         case SYSTEM_EVENT_STA_DISCONNECTED: // Board got disconnected from AP
 
-            ESP_LOGI(TAG, "Board got disconnected from the \"%s\" Wi-Fi network.", WIFI_SSID);
+            ESP_LOGI(BOARD_TAG, "Board got disconnected from the \"%s\" Wi-Fi network.", WIFI_SSID);
             break;
 
         // case SYSTEM_EVENT_STA_STOP: // Board stops

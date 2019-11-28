@@ -8,7 +8,11 @@
 #include <esp_wifi_types.h>
 #include "stddef.h"
 
-extern const char *TAG;
+/**
+ * Tag by which this board is identified in the output.
+ * Format: "Board XY", where "XY" represents the last two digits of this board's MAC address
+ */
+extern char BOARD_TAG[9];
 
 /**
  * Aborts in case the condition is not satisfied.
@@ -31,8 +35,8 @@ extern const char *TAG;
     {                                                                                     \
         if (!(a))                                                                         \
         {                                                                                 \
-            ESP_LOGE(SNIFFER_TAG, "%s(%d): " str, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
-            ESP_LOGE(SNIFFER_TAG, "errno %d: %s ", errno, strerror(errno));               \
+            ESP_LOGE(BOARD_TAG, "%s(%d): " str, __FUNCTION__, __LINE__, ##__VA_ARGS__);   \
+            ESP_LOGE(BOARD_TAG, "errno %d: %s ", errno, strerror(errno));                 \
             goto goto_tag;                                                                \
         }                                                                                 \
     } while (0)
