@@ -19,9 +19,9 @@ public:
         }
     };
 
-    double getX();
+    const double getX();
 
-    double getY();
+    const double getY();
     bool isValid();
 
     friend std::ostream& operator<<(std::ostream&, const Point&);

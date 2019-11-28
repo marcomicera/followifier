@@ -2,11 +2,11 @@
 #include <stdexcept>
 #include <cmath>
 
-double Point::getX() {
+const double Point::getX() {
     return this->x;
 }
 
-double Point::getY() {
+const double Point::getY() {
     return this->y;
 }
 

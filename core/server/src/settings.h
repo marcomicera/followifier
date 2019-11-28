@@ -7,6 +7,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 #include <bits/stdc++.h>
+#include "room.h"
 
 /*
  * Default minimum number of calibration messages nedded to compute the
@@ -38,7 +39,7 @@ typedef struct {
     /**
      * Room vertexes
      */
-    std::unordered_set<Point, Point::PointHasher> room_coordinates;
+    Room room_coordinates;
 
     /**
      * MAC address of the mobile device used for boards calibration.
