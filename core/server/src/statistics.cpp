@@ -2,12 +2,19 @@
 #include "settings.h"
 #include <iostream>
 
-Point statistics::getDevicePosition(std::unordered_map<std::string, followifier::ESP32Metadata> &boardMetadatas) {
+Point statistics::getDevicePosition(std::unordered_map<std::string, followifier::ESP32Metadata> &board_metadatas) {
 
     std::unordered_set<Point, Point::PointHasher> listPossiblePoints;
 
-    for (auto i = boardMetadatas.begin(); i != boardMetadatas.end(); ++i) {
-        for (auto j = std::next(i, 1); j != boardMetadatas.end(); ++j) {
+    /* Logging announced distances */
+    for (auto & board_metadata : board_metadatas) {
+        std::string board_mac = board_metadata.first;
+        double estimated_distance = statistics::estimatedDistance(board_mac, board_metadata.second.rssi());
+        logDeviceDistanceAnnouncement(board_mac, board_metadata.second, estimated_distance);
+    }
+
+    for (auto i = board_metadatas.begin(); i != board_metadatas.end(); ++i) {
+        for (auto j = std::next(i, 1); j != board_metadatas.end(); ++j) {
 
             std::string first_board_mac = i->first;
             std::string second_board_mac = j->first;
@@ -21,8 +28,6 @@ Point statistics::getDevicePosition(std::unordered_map<std::string, followifier:
             // TODO Implement tolerance?
             double r1 = statistics::estimatedDistance(first_board_mac, i->second.rssi());
             double r2 = statistics::estimatedDistance(second_board_mac, j->second.rssi());
-            logDeviceDistanceAnnouncement(first_board_mac, i->second, r1);
-            logDeviceDistanceAnnouncement(second_board_mac, j->second, r2);
 
             // d = sqrt((x1-x2)^2 + (y1-y2)^2)
             double d = std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
@@ -45,10 +50,10 @@ Point statistics::getDevicePosition(std::unordered_map<std::string, followifier:
             double yr1 = l * (y2 - y1) / d - h * (x2 - x1) / d + y1;
             double yr2 = l * (y2 - y1) / d + h * (x2 - x1) / d + y1;
 
-            if (xr1 >= 0 && yr1 >= 0 && checkPoint(xr1, yr1, boardMetadatas) && Point(xr1, yr1).isValid()) {
+            if (xr1 >= 0 && yr1 >= 0 && checkPoint(xr1, yr1, board_metadatas) && Point(xr1, yr1).isValid()) {
                 listPossiblePoints.insert(Point(std::round(xr1), std::round(yr1)));
             }
-            if (xr2 >= 0 && yr2 >= 0 && checkPoint(xr2, yr2, boardMetadatas) && Point(xr2, yr2).isValid()) {
+            if (xr2 >= 0 && yr2 >= 0 && checkPoint(xr2, yr2, board_metadatas) && Point(xr2, yr2).isValid()) {
                 listPossiblePoints.insert(Point(std::round(xr2), std::round(yr2)));
             }
         }
