@@ -77,8 +77,6 @@ protected:
                 message.metadata().timestamp() >= calibration::starting_timestamp) {
                 ++number_of_messages_sent_by_calibration_device;
                 average_rssi += message.metadata().rssi();
-            }else{
-                std::cout << message.metadata().timestamp() << " " << calibration::starting_timestamp << std::endl;
             }
         }
         average_rssi /= number_of_messages_sent_by_calibration_device;
@@ -94,7 +92,7 @@ protected:
                 Settings::configuration.min_num_calibration_messages) {
             std::cout << "Device " << Settings::configuration.calibration_device_mac_address.value() << " has sent "
                       << number_of_messages_sent_by_calibration_device << " calibration messages after timestamp " <<
-                      calibration::starting_timestamp << ". More messages are needed" << std::endl;
+                      calibration::starting_timestamp << ". More messages are needed." << std::endl;
         } else { // batch was good
 
             /* Logging */
