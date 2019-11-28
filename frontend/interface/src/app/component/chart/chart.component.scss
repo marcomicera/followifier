@@ -2,18 +2,20 @@
 mat-label{
   color: darkgrey;
 }
+#row{
+  display: flex;
+  justify-content: center;
+}
 .chart-wrapper{
-  float: right;
   width:40%;
-  margin-right: auto;
+  margin-left: auto;
   height: 1000px;
   align-content: baseline;
 }
 .wrap{
-  float: left;
   width:40%;
   height: 1000px;
-  margin-left: auto;
+  margin-right: auto;
   align-content: baseline;
 }
 canvas{

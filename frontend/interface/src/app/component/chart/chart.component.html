@@ -1,23 +1,20 @@
-<div style="display: block;" align="center">
-<div class="wrap">
-
-      <canvas baseChart
-              [datasets]="scatterChartDataSet"
-              [options]="scatterChartOptions"
-              [chartType]="scatterChartType">
-      </canvas>
-
-    </div>
-    <div class="chart-wrapper">
-
-      <canvas baseChart
-              [datasets]="lineChartData"
-              [labels]="lineChartLabels"
-              [options]="lineChartOptions"
-              [colors]="lineChartColors"
-              [legend]="lineChartLegend"
-              [chartType]="lineChartType"
-              [plugins]="lineChartPlugins">
-      </canvas>
-    </div>
+<div id="row">
+  <div class="wrap">
+    <canvas baseChart
+            [datasets]="scatterChartDataSet"
+            [options]="scatterChartOptions"
+            [chartType]="scatterChartType">
+    </canvas>
+  </div>
+  <div class="chart-wrapper">
+    <canvas baseChart
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [colors]="lineChartColors"
+            [legend]="lineChartLegend"
+            [chartType]="lineChartType"
+            [plugins]="lineChartPlugins">
+    </canvas>
+  </div>
 </div>
