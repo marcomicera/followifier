@@ -14,10 +14,12 @@ server::server(boost::asio::io_service &io_service) : acceptor_(io_service, tcp:
 
     /* If a calibration device is set */
     if (Settings::configuration.calibration_device_mac_address) {
+
         /* Start calibrating boards one at the time */
         board_has_sent_calibration_batch = true;
         start_calibration();
-    }else{
+    } else {
+
         /* Start accepting connections from boards */
         start_statistics();
     }
@@ -51,16 +53,16 @@ void server::calibration_accept_handler(const connection::pointer &new_connectio
 void server::start_calibration() {
 
     /* For every board */
-    short board_counter = 0;
     for (auto &board : Settings::configuration.boards) {
 
         /* This board's MAC address */
         calibration::board_to_calibrate = board.first;
 
         if (!statistics::has_been_calibrated(calibration::board_to_calibrate)) {
+
             /* Wait for the user to place this board */
-            if(board_has_sent_calibration_batch){
-                calibration::wait_placement(calibration::board_to_calibrate, board_counter++);
+            if (board_has_sent_calibration_batch) {
+                calibration::wait_placement(calibration::board_to_calibrate);
                 board_has_sent_calibration_batch = false;
             }
 
@@ -72,9 +74,9 @@ void server::start_calibration() {
                                                boost::asio::placeholders::error));
             return;
         }
-        board_counter++;
     }
-    std::cout << "Calibration has been completed. Statistics may not be calculated right away" << std::endl;
+    std::cout << "Calibration completed. Statistics may not be calculated right away." << std::endl << std::endl;
+
     /* All boards have been calibrated */
     start_statistics();
 }

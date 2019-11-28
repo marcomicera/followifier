@@ -7,6 +7,7 @@
 #include "receiver.h"
 #include "statistics.h"
 #include "calibration.h"
+
 using boost::asio::ip::tcp;
 
 #ifndef CORE_CONNECTION_H
@@ -61,6 +62,7 @@ protected:
 
     // TODO Documentation
     void calibration_packet_handler(const followifier::Batch &batch) {
+
         /* Data structures for reading purposes */
         boost::system::error_code error; // connection may fail
         double average_rssi = 0;
@@ -71,57 +73,68 @@ protected:
          */
         for (const auto &message: batch.messages()) {
 
-            /* Filtering messages that are not being sent by the calibration device */
+            /* Filtering messages that are not being sent by the calibration device and
+             * whose timestamp greater than the calibration start time
+             */
             if (boost::iequals(message.metadata().devicemac(),
                                Settings::configuration.calibration_device_mac_address.value()) &&
                 message.metadata().timestamp() >= calibration::starting_timestamp) {
+
+                /* Counting the number of messages suitable for the average 1-meter-distance RSSI computation */
                 ++number_of_messages_sent_by_calibration_device;
+
+                /* Summing up 1-meter-distance RSSI values */
                 average_rssi += message.metadata().rssi();
             }
         }
+
+        /* Computing the average 1-meter-distance RSSI value for this board */
         average_rssi /= number_of_messages_sent_by_calibration_device;
 
-        /* If this batch is not suitable for the calibration */
-        if (    /* Case-insensitive comparison */
-                !boost::iequals(batch.boardmac(), calibration::board_to_calibrate)) {}
-            //batch received from another board
-        else if (
-            /* There needs to be at least `Settings::configuration.min_num_calibration_messages` messages
-               in the batch in order to compute a meaningful RSSI average */
-                number_of_messages_sent_by_calibration_device <
-                Settings::configuration.min_num_calibration_messages) {
-            std::cout << "Device " << Settings::configuration.calibration_device_mac_address.value() << " has sent "
-                      << number_of_messages_sent_by_calibration_device << " calibration messages after timestamp " <<
-                      calibration::starting_timestamp << ". More messages are needed." << std::endl;
-        } else { // batch was good
+        /* If batch has been sent from the board that is being calibrated */
+        if (boost::iequals(batch.boardmac(), calibration::board_to_calibrate)) { // case-insensitive comparison
 
-            /* Logging */
-            std::cout << "Device " << Settings::configuration.calibration_device_mac_address.value() << " has sent "
-                      << number_of_messages_sent_by_calibration_device << " calibration messages after timestamp " <<
-                      calibration::starting_timestamp << std::endl;
+            /* There needs to be at least `Settings::configuration.min_num_calibration_messages`
+             * messages in the batch in order to compute a meaningful RSSI average
+             */
+            if (number_of_messages_sent_by_calibration_device < Settings::configuration.min_num_calibration_messages) {
 
-            /* Store the average 1-meter-distance RSSI value */
-            statistics::insert_one_meter_rssi(calibration::board_to_calibrate, average_rssi);
-            std::cout << "Board " << calibration::board_to_calibrate << " detected an average RSSI of " << average_rssi
-                      << " from device "
-                      << Settings::configuration.calibration_device_mac_address.value() << "." << std::endl;
+                /* Logging */
+                std::cout << "Device " << Settings::configuration.calibration_device_mac_address.value() << " has sent "
+                          << number_of_messages_sent_by_calibration_device << " calibration messages after timestamp "
+                          << calibration::starting_timestamp << ". At least "
+                          << Settings::configuration.min_num_calibration_messages.value()
+                          << (Settings::configuration.min_num_calibration_messages.value() == 1 ? " is" : " are")
+                          << " needed." << std::endl;
+            } else { // batch contained enough messages
 
-            /* Waking up the server thread */
-            board_has_sent_calibration_batch = true;
-            size_t board_counter = 0;
-            for (auto &board : Settings::configuration.boards) {
+                /* Logging */
+                std::cout << "Device " << Settings::configuration.calibration_device_mac_address.value() << " has sent "
+                          << number_of_messages_sent_by_calibration_device << " calibration messages after timestamp "
+                          << calibration::starting_timestamp << "." << std::endl;
 
-                /* This board's MAC address */
-                calibration::board_to_calibrate = board.first;
+                /* Store the average 1-meter-distance RSSI value */
+                statistics::insert_one_meter_rssi(calibration::board_to_calibrate, average_rssi);
+                std::cout << "Board " << calibration::board_to_calibrate << " detected an average RSSI of "
+                          << average_rssi << " from device "
+                          << Settings::configuration.calibration_device_mac_address.value() << "." << std::endl
+                          << std::endl;
 
-                if (!statistics::has_been_calibrated(calibration::board_to_calibrate)) {
-                    /* Wait for the user to place this board */
-                    if (board_has_sent_calibration_batch) {
-                        calibration::wait_placement(calibration::board_to_calibrate, board_counter++);
-                        board_has_sent_calibration_batch = false;
+                board_has_sent_calibration_batch = true;
+                for (auto &board : Settings::configuration.boards) {
+
+                    /* This board's MAC address */
+                    calibration::board_to_calibrate = board.first;
+
+                    if (!statistics::has_been_calibrated(calibration::board_to_calibrate)) {
+
+                        /* Wait for the user to place this board */
+                        if (board_has_sent_calibration_batch) {
+                            calibration::wait_placement(calibration::board_to_calibrate);
+                            board_has_sent_calibration_batch = false;
+                        }
                     }
                 }
-                board_counter++;
             }
         }
     }

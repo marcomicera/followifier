@@ -11,22 +11,32 @@
 #include <ctime>
 
 class calibration {
-public:
-    static std::string board_to_calibrate;
-    static long int starting_timestamp;
+
+protected:
+
     /**
- * Waits for the user to place the specified board at 1 meter distance from the server.
- *
- * @param board_mac         MAC address of the board to be placed.
- * @param board_counter     indicates how many boards have completed this process (printing purposes only).
- */
-    static void wait_placement(const std::string &board_mac, short board_counter) {
+     * How many boards have been calibrated so far.
+     */
+    static short board_counter;
+
+public:
+
+    static std::string board_to_calibrate;
+
+    static long int starting_timestamp;
+
+    /**
+     * Waits for the user to place the specified board at 1 meter distance from the server.
+     *
+     * @param board_mac         MAC address of the board to be placed.
+     */
+    static void wait_placement(const std::string &board_mac) {
 
         /* How many seconds are left for the user so s/he can place the board at 1 meter distance */
         int board_placements_seconds_left = Settings::configuration.calibration_placement_duration_in_seconds.value();
 
         std::cout << "Please place device " << Settings::configuration.calibration_device_mac_address.value()
-                  << " at 1 meter distance from board " << board_mac << " (" << (board_counter + 1) << "/"
+                  << " at 1 meter distance from board " << board_mac << " (" << (++calibration::board_counter) << "/"
                   << Settings::get_num_boards() << ")." << std::endl;
 
         /* `INITIALIZATION_BOARD_PLACEMENT_WAITING_TIME` seconds countdown starts now */
@@ -38,7 +48,7 @@ public:
         }
         std::cout << "\rReady to calibrate board " << board_mac << ". Please do not move the device any further."
                   << std::endl;
-        starting_timestamp =  std::time(0);
+        starting_timestamp =  std::time(nullptr);
     }
 };
 
