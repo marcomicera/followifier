@@ -16,7 +16,7 @@ server::server(boost::asio::io_service &io_service) : acceptor_(io_service, tcp:
     if (Settings::configuration.calibration_device_mac_address) {
 
         /* Start calibrating boards one at the time */
-        board_has_sent_calibration_batch = true;
+        calibration::board_has_sent_calibration_batch = true;
         start_calibration();
     } else {
 
@@ -47,6 +47,7 @@ void server::calibration_accept_handler(const connection::pointer &new_connectio
     if (!error) {
         new_connection->async_batch_read_for_calibration();
     }
+    /** A new accept must be started **/
     start_calibration();
 }
 
@@ -58,12 +59,16 @@ void server::start_calibration() {
         /* This board's MAC address */
         calibration::board_to_calibrate = board.first;
 
+        /* Find first board that has not been calibrated */
         if (!statistics::has_been_calibrated(calibration::board_to_calibrate)) {
 
-            /* Wait for the user to place this board */
-            if (board_has_sent_calibration_batch) {
+            /* Wait for the user to place this board if it has not been done yet
+             * The board_has_sent_calibration_batch value will be set to true
+             * after a batch has been received and false after the device has been
+             * placed */
+            if (calibration::board_has_sent_calibration_batch) {
                 calibration::wait_placement(calibration::board_to_calibrate);
-                board_has_sent_calibration_batch = false;
+                calibration::board_has_sent_calibration_batch = false;
             }
 
             /* Wait for the board to send the calibration batch */
