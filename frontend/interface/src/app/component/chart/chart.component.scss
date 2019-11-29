@@ -1,34 +1,29 @@
-@import '~@angular/material/theming';
 
+mat-label{
+  color: darkgrey;
+}
+#row{
+  display: flex;
+  justify-content: center;
+}
+.chart-wrapper{
+  width:40%;
+  margin-left: auto;
+  height: 1000px;
+  align-content: baseline;
+}
+.wrap{
+  width:40%;
+  height: 1000px;
+  margin-right: auto;
+  align-content: baseline;
+}
 canvas{
   background-color: whitesmoke;
-
-
-
   border: solid 3px #ff7347;
-
   font-size: 24px;
-
   text-align: center;
+  width: 60%;
 }
 
-.wrap{
-  position: relative;
-  margin: 16px;
 
-  width: 500px;
-
-  height: 500px;
-
-}
-
-#info{
-  position: absolute;
-  background-color: white;
-  border: white 20px solid;
-  color: white;
-  left: 0px;
-  top: 0px;
-  visibility: hidden;
-  @include mat-elevation(4)
-}

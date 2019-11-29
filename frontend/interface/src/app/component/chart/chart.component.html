@@ -1,12 +1,20 @@
-<div class="wrap">
-
-   <canvas baseChart
-             [datasets]="scatterChartData"
-             [options]="scatterChartOptions"
-             [chartType]="scatterChartType">
-</canvas>
+<div id="row">
+  <div class="wrap">
+    <canvas baseChart
+            [datasets]="scatterChartDataSet"
+            [options]="scatterChartOptions"
+            [chartType]="scatterChartType">
+    </canvas>
+  </div>
+  <div class="chart-wrapper">
+    <canvas baseChart
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [colors]="lineChartColors"
+            [legend]="lineChartLegend"
+            [chartType]="lineChartType"
+            [plugins]="lineChartPlugins">
+    </canvas>
+  </div>
 </div>
-<nav>
-  <a routerLink="/chart" routerLinkActive="active">chart</a>
-</nav>
-<router-outlet></router-outlet>

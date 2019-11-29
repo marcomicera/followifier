@@ -5,7 +5,8 @@ Config Settings::configuration;
 void Settings::load(const std::string &filename) {
 
     pt::ptree tree;
-
+    database db;
+    db.dropBoards();
     // Parse the XML into the property tree.
     pt::read_json(filename, tree);
 
@@ -30,6 +31,7 @@ void Settings::load(const std::string &filename) {
                     Point coordinates(v.second.get<double>("x"), v.second.get<double>("y"));
                     Board b(v.second.get<std::string>("mac"), coordinates);
                     configuration.boards.insert(std::make_pair(b.getMac(), b));
+                    db.insert_board(v.second.get<std::string>("mac"), v.second.get<double>("x"), v.second.get<double>("y"));
                 }
     if (Settings::configuration.boards.size() <=1) {
         throw std::invalid_argument("At least 2 boards must be configured");
