@@ -23,7 +23,7 @@
     "@angular/router": "~8.0.0",
     "@syncfusion/ej2-angular-charts": "latest",
     "angular-chart.js": "^1.1.1",
-    "builder-pattern": "^1.2.2",
+    "builder-pattern": "^1.2.3",
     "chart.js": "^2.9.3",
     "ng-click-outside": "^5.1.1",
     "ng2-charts": "^2.3.0",
