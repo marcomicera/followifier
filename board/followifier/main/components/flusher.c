@@ -144,6 +144,7 @@ void flush(void) {
             sent += sent_now;
             ESP_LOGI(BOARD_TAG, "%d", sent);
         } while (sent < to_send);
+
         // Skipping until here in case connection towards the server was unsuccessful
         closing_socket:
 

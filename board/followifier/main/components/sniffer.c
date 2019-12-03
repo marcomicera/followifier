@@ -317,6 +317,7 @@ void *sniffer_timer(void *args) {
     min_rrsi_in_measure_period = INT_MAX;
     max_rrsi_in_measure_period = INT_MIN;
 #endif
+
     ESP_LOGI(BOARD_TAG, "Flush timer expired (%d seconds): time to flush the batch.", seconds);
     prepare_to_flush(true);
     return NULL;

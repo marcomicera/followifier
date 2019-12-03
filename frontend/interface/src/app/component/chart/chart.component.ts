@@ -1,12 +1,18 @@
 import {Component, ElementRef, HostBinding, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Chart, ChartDataSets, ChartOptions, ChartPoint, ChartType} from 'chart.js';
-import { ActivatedRoute } from '@angular/router';
-import {log} from 'util';
-import {DataService} from '../../service/data/data.service';
-import {TestModel} from '../../model/testModel';
-import {any} from 'codelyzer/util/function';
-import {Subject} from 'rxjs';
+import {
+  Chart, ChartData,
+  ChartDataSets,
+  ChartOptions,
+  ChartPoint,
+  ChartScales, ChartSize,
+  ChartTitleOptions, ChartTooltipCallback, ChartTooltipItem,
+  ChartTooltipOptions,
+  ChartType
+} from 'chart.js';
+import {ActivatedRoute} from '@angular/router';
 import {ApiService, Board} from '../../service/api/api.service';
+import {Observable, interval, Subscription} from 'rxjs';
+import {Color, Label} from "ng2-charts";
 
 @Component({
   selector: 'app-chart',
@@ -15,30 +21,101 @@ import {ApiService, Board} from '../../service/api/api.service';
 })
 export class ChartComponent implements OnInit {
   // Radar
-  public scatterChartOptions: ChartOptions = {
-    responsive: true,
-  };
-  public point: ChartPoint;
-
-  public scatterChartData: ChartDataSets[] = [{
-    data: [{}],
+  numberDevice: number;
+  private updateSubscription: Subscription;
+  public scatterChartDataSet: ChartDataSets[] = [{
     label: 'Boards',
     pointRadius: 10,
-  }];
+    pointBackgroundColor: 'blue',
+    backgroundColor: 'blue',
+    hoverBackgroundColor: 'blue',
+    data: [],
+    hideInLegendAndTooltip: false,
+  },
+    {
+      label: 'Devices',
+      pointRadius: 10,
+      pointBackgroundColor: 'red',
+      backgroundColor: 'red',
+      hoverBackgroundColor: 'red',
+      data: []
+
+    }];
+  public scatterToolTipItem: ChartTooltipItem[] = [];
+  public scatterChartData: ChartData = {
+    datasets: this.scatterChartDataSet,
+  }
+
+  public scatterCallback: ChartTooltipCallback = {
+    title(item: Chart.ChartTooltipItem[], data: Chart.ChartData): string | string[] {
+      return ((data.datasets[item[0].datasetIndex].data[item[0].index] as ChartPoint).t as string);
+    }
+  };
+  public scatterToolTipOptions: ChartTooltipOptions = {
+    enabled: true,
+    callbacks: this.scatterCallback,
+  };
   public scatterChartType: ChartType = 'scatter';
+  public scatterChartOptions: ChartOptions = {
+    responsive: true,
+    tooltips: this.scatterToolTipOptions,
+  };
+  public scatterChartSize: ChartSize = {
+    height: 180,
+    width: 180,
+  };
+  public lineChartData: ChartDataSets[] = [
+    { data: [], label: 'Devices' },
+  ];
 
+  lineChartLabels: Label[] = [];
 
+  lineChartOptions = {
+    responsive: true,
+  };
+
+  lineChartColors: Color[] = [
+    {
+      borderColor: 'black',
+      backgroundColor: 'rgba(255,255,0,0.28)',
+    },
+  ];
+
+  lineChartLegend = true;
+  lineChartPlugins = [];
+  lineChartType = 'line';
   constructor(private route: ActivatedRoute, private apiService: ApiService) {
   }
 
   ngOnInit() {
-    console.log('LOG: OnInit');
-    this.apiService.getBoards().subscribe(data => {
-      data.forEach(d => {
-        console.error('board: x:' + d.x + ' y ' + d.y + ' t ' + d.mac );
-        this.scatterChartData[0].data.push({ x: d.x, y: d.y, t: d.mac });
-        console.error( this.scatterChartData[0]);
+    this.updateSubscription = interval(2000).subscribe((val) => {
+      console.log('LOG: OnInit');
+      this.apiService.getDevicesNumber().subscribe(data => {
+          this.numberDevice = +data;
+          this.lineChartData[0].data.push(this.numberDevice);
+          this.lineChartLabels.push(String(new Date().getMinutes()));
+        }
+      );
+      this.scatterToolTipItem  = [];
+      this.apiService.getBoards().subscribe(data => {
+        this.scatterChartDataSet[0].data = [];
+
+        data.forEach(d => {
+          console.log('board: ' + d.mac);
+
+          (this.scatterChartDataSet[0].data as ChartPoint[]).push({x: d.x, y: d.y, t: d.mac});
+          (this.scatterToolTipItem.push({label: d.mac, datasetIndex: 0, index: this.scatterChartDataSet[0].data.length}));
+
+        });
+      });
+      this.apiService.getDevices().subscribe(data => {
+        this.scatterChartDataSet[1].data  = [];
+        data.forEach(d => {
+          console.log('device: ' + d._id);
+          (this.scatterChartDataSet[1].data as ChartPoint[]).push({x: d.x, y: d.y, t: d._id});
+          (this.scatterToolTipItem.push({label: d._id, datasetIndex: 1, index: this.scatterChartDataSet[1].data.length}));
+        });
       });
     });
   }
-}
+};

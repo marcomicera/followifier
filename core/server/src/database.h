@@ -13,8 +13,8 @@ class database {
 
 public:
     explicit database();
-
      void insert_message(followifier::ESP32Message message, Point position);
+     void dropBoards();
      void destroy_database_connection();
      void insert_board(std::string mac, int x, int y);
 };
