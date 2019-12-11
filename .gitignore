@@ -2,6 +2,9 @@
 ### Misc
 #
 
+# Replayer batch files
+batch__*
+
 # Configuration files
 core/server/config.json
 
