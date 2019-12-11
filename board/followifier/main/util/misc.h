@@ -18,19 +18,20 @@ extern char BOARD_TAG[9];
  * Aborts in case the condition is not satisfied.
  * Prints the `errno` number and its meaning.
  */
-#define MUST_NOT_HAPPEN(condition, string_error, ...) {\
-    if ((condition)) {\
-        fprintf(stderr, string_error, ##__VA_ARGS__);\
-        fprintf(stderr, " (error %d): %s.\n", errno, strerror(errno));\
-        exit(EXIT_FAILURE);\
-    }\
-}
+#define ESP_ERROR_CHECK_WITH_MESSAGE(condition, string_error, ...)              \
+    do {                                                                        \
+        if (!(condition)) {                                                     \
+                ESP_LOGE(BOARD_TAG, "%s", string_error, ##__VA_ARGS__);         \
+                fprintf(stderr, " (error %d): %s.\n", errno, strerror(errno));  \
+                exit(EXIT_FAILURE);                                             \
+            }                                                                   \
+    } while (0)
 
 /**
  * Prints an error message in case the condition is not satisfied
  * and jump to the specified label.
  */
-#define ESP_ERROR_CHECK_JUMP_LABEL(a, str, goto_tag, ...)                                              \
+#define ESP_ERROR_CHECK_JUMP_LABEL(a, str, goto_tag, ...)                                 \
     do                                                                                    \
     {                                                                                     \
         if (!(a))                                                                         \

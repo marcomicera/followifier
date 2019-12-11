@@ -43,16 +43,21 @@ esp_err_t board_event_handler(void *ctx, system_event_t *event) {
             ESP_LOGI(BOARD_TAG, "Got IP: %s\n", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
 
             // If time has not been set already
-            if (!time_has_been_set()) {
+            unsigned short sntp_time_retrieval_attempts = 5;
+            while (!time_has_been_set() && sntp_time_retrieval_attempts--) {
 
                 // Send a request to the SNTP server
                 send_sntp_request();
 
                 // Wait until time is set
-                while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED) {
+                unsigned short wait_sntp_status_completed = 5;
+                while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED && wait_sntp_status_completed--) {
                     vTaskDelay(2000 / portTICK_PERIOD_MS);
                 }
             }
+
+            // If time has not been set in `sntp_time_retrieval_attempts` times
+            ESP_ERROR_CHECK_WITH_MESSAGE(time_has_been_set(), "Current date/time not received. Terminating...");
 
             // Board is ready to flush messages to the core server
             flush();
