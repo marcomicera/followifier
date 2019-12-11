@@ -53,9 +53,10 @@ def service_capture(port, prefix, batch_number):
     threads = []
     while not all(counter >= batch_number for counter in counters.values()): 
         conn, addr = s.accept()
+        addr = addr[0]
         # Using addr as a unique fingerprint here.
         if addr not in counters:
-            counters[addr] = (board_counter, 0)
+            counters[addr] = [board_counter, 0]
             board_counter += 1
         else:
             counters[addr][1] += 1
