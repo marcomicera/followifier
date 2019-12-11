@@ -41,6 +41,7 @@ def service_capture(port, prefix, batch_number):
     board_counter = 0
     counters = {'dummy': 0} # just to init, for the loop
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
         s.bind(("0.0.0.0", port))
     except socket.error as msg:
@@ -58,6 +59,7 @@ def service_capture(port, prefix, batch_number):
             board_counter += 1
         else:
             counters[addr][1] += 1
+        pprint.pprint(counters)
         filename = "{}_{}_{}".format(prefix, *counters[addr])
         print("Capturing {} batch".format(filename))
         t = threading.Thread(target=capture, args=(conn, filename))
