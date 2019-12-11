@@ -4,23 +4,28 @@ import threading
 import socket
 import os
 import sys
+import time
 
 
 def replay(filename, port):
-    socket = socket.socket(socket.AF_INET, socket.AF_STREAM)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(("127.0.0.1", port))
     with open(filename, 'rb') as f:
         data = f.read()
-    socket.send(data)
+    s.send(data)
 
 def service_replay(port, prefix, batch_number):
     threads = []
-    for board_num in range(3):
-        for batch_index in range(batch_number):
-            filename = "{}_{}_{}".format(prefix, board_num, batch_number)
-            print("Sending {} to server.".format(filename))
-            t = threading.Thread(target=replay, args=(filename, port))
-            t.start()
-            threads.append(t)
+    for batch_index in range(batch_number):
+        for board_num in range(3):
+            filename = "{}_b{}_t{}".format(prefix, board_num, batch_index + 1)
+            print(f"Checking whether file {filename} exists")
+            if os.path.exists(filename):
+                print("Sending {} to server.".format(filename))
+                t = threading.Thread(target=replay, args=(filename, port))
+                t.start()
+                threads.append(t)
+        time.sleep(60)
     for t in threads:
         t.join()
 
@@ -61,7 +66,7 @@ def service_capture(port, prefix, batch_number):
         else:
             counters[addr][1] += 1
         pprint.pprint(counters)
-        filename = "{}_{}_{}".format(prefix, *counters[addr])
+        filename = "{}_b{}_t{}".format(prefix, *counters[addr])
         print("Capturing {} batch".format(filename))
         t = threading.Thread(target=capture, args=(conn, filename))
         t.start()
