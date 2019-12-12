@@ -13,3 +13,6 @@
   - MAC address: `cc:61:e5:13:1a:d1`
   - Location: `< x: 99, y: 188 >`
 - Any other device in this trace is not in the _room_ hence should not be considered
+
+### Map
+Link on [Desmos](https://www.desmos.com/calculator/nw4mtnwiry)
