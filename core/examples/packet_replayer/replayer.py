@@ -8,11 +8,11 @@ from datetime import datetime
 
 
 def replay(filename, port):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("127.0.0.1", port))
-    with open(filename, 'rb') as f:
-        data = f.read()
-    s.send(data)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(("127.0.0.1", port))
+        with open(filename, 'rb') as f:
+            data = f.read()
+        s.send(data)
     print("Sent {} bytes from {}".format(len(data), threading.currentThread().getName()))
 
 
