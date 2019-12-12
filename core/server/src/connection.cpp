@@ -5,6 +5,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <gen/message.pb.h>
 #include "receiver.h"
+#include "debug.h"
 
 using std::cout;
 using std::cerr;
@@ -19,6 +20,9 @@ tcp::socket &connection::socket() {
 }
 
 void connection::start() {
+    if (DEBUG) {
+        std::cout << "Ready to read data from socket..." << std::endl;
+    }
     try {
         GOOGLE_PROTOBUF_VERIFY_VERSION;
         boost::asio::async_read_until(socket_, buf, delimiter,
