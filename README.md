@@ -9,6 +9,11 @@ Find out more about this project by visiting each of the following components' `
 - [`core`](core)
 - [`frontend`](frontend)
 
+### How to run it
+1. [Start the `core` server](https://github.com/marcomicera/followifier/blob/master/core/server/README.md)
+1. [Launch the `frontend` module](https://github.com/marcomicera/followifier/blob/master/frontend/README.md)
+1. [Flash the firmware on all boards](https://github.com/marcomicera/followifier/blob/master/board/followifier/README.md)
+
 ### Team
 
 - [Marco Micera](https://github.com/marcomicera)
