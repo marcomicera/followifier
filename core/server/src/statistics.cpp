@@ -2,23 +2,32 @@
 #include "settings.h"
 #include <iostream>
 
-Point statistics::getDevicePosition(std::unordered_map<std::string, followifier::ESP32Metadata> &boardMetadatas) {
+Point statistics::getDevicePosition(std::unordered_map<std::string, followifier::ESP32Metadata> &board_metadatas) {
 
     std::unordered_set<Point, Point::PointHasher> listPossiblePoints;
 
-    for (auto i = boardMetadatas.begin(); i != boardMetadatas.end(); ++i) {
-        for (auto j = std::next(i, 1); j != boardMetadatas.end(); ++j) {
+    /* Logging announced distances */
+    for (auto & board_metadata : board_metadatas) {
+        std::string board_mac = board_metadata.first;
+        double estimated_distance = statistics::estimatedDistance(board_mac, board_metadata.second.rssi());
+        logDeviceDistanceAnnouncement(board_mac, board_metadata.second, estimated_distance);
+    }
 
-            double x1 = Settings::configuration.boards.find(i->first)->second.getCoordinates().getX();
-            double x2 = Settings::configuration.boards.find(j->first)->second.getCoordinates().getX();
-            double y1 = Settings::configuration.boards.find(i->first)->second.getCoordinates().getY();
-            double y2 = Settings::configuration.boards.find(j->first)->second.getCoordinates().getY();
+    for (auto i = board_metadatas.begin(); i != board_metadatas.end(); ++i) {
+        for (auto j = std::next(i, 1); j != board_metadatas.end(); ++j) {
+
+            std::string first_board_mac = i->first;
+            std::string second_board_mac = j->first;
+
+            double x1 = Settings::configuration.boards.find(first_board_mac)->second.getCoordinates().getX();
+            double x2 = Settings::configuration.boards.find(second_board_mac)->second.getCoordinates().getX();
+            double y1 = Settings::configuration.boards.find(first_board_mac)->second.getCoordinates().getY();
+            double y2 = Settings::configuration.boards.find(second_board_mac)->second.getCoordinates().getY();
 
             // Interception points
-            double r1 = statistics::estimatedDistance(i->second.rssi());
-            double r2 = statistics::estimatedDistance(j->second.rssi());
-            logDeviceDistanceAnnouncement(i->first, i->second, r1);
-            logDeviceDistanceAnnouncement(j->first, j->second, r2);
+            // TODO Implement tolerance?
+            double r1 = statistics::estimatedDistance(first_board_mac, i->second.rssi());
+            double r2 = statistics::estimatedDistance(second_board_mac, j->second.rssi());
 
             // d = sqrt((x1-x2)^2 + (y1-y2)^2)
             double d = std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
@@ -41,10 +50,10 @@ Point statistics::getDevicePosition(std::unordered_map<std::string, followifier:
             double yr1 = l * (y2 - y1) / d - h * (x2 - x1) / d + y1;
             double yr2 = l * (y2 - y1) / d + h * (x2 - x1) / d + y1;
 
-            if (xr1 >= 0 && yr1 >= 0 && checkPoint(xr1, yr1, boardMetadatas) && Point(xr1, yr1).isValid()) {
+            if (xr1 >= 0 && yr1 >= 0 && checkPoint(xr1, yr1, board_metadatas) && Point(xr1, yr1).isValid()) {
                 listPossiblePoints.insert(Point(std::round(xr1), std::round(yr1)));
             }
-            if (xr2 >= 0 && yr2 >= 0 && checkPoint(xr2, yr2, boardMetadatas) && Point(xr2, yr2).isValid()) {
+            if (xr2 >= 0 && yr2 >= 0 && checkPoint(xr2, yr2, board_metadatas) && Point(xr2, yr2).isValid()) {
                 listPossiblePoints.insert(Point(std::round(xr2), std::round(yr2)));
             }
         }
@@ -58,12 +67,15 @@ Point statistics::getDevicePosition(std::unordered_map<std::string, followifier:
     }
 
     Point center = Point(Px / listPossiblePoints.size(), Py / listPossiblePoints.size());
-    return center;
+    if(Settings::configuration.room_coordinates.isPointInside(center))
+        return center;
+    else
+        return Point(nan(""), nan(""));
 }
 
-double statistics::estimatedDistance(double rssi) {
-    double distance = std::pow(10, (ONE_METER_RSSI - rssi) / (10 * 2)) * 100;
-    return distance * 1.0; // FIXME Make tolerance a variable
+double statistics::estimatedDistance(const std::string &board_mac, double rssi_value) {
+    double one_meter_rssi = statistics::get_one_meter_rssi_or_default(board_mac);
+    return std::pow(10, (one_meter_rssi - rssi_value) / (10 * 2)) * 100;
 }
 
 bool statistics::checkPoint(double x, double y,
@@ -73,7 +85,7 @@ bool statistics::checkPoint(double x, double y,
 
         if (std::sqrt(std::pow(x - board.second.getCoordinates().getX(), 2) +
                       std::pow(y - board.second.getCoordinates().getY(), 2)) -
-            std::pow(statistics::estimatedDistance(boardMetadatas.find(board.first)->second.rssi()), 2) > 0) {
+            std::pow(statistics::estimatedDistance(board.first, boardMetadatas.find(board.first)->second.rssi()), 2) > 0) {
 
             return false;
         }

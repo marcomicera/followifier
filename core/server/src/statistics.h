@@ -6,8 +6,14 @@
 #include <unordered_map>
 #include "../gen/message.pb.h"
 #include "receiver.h"
+#include <boost/algorithm/string/predicate.hpp>
 
-#define ONE_METER_RSSI -51
+/**
+ * Default 1-meter-distance RSSI value to be used in case calibration has not been performed
+ * for a specific board.
+ */
+// TODO Make it a configuration parameter?
+#define DEFAULT_ONE_METER_RSSI -51
 
 /**
  * When true, only one device will generate printouts.
@@ -27,12 +33,18 @@ protected:
 
     static bool checkPoint(double, double, std::unordered_map<std::string, followifier::ESP32Metadata> &);
 
-    static double estimatedDistance(double);
+    // TODO Documentation
+    static double estimatedDistance(const std::string &board_mac, double rssi_value);
+
+    /**
+     * Map of boards' MAC addresses to their average 1-meter-distance RSSI value,
+     * derived during the initial calibration phase.
+     */
+    static std::unordered_map<std::string, double> boards_one_meter_distance_rssi_values;
 
 public:
 
     static Point getDevicePosition(std::unordered_map<std::string, followifier::ESP32Metadata> &boardMetadatas);
-
 
     /**
      * Prints out the announcement of a device location from a board.
@@ -50,7 +62,8 @@ public:
         std::string deviceMac = metadata.devicemac();
         int rssi = metadata.rssi();
 
-        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && deviceMac == DEBUG_TRACKED_DEVICE_MAC)) {
+        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && boost::iequals(deviceMac,
+                                                                                       DEBUG_TRACKED_DEVICE_MAC))) { // case-insensitive comparison
             std::cout << "Board " << boardMac << " announced device " << deviceMac << " at a distance of "
                       << deviceDistance << " cm (RSSI: " << rssi << ")." << std::endl;
         }
@@ -65,7 +78,8 @@ public:
      * @param deviceLocation    the device location.
      */
     static void logDeviceLocation(const std::string deviceMac, const Point &deviceLocation) {
-        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && deviceMac == DEBUG_TRACKED_DEVICE_MAC)) {
+        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && boost::iequals(deviceMac,
+                                                                                       DEBUG_TRACKED_DEVICE_MAC))) { // case-insensitive comparison
             std::cout << "Device " << deviceMac << " located at: " << deviceLocation << "." << std::endl;
         }
     }
@@ -81,9 +95,45 @@ public:
      */
     static void
     logInvalidDeviceLocation(const std::string &frameHash, const std::string deviceMac, const Point &deviceLocation) {
-        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && deviceMac == DEBUG_TRACKED_DEVICE_MAC)) {
+        if (!DEBUG_ONE_DEVICE_TRACKING || (DEBUG_ONE_DEVICE_TRACKING && boost::iequals(deviceMac,
+                                                                                       DEBUG_TRACKED_DEVICE_MAC))) { // case-insensitive comparison
             std::cerr << "Frame " << frameHash << " discarded since announcing device " << deviceMac
                       << " is located in an invalid position (" << deviceLocation << ")." << std::endl;
+        }
+    }
+
+    /**
+     * Inserts a 1-meter-distance RSSI value into the RSSI average values map.
+     *
+     * @param board_mac     board's MAC address who announced this RSSI value.
+     * @param rssi_value    the 1-meter-distance RSSI value announced by the board,
+     */
+    static void insert_one_meter_rssi(const std::string &board_mac, double rssi_value) {
+        statistics::boards_one_meter_distance_rssi_values.insert(std::make_pair(board_mac, rssi_value));
+    }
+
+    /**
+     * Returns the 1-meter-distance average RSSI of a specific board, or a default value in case
+     * calibration has not been performed for that specific board.
+     *
+     * @param board_mac     the board of which the average 1-meter-distance RSSI value is of interest.
+     * @return              the average 1-meter-distance RSSI value to be used when computing distances for this board.
+     */
+    static double get_one_meter_rssi_or_default(const std::string& board_mac) {
+        auto it = statistics::boards_one_meter_distance_rssi_values.find(board_mac);
+        if (it == statistics::boards_one_meter_distance_rssi_values.end()) {
+            return DEFAULT_ONE_METER_RSSI;
+        } else {
+            return it->second;
+        }
+    }
+
+    static bool has_been_calibrated(const std::string& board_mac){
+        auto it = statistics::boards_one_meter_distance_rssi_values.find(board_mac);
+        if (it == statistics::boards_one_meter_distance_rssi_values.end()) {
+            return false;
+        } else {
+            return true;
         }
     }
 };

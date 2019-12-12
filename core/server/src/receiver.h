@@ -14,8 +14,6 @@
 
 using boost::uuids::detail::md5;
 
-#define NUMBER_BOARDS Settings::configuration.boards.size()
-
 /**
  * When true, it never deletes frames of previous rounds.
  *
@@ -73,7 +71,7 @@ public:
         if (!ROUNDLESS_MODE) {
             std::cout << cause << " " << std::flush; // TODO glog
             std::cout << "Starting a new round..." << std::endl;
-            if (lastRoundBoardMacs.size() == NUMBER_BOARDS) {
+            if (lastRoundBoardMacs.size() == Settings::get_num_boards()) {
                 std::cout << std::endl << std::endl;
             }
             lastRoundBoardMacs.clear();

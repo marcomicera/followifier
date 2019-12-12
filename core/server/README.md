@@ -11,7 +11,7 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
     ```bash
    $ sudo service mongod start 
    ```
-1. Create a configuration file `config.json` having the following format:
+1. Create a configuration file `config.json` having the following format: <!-- TODO add missing fields -->
     ```json
     {
         "port": 12345,
@@ -33,9 +33,25 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
             {"x": 0, "y": 90},
             {"x": 90, "y": 0},
             {"x": 90, "y": 90}
-        ]
+        ],
+        "calibration": {
+            "calibration_device": "cc:61:e5:13:1a:d1",
+            "min_num_calibration_messages": 2,
+            "placement_duration_in_seconds": 15
+        }
     }
     ```
+    - The `calibration` object is completely optional, and refers to the initial boards calibration phase during
+    the user is asked to place a mobile device at 1 meter from all boards, one at the time.\
+    If missing, calibration will not be performed.
+        -  The mobile calibration device that has to be carried around is `calibration_device`.\
+        If missing, calibration will not be performed.
+        - `min_num_calibration_messages` represents the minimum number of messages that the calibration device needs
+        to send in a batch in order for the calibration to make sense.\
+        If missing, a default value will be used.
+        - `placement_duration_in_seconds` represents the number of seconds that the user has at her/his disposal 
+        in order to place the mobile device at one meter for boards, one at the time.
+        If missing, a default value will be used.
 1. Optionally, free the `core` server port:
     ```bash
    lsof -i tcp:12345 | grep LISTEN | awk '{print $2}' | xargs kill

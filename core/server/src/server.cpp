@@ -1,25 +1,91 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include "server.h"
+#include "statistics.h"
+#include <boost/algorithm/string/predicate.hpp>
+
+std::unordered_map<std::string, double> statistics::boards_one_meter_distance_rssi_values;
 
 server::server(boost::asio::io_service &io_service) : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)) {
-    std::cout << "Core server started on port " << acceptor_.local_endpoint().port() << ".\n\n"; // TODO print local address
-    start_accept();
+
+    /* Intro message displayed on server startup */
+    std::cout << "Core server started on port " << acceptor_.local_endpoint().port()
+              << ".\n\n"; // TODO print local address
+
+    /* If a calibration device is set */
+    if (Settings::configuration.calibration_device_mac_address) {
+
+        /* Start calibrating boards one at the time */
+        calibration::board_has_sent_calibration_batch = true;
+        start_calibration();
+    } else {
+
+        /* Start accepting connections from boards */
+        start_statistics();
+    }
 }
 
-void server::start_accept() {
-    connection::pointer new_connection = connection::create(acceptor_.get_io_service());
+void server::statistics_accept_handler(const connection::pointer &new_connection,
+                                       const boost::system::error_code &error) {
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
+    if (!error) {
+        new_connection->async_batch_read_for_statistics();;
+    }
+    start_statistics();
+}
 
+void server::start_statistics() {
+    connection::pointer new_connection = connection::create(acceptor_.get_io_service());
     acceptor_.async_accept(new_connection->socket(),
-                           boost::bind(&::server::handle_accept, this, new_connection,
+                           boost::bind(&::server::statistics_accept_handler, this, new_connection,
                                        boost::asio::placeholders::error));
 }
 
-void server::handle_accept(const connection::pointer &new_connection,
-                           const boost::system::error_code &error) {
+void server::calibration_accept_handler(const connection::pointer &new_connection,
+                                        const boost::system::error_code &error) {
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
     if (!error) {
-        new_connection->start();
+        new_connection->async_batch_read_for_calibration();
     }
+    /** A new accept must be started **/
+    start_calibration();
+}
 
-    start_accept();
+void server::start_calibration() {
+
+    /* For every board */
+    for (auto &board : Settings::configuration.boards) {
+
+        /* This board's MAC address */
+        calibration::board_to_calibrate = board.first;
+
+        /* Find first board that has not been calibrated */
+        if (!statistics::has_been_calibrated(calibration::board_to_calibrate)) {
+
+            /* Wait for the user to place this board if it has not been done yet
+             * The board_has_sent_calibration_batch value will be set to true
+             * after a batch has been received and false after the device has been
+             * placed */
+            if (calibration::board_has_sent_calibration_batch) {
+                calibration::wait_placement(calibration::board_to_calibrate);
+                calibration::board_has_sent_calibration_batch = false;
+            }
+
+            /* Wait for the board to send the calibration batch */
+            connection::pointer calibration_connection = connection::create(
+                    acceptor_.get_io_service()); // connection needed to calibrate this board
+            acceptor_.async_accept(calibration_connection->socket(),
+                                   boost::bind(&::server::calibration_accept_handler, this, calibration_connection,
+                                               boost::asio::placeholders::error));
+            return;
+        }
+    }
+    std::cout << "Calibration completed. Statistics may not be calculated right away." << std::endl << std::endl;
+
+    /* All boards have been calibrated */
+    start_statistics();
+}
+
+server::~server() {
+    acceptor_.close();
 }

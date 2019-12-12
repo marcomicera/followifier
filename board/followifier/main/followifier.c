@@ -67,6 +67,14 @@ esp_err_t board_event_handler(void *ctx, system_event_t *event) {
         case SYSTEM_EVENT_STA_DISCONNECTED: // Board got disconnected from AP
 
             ESP_LOGI(BOARD_TAG, "Board got disconnected from the \"%s\" Wi-Fi network.", WIFI_SSID);
+
+            // TODO: Sometimes it would get stuck here for me. I've tried to fix it but I wasn't able to reproduce it anymore.
+            if(!wifi_stopped) {
+
+                // Wifi wasn't voluntary stopped
+                init_sniffer();
+                start_sniffer();
+            }
             break;
 
         // case SYSTEM_EVENT_STA_STOP: // Board stops
