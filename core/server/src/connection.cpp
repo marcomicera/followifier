@@ -43,13 +43,17 @@ void connection::start() {
  */
 void connection::handle_read(const boost::system::error_code &error,
                              size_t bytes_transferred) {
-
+    if (DEBUG) {
+        cout << "Handling read..." << endl;
+    }
     /* If the batch has not been received correctly */
     if (bytes_transferred == 0) {
         cerr << "Something went wrong while receiving a batch (" << error.message() << ", " << bytes_transferred
              << " bytes transferred)." << endl << endl;
     } else {
-
+        if (DEBUG) {
+            cout << "Reading data into batch..." << endl;
+            }
         followifier::Batch batch;
         database database;
 
