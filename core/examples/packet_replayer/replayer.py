@@ -13,6 +13,7 @@ def replay(filename, port):
     with open(filename, 'rb') as f:
         data = f.read()
     s.send(data)
+    print("Sent {} bytes from {}".format(len(data), threading.currentThread().getName()))
 
 
 def service_replay(port, prefix, batch_number, trace_dir):
