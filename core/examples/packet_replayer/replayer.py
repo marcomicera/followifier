@@ -62,7 +62,7 @@ def service_capture(port, prefix, batch_number, trace_dir):
     print("Socket listening.")
     threads = []
     if not os.path.exists(trace_dir):
-        os.mkdir(trace_dir)
+        os.makedirs(trace_dir)
     while not all(counter >= batch_number for counter in counters.values()):
         conn, addr = s.accept()
         addr = addr[0]
