@@ -36,7 +36,7 @@ and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
         ]
     }
     ```
-1. Optionally, free the `core` server port:
+1. Optionally, free the `core` server port (example with port 12345):
     ```bash
    lsof -i tcp:12345 | grep LISTEN | awk '{print $2}' | xargs kill
    ```
