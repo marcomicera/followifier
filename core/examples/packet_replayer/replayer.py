@@ -20,7 +20,7 @@ def service_replay(port, prefix, batch_number, trace_dir):
     threads = []
     for batch_index in range(batch_number):
         for board_num in range(3):
-            filename = "{}/{}b{}_t{}".format(trace_dir, prefix, board_num, batch_index + 1)
+            filename = "{}/{}b{}_t{}".format(trace_dir, prefix, board_num, batch_index)
             if os.path.exists(filename):
                 print("Sending {} to server.".format(filename))
                 t = threading.Thread(target=replay, args=(filename, port))
