@@ -18,7 +18,7 @@ def replay(filename, port):
 
 def service_replay(port, prefix, batch_number, trace_dir):
     threads = []
-    for batch_index in range(batch_number):
+    for batch_index in range(batch_number + 1):
         for board_num in range(3):
             filename = "{}/{}b{}_t{}".format(trace_dir, prefix, board_num, batch_index)
             if os.path.exists(filename):

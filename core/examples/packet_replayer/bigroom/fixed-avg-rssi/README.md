@@ -2,7 +2,7 @@
 
 ### Assumptions
 - [`config.json`](config.json) is the configuration used while capturing batches and it must be used while replaying this trace
-- Distances are expressed in centimeters 
+- Distances are expressed in centimeters
 
 ## List of devices
 Here follows a list of _stationary_ and _non-stationary_ devices in the room.\
