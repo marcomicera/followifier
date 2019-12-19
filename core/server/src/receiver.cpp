@@ -8,6 +8,7 @@ using std::endl;
 
 std::mutex receiver::m;
 messages_map receiver::messagesBuffer;
+std::unordered_map<std::string, unsigned short> receiver::messagesAge;
 #ifndef ROUNDLESS_MODE
 std::unordered_set<std::string> receiver::lastRoundBoardMacs;
 #endif
@@ -84,6 +85,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             std::unordered_map<std::string, followifier::ESP32Metadata> tempBoardMap;
             tempBoardMap.insert(std::make_pair(newBatch.boardmac(), newMessage.metadata()));
             messagesBuffer.insert(std::make_pair(newMessage.frame_hash(), tempBoardMap));
+            messagesAge.insert(std::make_pair(newMessage.frame_hash(), 0));
         }
 
 
@@ -114,6 +116,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
             /* Clearing the entry relative to this frame */
             messagesBuffer.erase(newMessage.frame_hash());
+            messagesAge.erase(newMessage.frame_hash());
         } else {
 
             // TODO Roundless mode: delete messages not being sent by all boards after a while
@@ -138,34 +141,19 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
     }
 #endif
 
-    /* Delete messages older than 5 minutes */
-    deleteOldMessagesFromBuffer();
+    /* Delete old and unused messages */
+    cleanMessagesBuffer();
 }
 
-void receiver::deleteOldMessagesFromBuffer() {
+void receiver::cleanMessagesBuffer() {
 
-    struct timeval tp{};
-    std::vector<std::string> messagesToDelete;
-
-    //get 5 minutes ago milliseconds
-    gettimeofday(&tp, nullptr);
-    long int ms = (tp.tv_sec - 5 * 60);
-    cout << "Current timestamp: " << tp.tv_sec << ", 5 minutes ago: " << ms << endl;
-
-    for (auto i : messagesBuffer) {
-        if (i.second.begin()->second.timestamp() < ms) {
-            //adds them to a vector to delete them later on
-            messagesToDelete.push_back(i.first);
+    for (auto &ageEntry: messagesAge) {
+        if (++ageEntry.second >= MESSAGES_CLEANING_AGE_THRESHOLD) {
+            cout << "Deleting frame " << prettyHash(ageEntry.first)
+                 << " since it has not been sent by all boards after " << ageEntry.second << " batch receptions."
+                 << endl;
+            messagesBuffer.erase(ageEntry.first);
+            messagesAge.erase(ageEntry.first);
         }
     }
-
-    //delete found messages
-    if (!messagesToDelete.empty()) {
-        cout << "Deleting " << messagesToDelete.size() << " messages" << endl;
-        for (const auto &i : messagesToDelete) {
-            messagesBuffer.erase(i);
-        }
-        // cout << "Deleted old messages" << endl;
-    }
-    messagesToDelete.clear();
 }

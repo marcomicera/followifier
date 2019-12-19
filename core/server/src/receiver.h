@@ -23,6 +23,13 @@ using boost::uuids::detail::md5;
  */
 #define ROUNDLESS_MODE
 
+/*
+ * Messages which have not been sent by all boards after this many
+ * batch receptions will be deleted from the local messages buffer.
+ * This must be greater than the number of boards by at least an order of magnitude.
+ */
+#define MESSAGES_CLEANING_AGE_THRESHOLD 20
+
 typedef std::unordered_map<
         std::string, // frame hash
         std::unordered_map< // sender
@@ -35,6 +42,31 @@ typedef std::unordered_map<
  */
 class receiver {
 
+protected:
+
+    /**
+     * Batches must be added in an interruptable fashion.
+     */
+    static std::mutex m;
+
+    /**
+     * Messages buffer mapping frame hashes to boards' metadata.
+     */
+    static messages_map messagesBuffer;
+
+    /**
+     * Stores the age of every frame hash.
+     * Useful for cleaning purposes.
+     */
+    static std::unordered_map<std::string, unsigned short> messagesAge;
+
+#ifndef ROUNDLESS_MODE
+    /**
+     * MAC addresses of boards that have sent a message during the last round.
+     */
+    static std::unordered_set<std::string> lastRoundBoardMacs;
+#endif
+
 public:
 
     /**
@@ -45,9 +77,9 @@ public:
     static void addBatch(const followifier::Batch &newBatch, database &database);
 
      /**
-      * Deletes messages older than 5 minutes from the messages buffer.
+      * Deletes old and unused messages from the messages buffer.
       */
-    static void deleteOldMessagesFromBuffer();
+    static void cleanMessagesBuffer();
 
     /**
      * Logs a Proto message following its own format.
@@ -92,25 +124,6 @@ public:
         boost::algorithm::hex(charDigest, charDigest + sizeof(md5::digest_type) * 2, std::back_inserter(result));
         return result;
     }
-
-protected:
-
-    /**
-     * Batches must be added in an interruptable fashion.
-     */
-    static std::mutex m;
-
-    /**
-     * Messages buffer mapping frame hashes to boards' metadata.
-     */
-    static messages_map messagesBuffer;
-
-#ifndef ROUNDLESS_MODE
-    /**
-     * MAC addresses of boards that have sent a message during the last round.
-     */
-    static std::unordered_set<std::string> lastRoundBoardMacs;
-#endif
 };
 
 #endif //CORE_RECEIVER_H
