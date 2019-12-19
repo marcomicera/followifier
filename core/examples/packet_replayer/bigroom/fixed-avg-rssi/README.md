@@ -25,3 +25,6 @@ Any other device in this trace is not in the room hence should not be considered
 - Tablet
   - Connects to the WiFi network quite rarely
   - MAC address: `78:88:6d:ad:ce:99`
+
+### Map
+Link on [Desmos](https://www.desmos.com/calculator/yx8w4a4u5b)
