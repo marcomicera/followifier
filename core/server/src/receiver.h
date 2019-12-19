@@ -17,13 +17,11 @@ using boost::uuids::detail::md5;
 #define NUMBER_BOARDS Settings::configuration.boards.size()
 
 /**
- * When true, it never deletes frames of previous rounds.
+ * When defined, the server never deletes frames of previous rounds.
  *
- * Warning: this is an experimental flag that should be set only in special cases
- *          (e.g., debugging, no synchronization between boards, etc.).
- *          This flag will cause a StackOverflow after a while.
+ * Comment the following line to disable it.
  */
-#define ROUNDLESS_MODE 1
+#define ROUNDLESS_MODE
 
 typedef std::unordered_map<
         std::string, // frame hash
@@ -46,11 +44,10 @@ public:
      */
     static void addBatch(const followifier::Batch &newBatch, database &database);
 
-    /**
-     * deletes old messages
-     *
-     */
-    static void cleanBatch();
+     /**
+      * Deletes messages older than 5 minutes from the messages buffer.
+      */
+    static void deleteOldMessagesFromBuffer();
 
     /**
      * Logs a Proto message following its own format.
@@ -65,25 +62,22 @@ public:
                ",  Timestamp: " + std::to_string(message.metadata().timestamp()) + ">";
     }
 
+#ifndef ROUNDLESS_MODE
     /**
      * To be called every time a new round begins.
      *
      * @param cause     the cause that led the start of a new round.
      */
     static void newRound(const std::string &cause) {
-        if (!ROUNDLESS_MODE) {
-            std::cout << cause << " " << std::flush; // TODO glog
-            std::cout << "Starting a new round..." << std::endl;
-            if (lastRoundBoardMacs.size() == NUMBER_BOARDS) {
-                std::cout << std::endl << std::endl;
-            }
-            lastRoundBoardMacs.clear();
-            messagesBuffer.clear();
-        } else {
-            cleanBatch();
-            lastRoundBoardMacs.clear();
+        std::cout << cause << " " << std::flush; // TODO glog
+        std::cout << "Starting a new round..." << std::endl;
+        if (lastRoundBoardMacs.size() == NUMBER_BOARDS) {
+            std::cout << std::endl << std::endl;
         }
+        lastRoundBoardMacs.clear();
+        messagesBuffer.clear();
     }
+#endif
 
     /**
      * Pretty-prints a hash digest.
@@ -111,12 +105,12 @@ protected:
      */
     static messages_map messagesBuffer;
 
+#ifndef ROUNDLESS_MODE
     /**
      * MAC addresses of boards that have sent a message during the last round.
      */
     static std::unordered_set<std::string> lastRoundBoardMacs;
-
-    static Point getPosition(std::string, std::unordered_map< std::string, followifier::ESP32Metadata>);
+#endif
 };
 
 #endif //CORE_RECEIVER_H

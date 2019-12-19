@@ -8,7 +8,9 @@ using std::endl;
 
 std::mutex receiver::m;
 messages_map receiver::messagesBuffer;
+#ifndef ROUNDLESS_MODE
 std::unordered_set<std::string> receiver::lastRoundBoardMacs;
+#endif
 
 void receiver::addBatch(const followifier::Batch &newBatch, database &database) {
 
@@ -20,6 +22,7 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
     cout << "New batch received from " + newBatch.boardmac() + " of size " + std::to_string(newBatch.messages_size())
          << "." << endl;
 
+#ifndef ROUNDLESS_MODE
     /* If the board's MAC address does not appear for the first time */
     if (lastRoundBoardMacs.find(newBatch.boardmac()) != lastRoundBoardMacs.end()) {
 
@@ -29,14 +32,12 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
          */
         newRound("Board " + newBatch.boardmac() + " appears for the second time during this round.");
     } else {
-
-        if (!ROUNDLESS_MODE) {
-            cout << "Board " << newBatch.boardmac() << " appears for the first time during this round." << endl;
-        }
+        cout << "Board " << newBatch.boardmac() << " appears for the first time during this round." << endl;
     }
 
     /* Insert it into the set of boards that have sent a message during the last round */
     lastRoundBoardMacs.insert(newBatch.boardmac());
+#endif
 
     /* Printing received messages */
     if (newBatch.messages_size() > 0) { // if there is at least one message in it
@@ -47,8 +48,10 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
     }
     cout << endl << endl;
 
+#ifndef ROUNDLESS_MODE
     /* True when all boards have sent the same frame, hence it's time for a new round */
     bool aFrameHasBeenSentByAllBoards = false;
+#endif
 
     /* For each message in the batch */
     for (const followifier::ESP32Message &newMessage: newBatch.messages()) {
@@ -66,10 +69,10 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
                              /* Error: same board has announced the same frame twice */
                              cerr << "Board " << newBatch.boardmac() << " has announced frame "
                                   << prettyHash(newMessage.frame_hash()) << " at least twice." << endl;
-                             if (!ROUNDLESS_MODE) {
-                                 cerr << "Terminating since roundless mode is disabled." << endl;
-                                 exit(1); // FIXME maybe there's a better way to handle this
-                             }
+#ifndef ROUNDLESS_MODE
+                             cerr << "Terminating since roundless mode is disabled." << endl;
+                             exit(1); // FIXME maybe there's a better way to handle this
+#endif
                          }
                      });
 
@@ -87,7 +90,9 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
         /* If this message has been sent by all other boards */
         if (messagesBuffer.find(newMessage.frame_hash())->second.size() == NUMBER_BOARDS) {
 
+#ifndef ROUNDLESS_MODE
             aFrameHasBeenSentByAllBoards = true;
+#endif
             cout << "Message " << prettyHash(newMessage.frame_hash()) << " has been sent by all boards." << endl;
 
             /* Computing device position */
@@ -115,14 +120,13 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
         }
     }
 
+#ifndef ROUNDLESS_MODE
     /* Number of boards seen during this round assertion */
     if (aFrameHasBeenSentByAllBoards && (lastRoundBoardMacs.size() != NUMBER_BOARDS)) {
-        cout << "A frame has been sent by all boards, but during different rounds." << endl;
-        if (!ROUNDLESS_MODE) {
-            cerr << "Server should not consider frames belonging to previous round since roundless mode is disabled."
-                 << endl;
-            exit(1);
-        }
+        cerr << "A frame has been sent by all boards, but during different rounds.\n"
+         << "Server should not consider frames belonging to previous round since roundless mode is disabled."
+         << endl;
+        exit(1);
     }
 
     /* If all boards have sent their batch */
@@ -132,9 +136,13 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
         newRound(std::to_string(lastRoundBoardMacs.size()) + " out of " + std::to_string(NUMBER_BOARDS) +
                  " boards have sent their batch.");
     }
+#endif
+
+    /* Delete messages older than 5 minutes */
+    deleteOldMessagesFromBuffer();
 }
 
-void receiver::cleanBatch() {
+void receiver::deleteOldMessagesFromBuffer() {
 
     struct timeval tp{};
     std::vector<std::string> messagesToDelete;
@@ -142,6 +150,7 @@ void receiver::cleanBatch() {
     //get 5 minutes ago milliseconds
     gettimeofday(&tp, nullptr);
     long int ms = (tp.tv_sec - 5 * 60);
+    cout << "Current timestamp: " << tp.tv_sec << ", 5 minutes ago: " << ms << endl;
 
     for (auto i : messagesBuffer) {
         if (i.second.begin()->second.timestamp() < ms) {
@@ -153,7 +162,7 @@ void receiver::cleanBatch() {
     //delete found messages
     if (!messagesToDelete.empty()) {
         cout << "Deleting " << messagesToDelete.size() << " messages" << endl;
-        for (const auto& i : messagesToDelete) {
+        for (const auto &i : messagesToDelete) {
             messagesBuffer.erase(i);
         }
         // cout << "Deleted old messages" << endl;
