@@ -58,7 +58,10 @@ Point statistics::getDevicePosition(std::unordered_map<std::string, followifier:
     }
 
     Point center = Point(Px / listPossiblePoints.size(), Py / listPossiblePoints.size());
-    return center;
+    if(Settings::configuration.room_coordinates.isPointInside(center))
+        return center;
+    else
+        return Point(nan(""), nan(""));
 }
 
 double statistics::estimatedDistance(double rssi) {

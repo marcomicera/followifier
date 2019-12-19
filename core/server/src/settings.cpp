@@ -14,13 +14,16 @@ void Settings::load(const std::string &filename) {
     // If the port cannot be resolved, an exception is thrown.
     configuration.port = tree.get<size_t>("port");
 
+    std::vector<Point> room_coordinates;
     BOOST_FOREACH(pt::ptree::value_type &v, tree.get_child("room_coordinates")) {
                     Point p(v.second.get<double>("x"), v.second.get<double>("y"));
-                    configuration.room_coordinates.insert(p);
+                    room_coordinates.push_back(p);
                 }
-    if (configuration.room_coordinates.size() != 4) {
-        throw std::invalid_argument("Duplicate room coordinates");
+    if (room_coordinates.size() != 4) {
+        throw std::invalid_argument("Missing room coordinate");
     }
+     configuration.room_coordinates = Room(room_coordinates[0], room_coordinates[1], room_coordinates[2], room_coordinates[3]);
+
 
     // Use get_child to find the node containing the modules, and iterate over
     // its children. If the path cannot be resolved, get_child throws.

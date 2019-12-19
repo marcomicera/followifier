@@ -8,12 +8,44 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 #include <bits/stdc++.h>
+#include "room.h"
 
 namespace pt = boost::property_tree;
 typedef struct {
-    size_t port; //server port number
-    std::unordered_map<std::string, Board> boards; //set of boards
-    std::unordered_set<Point, Point::PointHasher> room_coordinates; //coordinates of room
+    /**
+     * This server's port number towards boards.
+     */
+    size_t port;
+
+    /**
+     * Map of boards' MAC address to their corresponding object.
+     */
+    std::unordered_map<std::string, Board> boards;
+
+    /**
+     * Room vertexes
+     */
+    Room room_coordinates;
+
+    /**
+     * MAC address of the mobile device used for boards calibration.
+     * This field is optional (in case it is missing, no calibration will be performed).
+     */
+    boost::optional<std::string> calibration_device_mac_address;
+
+    /**
+     * Minimum number of calibration messages needed to compute the
+     * average 1-meter-distance RSSI value of all boards.
+     * This field is optional (in case it is missing, a default value will be used).
+     */
+    boost::optional<int> min_num_calibration_messages;
+
+    /**
+     * How many seconds does the user have to place the mobile device at 1 meter
+     * distance from boards, one at the time.
+     */
+    boost::optional<int> calibration_placement_duration_in_seconds;
+
 } Config;
 
 class Settings {
