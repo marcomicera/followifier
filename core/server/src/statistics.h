@@ -21,6 +21,12 @@
  */
 #define DEBUG_TRACKED_DEVICE_MAC "01:23:45:67:89:ab"
 
+/**
+ * When true, it will also announce devices erroneously captured outside the room.
+ * Used for debug purposes.
+ */
+#define INCLUDE_DEVICES_OUT_OF_ROOM 0
+
 class statistics {
 
 protected:
