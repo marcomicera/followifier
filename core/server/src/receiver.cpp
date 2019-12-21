@@ -147,13 +147,16 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
 void receiver::cleanMessagesBuffer() {
 
-    for (auto &ageEntry: messagesAge) {
-        if (++ageEntry.second >= MESSAGES_CLEANING_AGE_THRESHOLD) {
-            cout << "Deleting frame " << prettyHash(ageEntry.first)
-                 << " since it has not been sent by all boards after " << ageEntry.second << " batch receptions."
-                 << endl;
-            messagesBuffer.erase(ageEntry.first);
-            messagesAge.erase(ageEntry.first);
+    auto ageEntryIterator = messagesAge.begin();
+    while (ageEntryIterator != messagesAge.end()) {
+        if (++ageEntryIterator->second >= MESSAGES_CLEANING_AGE_THRESHOLD) {
+            cout << "Deleting frame " << prettyHash(ageEntryIterator->first)
+                 << " since it has not been sent by all boards after " << ageEntryIterator->second
+                 << " batch receptions." << endl;
+            messagesBuffer.erase(ageEntryIterator->first);
+            ageEntryIterator = messagesAge.erase(ageEntryIterator);
+        } else {
+            ++ageEntryIterator;
         }
     }
 }
