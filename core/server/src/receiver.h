@@ -30,12 +30,60 @@ using boost::uuids::detail::md5;
  */
 #define MESSAGES_CLEANING_AGE_THRESHOLD 20
 
+/*
+ * Maps frame hashes to their senders with their corresponding metadata.
+ */
 typedef std::unordered_map<
         std::string, // frame hash
         std::unordered_map< // sender
                 std::string, // board's MAC address
                 followifier::ESP32Metadata
         >> messages_map;
+
+/**
+ * Probe Request burst type: device MAC address and timestamp.
+ */
+struct burst {
+
+    /**
+     * MAC address of the device which has sent the Probe Request burst.
+     */
+    std::string deviceMac;
+
+    /**
+     * At what time the burst has been sent.
+     */
+    ::google::protobuf::int64 timestamp;
+
+public:
+
+    explicit burst(std::string deviceMac, ::google::protobuf::int64 timestamp) : deviceMac(std::move(deviceMac)),
+                                                                                 timestamp(timestamp) {}
+
+    explicit burst(const followifier::ESP32Message &message) : deviceMac(message.metadata().devicemac()),
+                                                               timestamp(message.metadata().timestamp()) {}
+
+    bool operator==(const burst &other) const {
+        return deviceMac == other.deviceMac && timestamp == other.timestamp;
+    }
+
+    bool operator!=(const burst &other) const {
+        return !(other == *this);
+    }
+
+    struct burst_hasher {
+        std::size_t operator()(const burst &b) const {
+            std::size_t result = 0;
+            boost::hash_combine(result, b.deviceMac);
+            boost::hash_combine(result, b.timestamp);
+            return result;
+        }
+    };
+
+    explicit operator std::string() const {
+        return deviceMac.substr(deviceMac.length() - 3) + "@" + std::to_string(timestamp);
+    }
+};
 
 /**
  * Receives and filters batches from all boards.
@@ -52,7 +100,7 @@ protected:
     /**
      * Messages buffer mapping frame hashes to boards' metadata.
      */
-    static messages_map messagesBuffer;
+    static messages_map messagesBuffer; // TODO Make it a map of frame hashes (string) to number of senders (unsigned short)
 
     /**
      * Stores the age of every frame hash.
@@ -76,9 +124,9 @@ public:
      */
     static void addBatch(const followifier::Batch &newBatch, database &database);
 
-     /**
-      * Deletes old and unused messages from the messages buffer.
-      */
+    /**
+     * Deletes old and unused messages from the messages buffer.
+     */
     static void cleanMessagesBuffer();
 
     /**
@@ -88,8 +136,20 @@ public:
      * @return          a string representation of the message.
      */
     static std::string logMessage(const followifier::ESP32Message &message) {
+        return logMessage(message, 1);
+    }
+
+    /**
+     * Logs a Proto message following its own format, indicating the burst average RSSI approximation.
+     *
+     * @param message       message to be printed.
+     * @param burstAvgRssi  burst average RSSI value. +1 if not being used.
+     * @return              a string representation of the message.
+     */
+    static std::string logMessage(const followifier::ESP32Message &message, double burstAvgRssi) {
         return "< Hash: " + prettyHash(message.frame_hash()) +
                ", RSSI: " + std::to_string(message.metadata().rssi()) +
+               ((burstAvgRssi != 1) ? (" -> " + std::to_string(burstAvgRssi) + " (burst approx.)") : "") +
                ",  Src MAC: " + message.metadata().devicemac() +
                ",  Timestamp: " + std::to_string(message.metadata().timestamp()) + ">";
     }
