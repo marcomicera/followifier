@@ -12,7 +12,7 @@
    ```
 1. Capture batches with:
     ```bash
-    $ python3 replayer.py replay <SERVER_PORT> --trace-dir <TRACE_DIRECTORY>
+    $ python3 replayer.py capture <SERVER_PORT> --trace-dir <TRACE_DIRECTORY>
     ```
 
 ### How to replay a trace
