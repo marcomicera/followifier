@@ -93,7 +93,7 @@ modes = {
 parser = argparse.ArgumentParser()
 parser.add_argument('mode', choices=['capture', 'replay'], help='')
 parser.add_argument('port', type=int, help="Port to listen on in capture mode, or to send packets in replay mode.")
-parser.add_argument('--batch-number', type=int, default=10, help="Number of batches to capture or replay.")
+parser.add_argument('--num-timeslots', type=int, default=10, help="Number of batches to capture or replay.")
 parser.add_argument('--file-prefix', type=str, default="batch_", help="Prefix for saved files.")
 parser.add_argument('--trace-dir', type=str, default=datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),
                     help="Where to save/retrieve batches.")
