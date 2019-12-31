@@ -5,8 +5,12 @@
 Tracking people by exploiting WiFi Probe Request frames.
 
 ### How to run it
-1. [Start the `core` server](core/server/README.md)
-1. [Launch the `frontend` module](frontend/README.md)
+1. Create a [server configuration file](core/server/README.md#configuration-file)
+1. Start the server:
+    ```bash
+    $ chmod u+x server.sh
+    $ ./server.sh
+    ```
 1. [Flash the firmware on all boards](board/followifier/README.md)
 
 ### Team
