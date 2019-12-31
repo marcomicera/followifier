@@ -4,38 +4,42 @@ Our `core` server:
 - Performs real-time analytics
 - Sends data to the [`frontend` module](../../frontend)
 
+## Dependencies
+[MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition-using-deb-packages)
+and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/).
+
+## Configuration file
+Create a configuration file `config.json` having the following format:
+```json
+{
+    "port": 12345,
+    "boards": [
+        {
+            "mac": "2e:c5:44:b4:7a:08",
+            "x": 0,
+            "y": 0 
+        },
+        {
+            "mac": "1a:dd:db:a7:b7:f5",
+            "x": 20,
+            "y": 0 
+        }
+
+    ],
+    "room_coordinates":[
+        {"x": 0, "y": 0},
+        {"x": 0, "y": 90},
+        {"x": 90, "y": 0},
+        {"x": 90, "y": 90}
+    ]
+}
+```
+
 ## Launch the `core` server
-1. Install [MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition-using-deb-packages)
-and [`mongocxx` drivers](http://mongocxx.org/mongocxx-v3/installation/)
 1. Start MongoDB:
     ```bash
    $ sudo service mongod start 
    ```
-1. Create a configuration file `config.json` having the following format:
-    ```json
-    {
-        "port": 12345,
-        "boards": [
-            {
-                "mac": "2e:c5:44:b4:7a:08",
-                "x": 0,
-                "y": 0 
-            },
-            {
-                "mac": "1a:dd:db:a7:b7:f5",
-                "x": 20,
-                "y": 0 
-            }
-
-        ],
-        "room_coordinates":[
-            {"x": 0, "y": 0},
-            {"x": 0, "y": 90},
-            {"x": 90, "y": 0},
-            {"x": 90, "y": 90}
-        ]
-    }
-    ```
 1. Optionally, free the `core` server port (example with port 12345):
     ```bash
    lsof -i tcp:12345 | grep LISTEN | awk '{print $2}' | xargs kill
