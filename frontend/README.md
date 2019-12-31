@@ -1,6 +1,6 @@
 # `frontend` module
 
-### Installation steps
+## Dependencies
 1. Install Node.js and npm:
     ```bash
     $ curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - && sudo apt install -y nodejs
@@ -11,7 +11,7 @@
     $ npm install interface
     ```
 
-### Launch it
+## Launch the `frontend` server
 1. Launch the [`reader`](reader) component:
     ```bash
     $ node reader/index.js
