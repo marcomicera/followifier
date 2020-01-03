@@ -11,9 +11,26 @@ _screen_daemon_no_reattach() {
   fi
 }
 
+# Allowing inbound and outbound TCP connections on the specified port
+_allow_tcp_port() {
+    PORT=$(python3 -c "import json; print(json.load(open('core/server/config.json'))['port'])")
+    echo Asking password to allow TCP inbound and outbound connections on port "$PORT" on this machine...
+    sudo iptables -A INPUT -p tcp --dport "$PORT" -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+    sudo iptables -A OUTPUT -p tcp --sport "$PORT" -m conntrack --ctstate ESTABLISHED -j ACCEPT   
+}
+
+# Starts the NTP server
+_launch_ntp_server() {
+    /etc/init.d/ntp start   
+}
+
+# Starts the local database
+_start_db() {
+    sudo service mongod start
+}
+
 # Launches the UI
 _launch_ui() {
-    sudo service mongod start
     _screen_daemon_no_reattach "reader" "node frontend/reader/index.js"
     _screen_daemon_no_reattach "gui" "cd frontend && npm start --prefix interface"
     xdg-open http://localhost:4200/ &
@@ -21,11 +38,15 @@ _launch_ui() {
 
 # Launches the core server without compiling first
 _launch_core() {
+    _allow_tcp_port
+    _launch_ntp_server
+    _start_db
     cd core/server && ./core
 }
 
 # Compiles and launches the core server
 _compile_and_launch_core() {
+    _start_db
     cd core/server && ./start.sh
 }
 
