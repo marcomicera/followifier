@@ -54,7 +54,7 @@ _help_message() {
     echo "Usage: $(basename "$0") [options]" >&2
     echo
     echo "  -h, --help              Shows this help message"
-    echo "  --compile               Imports home directory's dotfiles"
+    echo "  --compile               Compiles the core server before launching"
     echo
     exit 1
 }
