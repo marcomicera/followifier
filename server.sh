@@ -13,6 +13,7 @@ _screen_daemon_no_reattach() {
 
 # Launches the UI
 _launch_ui() {
+    sudo service mongod start
     _screen_daemon_no_reattach "reader" "node frontend/reader/index.js"
     _screen_daemon_no_reattach "gui" "cd frontend && npm start --prefix interface"
     xdg-open http://localhost:4200/ &
