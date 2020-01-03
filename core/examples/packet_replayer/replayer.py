@@ -16,9 +16,9 @@ def replay(filename, port):
     print("Sent {} bytes from {}".format(len(data), threading.currentThread().getName()))
 
 
-def service_replay(port, prefix, batch_number, trace_dir):
+def service_replay(port, prefix, num_timeslots, trace_dir):
     threads = []
-    for batch_index in range(batch_number + 1):
+    for batch_index in range(num_timeslots + 1):
         for board_num in range(3):
             filename = "{}/{}b{}_t{}".format(trace_dir, prefix, board_num, batch_index)
             if os.path.exists(filename):
@@ -29,7 +29,7 @@ def service_replay(port, prefix, batch_number, trace_dir):
             else:
                 print("File {} does not exist: please make sure you specify the trace directory "
                       "with the --trace-dir flag.".format(filename))
-        time.sleep(60)
+        time.sleep(1)
     for t in threads:
         t.join()
 
@@ -47,7 +47,7 @@ def capture(socket, filename):
         f.write(message)
 
 
-def service_capture(port, prefix, batch_number, trace_dir):
+def service_capture(port, prefix, num_timeslots, trace_dir):
     board_counter = 0
     counters = {'dummy': 0}  # just to init, for the loop
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -63,7 +63,7 @@ def service_capture(port, prefix, batch_number, trace_dir):
     threads = []
     if not os.path.exists(trace_dir):
         os.makedirs(trace_dir)
-    while not all(counter >= batch_number for counter in counters.values()):
+    while not all(counter >= num_timeslots for counter in counters.values()):
         conn, addr = s.accept()
         addr = addr[0]
         # Using addr as a unique fingerprint here.
@@ -100,4 +100,4 @@ parser.add_argument('--trace-dir', type=str, default=datetime.now().strftime("%Y
 args = parser.parse_args()
 
 print("Activating {} mode...".format(args.mode))
-modes[args.mode](args.port, args.file_prefix, args.batch_number, args.trace_dir)
+modes[args.mode](args.port, args.file_prefix, args.num_timeslots, args.trace_dir)
