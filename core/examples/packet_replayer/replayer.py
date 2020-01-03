@@ -1,6 +1,7 @@
 import argparse
 import os
 import pprint
+import select
 import socket
 import threading
 import time
@@ -36,15 +37,22 @@ def service_replay(port, prefix, num_timeslots, trace_dir):
 
 def capture(socket, filename):
     message = b""
+    socket.setblocking(0)
     while True:
-        data = socket.recv(2048)
-        print("{} received {}".format(threading.currentThread().getName(), len(data)))
-        if not data:
-            break
-        message += data
-    print("{} got {} bytes.".format(threading.currentThread().getName(), len(data)))
+        ready = select.select([socket], [], [], 40)
+        if ready[0]:
+            data = socket.recv(2048)
+            print("{} has just received a {} bytes packet.".format(threading.currentThread().getName(), len(data)))
+            if not data:
+                break
+            message += data
+        else:
+            print("{} did not receive the whole batch. Terminating...".format(threading.currentThread().getName()))
+            return
+    print("{} received a total of {} bytes.".format(threading.currentThread().getName(), len(message)))
     with open(filename, 'wb') as f:
         f.write(message)
+        print("{} saved a batch in {}.".format(threading.currentThread().getName(), filename))
 
 
 def service_capture(port, prefix, num_timeslots, trace_dir):
@@ -74,7 +82,7 @@ def service_capture(port, prefix, num_timeslots, trace_dir):
             counters[addr][1] += 1
         pprint.pprint(counters)
         filename = "{}/{}b{}_t{}".format(trace_dir, prefix, *counters[addr])
-        print("Capturing {} batch".format(filename))
+        print("Capturing {}...".format(filename))
         t = threading.Thread(target=capture, args=(conn, filename))
         t.start()
         threads.append(t)
