@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import Chart from 'chart.js';
+import {interval, Subscription} from 'rxjs';
+import {ApiService} from '../../service/api/api.service';
+import {ActivatedRoute} from "@angular/router";
+// import {Label} from "ng2-charts";
 
 
 @Component({
@@ -16,6 +20,13 @@ export class DashboardComponent implements OnInit{
   public chartEmail;
   public chartHours;
 
+  numberDevice: number;
+  // lineChartLabels: Label[] = [];
+  private updateSubscription: Subscription;
+  private static readonly lineChartUpdatingFrequency = 5 * 1000;  // low value for testing purposes
+  private static readonly lineChartDataPoints = 5;
+  constructor(private route: ActivatedRoute, private apiService: ApiService) {}
+
     ngOnInit(){
       this.chartColor = "#FFFFFF";
 
@@ -28,32 +39,19 @@ export class DashboardComponent implements OnInit{
         data: {
           labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
           datasets: [{
+              label: 'Devices',
               borderColor: "#6bd098",
               backgroundColor: "#6bd098",
               pointRadius: 0,
               pointHoverRadius: 0,
               borderWidth: 3,
-              data: [300, 310, 316, 322, 330, 326, 333, 345, 338, 354]
-            },
-            {
-              borderColor: "#f17e5d",
-              backgroundColor: "#f17e5d",
-              pointRadius: 0,
-              pointHoverRadius: 0,
-              borderWidth: 3,
-              data: [320, 340, 365, 360, 370, 385, 390, 384, 408, 420]
-            },
-            {
-              borderColor: "#fcc468",
-              backgroundColor: "#fcc468",
-              pointRadius: 0,
-              pointHoverRadius: 0,
-              borderWidth: 3,
-              data: [370, 394, 415, 409, 425, 445, 460, 450, 478, 484]
+              data: []
             }
           ]
         },
         options: {
+          responsive: true,
+
           legend: {
             display: false
           },
@@ -94,6 +92,21 @@ export class DashboardComponent implements OnInit{
             }]
           },
         }
+      });
+
+
+      this.updateSubscription = interval(DashboardComponent.lineChartUpdatingFrequency).subscribe((val) => {
+        console.log('Updating devices number line chart');
+        this.apiService.getDevicesNumber().subscribe(data => {
+              this.numberDevice = +data;
+              this.chartHours.data.datasets[0].data.push(this.numberDevice);
+              // this.lineChartLabels.push(String(new Date().getMinutes()));
+              if (this.chartHours.data.datasets[0].data.length > DashboardComponent.lineChartDataPoints) {
+                this.chartHours.data.datasets[0].data.shift();
+                // this.lineChartLabels.shift();
+              }
+            }
+        );
       });
 
 

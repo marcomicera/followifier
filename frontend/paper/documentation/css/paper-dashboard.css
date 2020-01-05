@@ -6265,7 +6265,7 @@ p.description {
 
 .category,
 .card-category {
-  text-transform: capitalize;
+  /*text-transform: capitalize;*/
   font-weight: 400;
   color: #9A9A9A;
   font-size: 0.7142em; }
