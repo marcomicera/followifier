@@ -22,6 +22,7 @@ import {Color, Label} from "ng2-charts";
 export class ChartComponent implements OnInit {
   // Radar
   numberDevice: number;
+  private static readonly radarUpdatingFrequency = 2 * 1000; // low value for testing purposes
   private updateSubscription: Subscription;
   public scatterChartDataSet: ChartDataSets[] = [{
     label: 'Boards',
@@ -81,6 +82,7 @@ export class ChartComponent implements OnInit {
     },
   ];
 
+  private static readonly lineChartUpdatingFrequency = 5 * 1000;  // low value for testing purposes
   lineChartLegend = true;
   lineChartPlugins = [];
   lineChartType = 'line';
@@ -88,14 +90,17 @@ export class ChartComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateSubscription = interval(2000).subscribe((val) => {
-      console.log('LOG: OnInit');
+    this.updateSubscription = interval(ChartComponent.lineChartUpdatingFrequency).subscribe((val) => {
+      console.log('Updating devices number line chart');
       this.apiService.getDevicesNumber().subscribe(data => {
           this.numberDevice = +data;
           this.lineChartData[0].data.push(this.numberDevice);
           this.lineChartLabels.push(String(new Date().getMinutes()));
         }
       );
+    });
+    this.updateSubscription = interval(ChartComponent.radarUpdatingFrequency).subscribe((val) => {
+      console.log('Updating radar');
       this.scatterToolTipItem  = [];
       this.apiService.getBoards().subscribe(data => {
         this.scatterChartDataSet[0].data = [];
