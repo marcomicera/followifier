@@ -74,7 +74,7 @@ app.route('/api/devices').get((req, res) => {
     var coll = db.collection("messages");
     coll.aggregate([
                     {$match:{timestamp:{$gt:date-60}}},
-                    {$group:{_id:"$mac",   x: {$addToSet: '$x'}, y: {$addToSet: '$y'}}},
+                    {$group:{_id:"$mac",   x: {$avg: '$x'}, y: {$avg: '$y'}}},
                     {$sort: {total: -1}},
                     ]).toArray(function (err, result) {
       if (err) {
