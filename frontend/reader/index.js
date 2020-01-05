@@ -8,6 +8,12 @@ const url = 'mongodb://localhost:27017';
 // Database Name
 const dbName = 'followifier';
 
+// Number of devices time interval (in seconds)
+const numDevicesTimeInterval = 1 * 60 * 5;
+
+// Time window within which devices must be shown in the radar (scatter chart)
+const devicesRadarTimeWindows = 1 * 60;
+
 const app = express();
 
 
@@ -53,7 +59,7 @@ app.route('/api/device/number').get((req, res) => {
     date = parseInt(date);
     const db = client.db(dbName);
     var coll = db.collection("messages");
-    coll.distinct('mac', {timestamp:{$gt:date-1*60}},function(err, result) {
+    coll.distinct('mac', {timestamp:{$gt:date-numDevicesTimeInterval}},function(err, result) {
       if (err) {
         res.send(err);
       } else {
@@ -73,7 +79,7 @@ app.route('/api/devices').get((req, res) => {
     const db = client.db(dbName);
     var coll = db.collection("messages");
     coll.aggregate([
-                    {$match:{timestamp:{$gt:date-60}}},
+                    {$match:{timestamp:{$gt:date-devicesRadarTimeWindows}}},
                     {$group:{_id:"$mac",   x: {$avg: '$x'}, y: {$avg: '$y'}}},
                     {$sort: {total: -1}},
                     ]).toArray(function (err, result) {
