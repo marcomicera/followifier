@@ -83,6 +83,7 @@ export class ChartComponent implements OnInit {
   ];
 
   private static readonly lineChartUpdatingFrequency = 5 * 1000;  // low value for testing purposes
+  private static readonly lineChartDataPoints = 5;
   lineChartLegend = true;
   lineChartPlugins = [];
   lineChartType = 'line';
@@ -96,6 +97,10 @@ export class ChartComponent implements OnInit {
           this.numberDevice = +data;
           this.lineChartData[0].data.push(this.numberDevice);
           this.lineChartLabels.push(String(new Date().getMinutes()));
+          if (this.lineChartData[0].data.length > ChartComponent.lineChartDataPoints) {
+            this.lineChartData[0].data.shift();
+            this.lineChartLabels.shift();
+          }
         }
       );
     });
