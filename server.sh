@@ -44,7 +44,6 @@ _start_db() {
 _launch_ui() {
     _screen_daemon_no_reattach "reader" "node frontend/reader/index.js"
     _screen_daemon_no_reattach "gui" "cd frontend && npm start --prefix interface"
-    xdg-open http://localhost:4200/ &
 }
 
 # Launches the core server without compiling first
