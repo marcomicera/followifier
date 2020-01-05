@@ -7,8 +7,8 @@
     ```
 1. Install [`reader`](reader)'s and [`interface`](interface)'s dependencies:
     ```bash
-    $ npm install reader
-    $ npm install interface
+    $ npm install reader -s
+    $ npm install interface -s
     ```
 
 ## Launch the `frontend` server
