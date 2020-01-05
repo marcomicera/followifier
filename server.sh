@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# 'core' and 'frontend' module starting script.
+# This shows the accepted flags.
+_help_message() {
+    echo "Usage: $(basename "$0") [options]" >&2
+    echo
+    echo "  -h, --help              Shows this help message"
+    echo "  --compile               Compiles the core server before launching"
+    echo
+    exit 1
+}
+
 # Creates a screen daemon if it does not exist already and does not attach to it.
 _screen_daemon_no_reattach() { 
   if screen -ls | awk '{print $1}' | grep -q "followifier-$1$"; then
@@ -50,31 +61,29 @@ _compile_and_launch_core() {
     cd core/server && ./start.sh
 }
 
-_help_message() {
-    echo "Usage: $(basename "$0") [options]" >&2
-    echo
-    echo "  -h, --help              Shows this help message"
-    echo "  --compile               Compiles the core server before launching"
-    echo
-    exit 1
-}
-
+# If there are no command line arguments
 if [ $# -eq 0 ]; then
+    # Start UI & server without compiling the latter
     _launch_ui
     _launch_core
+# If there is at least a command line argument
 else
+    # For every flag
     for i in "$@"
     do
         case $i in
+            # Help section
             --help|-h)
                 _help_message
                 shift
                 ;;
+            # Compile section
             --compile)
                 _launch_ui
                 _compile_and_launch_core
                 shift
                 ;;
+            # Anything else will just display the help message
             *)
                 _help_message
                 shift
