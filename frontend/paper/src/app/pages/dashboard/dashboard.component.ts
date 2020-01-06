@@ -27,11 +27,15 @@ export class DashboardComponent implements OnInit {
 
     // Number of devices
     totalNumberOfDevices: number;
-    private static readonly numberOfDevicesUpdatingFrequency = 5 * 1000;  // low value for testing purposes
-    private static readonly maxNumberOfDevicesDataPoints = 5;
+    private static readonly numberOfDevicesUpdatingFrequency = 2 * 1000;  // low value for testing purposes
+    private static readonly numberOfDevicesUpdatingFrequencyLabel: string =
+        ` Updated every ${DashboardComponent.numberOfDevicesUpdatingFrequency / 1000} seconds`
+    private static readonly maxNumberOfDevicesDataPoints = 10;
 
     // Radar
     private static readonly radarUpdatingFrequency = 2 * 1000; // low value for testing purposes
+    private static readonly radarUpdatingFrequencyLabel: string =
+        ` Updated every ${DashboardComponent.radarUpdatingFrequency / 1000} seconds`
     private radarToolTipItem: ChartTooltipItem[] = [];
     private radarDataSet: ChartDataSets[] = [{
         label: 'Boards',
@@ -53,8 +57,14 @@ export class DashboardComponent implements OnInit {
 
     ngOnInit() {
 
+        // Number of devices updating frequency
+        document.getElementById('totalNumberOfDevicesUpdatingFrequency')
+            .insertAdjacentText('afterend', DashboardComponent.numberOfDevicesUpdatingFrequencyLabel);
+        document.getElementById('numberOfDevicesUpdatingFrequency')
+            .insertAdjacentText('afterend', DashboardComponent.numberOfDevicesUpdatingFrequencyLabel);
+
         // Number of devices
-        this.canvas = document.getElementById("chartHours");
+        this.canvas = document.getElementById("numberOfDevicess");
         this.ctx = this.canvas.getContext("2d");
         this.numberOfDevices = new Chart(this.ctx, {
             type: 'line',
@@ -120,6 +130,7 @@ export class DashboardComponent implements OnInit {
                         // this.lineChartLabels.shift();
                     }
                     this.numberOfDevices.update();
+                    document.getElementById("totalNumberOfDevices").innerText = String(this.totalNumberOfDevices);
                 }
             );
         });
@@ -194,7 +205,9 @@ export class DashboardComponent implements OnInit {
 
 
         // Radar
-        var radarCanvas = document.getElementById("speedChart");
+        var radarCanvas = document.getElementById("radar");
+        document.getElementById('radarUpdatingFrequency')
+            .insertAdjacentText('afterend', DashboardComponent.radarUpdatingFrequencyLabel);
         this.radar = new Chart(radarCanvas, {
             type: 'scatter',
             hover: false,

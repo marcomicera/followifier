@@ -336,7 +336,7 @@ demo = {
           }]
         ];
 
-        Chartist.Line('#chartHours', dataSales, optionsSales, responsiveSales);
+        Chartist.Line('#numberOfDevicess', dataSales, optionsSales, responsiveSales);
 
 
         var data = {
@@ -1045,7 +1045,7 @@ demo = {
           }]
         ];
 
-        Chartist.Line('#chartHours', dataSales, optionsSales, responsiveSales);
+        Chartist.Line('#numberOfDevicess', dataSales, optionsSales, responsiveSales);
 
 //      pie chart
         Chartist.Pie('#chartPreferences', {
