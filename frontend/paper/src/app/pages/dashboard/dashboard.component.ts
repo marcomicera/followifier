@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit{
         type: 'line',
 
         data: {
-          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+          labels: ["5 mins ago", "4 mins ago", "3 mins ago", "2 mins ago", "1 min ago"],
           datasets: [{
               label: 'Devices',
               borderColor: "#6bd098",
@@ -105,6 +105,7 @@ export class DashboardComponent implements OnInit{
                 this.chartHours.data.datasets[0].data.shift();
                 // this.lineChartLabels.shift();
               }
+              this.chartHours.update();
             }
         );
       });
