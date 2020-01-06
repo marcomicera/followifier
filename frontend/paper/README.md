@@ -102,15 +102,12 @@ paper-dashboard-angular
 │   │   │   ├── icons
 │   │   │   │   ├── icons.component.html
 │   │   │   │   └── icons.component.ts
-│   │   │   ├── maps
-│   │   │   │   ├── maps.component.html
-│   │   │   │   └── maps.component.ts
 │   │   │   ├── notifications
 │   │   │   │   ├── notifications.component.html
 │   │   │   │   └── notifications.component.ts
 │   │   │   ├── table
-│   │   │   │   ├── table.component.html
-│   │   │   │   └── table.component.ts
+│   │   │   │   ├── appearances.component.html
+│   │   │   │   └── appearances.component.ts
 │   │   │   ├── typography
 │   │   │   │   ├── typography.component.html
 │   │   │   │   └── typography.component.ts
