@@ -4,9 +4,18 @@
             <div class="card-header">
                 <h4 class="card-title">Device appearances</h4>
                 <p class="card-category">How many times devices appeared over the last
-                    <input type="number" min="1" max="99" style="display:inline!important; width:62px;"
-                           placeholder="Number" value="1" class="form-control">
-                    <select required class="form-control" style="display:inline!important; width:108px;">
+                    <input type="number"
+                           min="1"
+                           max="99"
+                           style="display:inline!important; width:62px;"
+                           placeholder="Number"
+                           value="1"
+                           class="form-control appearancesTimeWindowSelector"
+                           (input)="getAppearances();">
+                    <select required
+                            class="form-control appearancesTimeWindowSelector"
+                            style="display:inline!important; width:108px;"
+                            (change)="getAppearances();">
                         <option value="minutes">minutes</option>
                         <option value="hours">hours</option>
                         <option value="days">days</option>
