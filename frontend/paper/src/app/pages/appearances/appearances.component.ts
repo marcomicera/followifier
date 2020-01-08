@@ -15,30 +15,32 @@ declare interface TableData {
 export class AppearancesComponent implements OnInit {
 
     public macList: string[];
-    public value: string;
+    public timeValue: number = 1;
+    timeWindowValues = ['minutes', 'hours', 'days', 'months']
+    public timeWindow: string = "hours";
     public devicesHistorical: DeviceHistorical[];
-    public selected;
 
     constructor(private apiService: ApiService, private changeDetectorRefs: ChangeDetectorRef) {
     }
 
     getAppearances(): void {
-        if (this.selected === 'hours') {
-            this.apiService.getDevicesHistorical(String((parseInt(this.value, 10) * 60))).subscribe(devices => {
+        console.log(`Retrieving appearances over the last ${this.timeValue} ${this.timeWindow}`);
+        if (this.timeWindow === 'hours') {
+            this.apiService.getDevicesHistorical(String((this.timeValue * 60))).subscribe(devices => {
                 this.devicesHistorical = devices;
                 console.log(this.devicesHistorical);
                 this.changeDetectorRefs.detectChanges();
             });
         }
-        if (this.selected === 'days') {
-            this.apiService.getDevicesHistorical(String((parseInt(this.value, 10) * 60 * 24))).subscribe(devices => {
+        if (this.timeWindow === 'days') {
+            this.apiService.getDevicesHistorical(String((this.timeValue * 60 * 24))).subscribe(devices => {
                 this.devicesHistorical = devices;
                 console.log(this.devicesHistorical);
                 this.changeDetectorRefs.detectChanges();
             });
         }
-        if (this.selected === 'minutes') {
-            this.apiService.getDevicesHistorical(String((parseInt(this.value, 10)))).subscribe(devices => {
+        if (this.timeWindow === 'minutes') {
+            this.apiService.getDevicesHistorical(String(this.timeValue)).subscribe(devices => {
                 this.devicesHistorical = devices;
                 console.log(this.devicesHistorical);
                 this.changeDetectorRefs.detectChanges();

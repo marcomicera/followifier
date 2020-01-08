@@ -11,22 +11,21 @@
                            placeholder="Number"
                            value="1"
                            class="form-control appearancesTimeWindowSelector"
+                           [(ngModel)]="timeValue"
                            (input)="getAppearances();">
                     <select required
                             class="form-control appearancesTimeWindowSelector"
                             style="display:inline!important; width:108px;"
-                            (change)="getAppearances();">
-                        <option value="minutes">minutes</option>
-                        <option value="hours">hours</option>
-                        <option value="days">days</option>
-                        <option value="months">months</option>
-                        <option value="years">years</option>
+                            (change)="getAppearances();"
+                            [(ngModel)]="timeWindow">
+                        <option [value]="timeWindowValue"
+                                *ngFor="let timeWindowValue of timeWindowValues">
+                            {{timeWindowValue}}
+                        </option>
                     </select>
                 </p>
             </div>
             <div class="card-body">
-
-
                 <div class="table-responsive">
                     <table class="table">
                         <thead class="text-primary">
@@ -34,7 +33,10 @@
                         <th class="text-right">Appearances</th>
                         </thead>
                         <tbody>
-
+                        <tr *ngFor="let deviceHistorical of devicesHistorical">
+                            <td>{{deviceHistorical._id}}</td>
+                            <td>{{deviceHistorical.n}}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
