@@ -31,8 +31,15 @@ export class AppearancesComponent implements OnInit {
         ]);
         this.apiService.getDevicesHistorical(String(this.timeValue * minutesInWindow.get(this.timeWindow)))
             .subscribe(devices => {
-                this.devicesHistorical = devices;
-                // console.log(this.devicesHistorical);
+                this.devicesHistorical = devices.sort((e1, e2) => {
+                    if (e1.n > e2.n) {
+                        return 1;
+                    }
+                    if (e1.n < e2.n) {
+                        return -1;
+                    }
+                    return 0;
+                });
                 this.changeDetectorRefs.detectChanges();
             });
     }
