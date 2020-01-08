@@ -43,7 +43,7 @@ _start_db() {
 # Launches the UI
 _launch_ui() {
     _screen_daemon_no_reattach "reader" "node frontend/reader/index.js"
-    _screen_daemon_no_reattach "gui" "cd frontend && npm start --prefix interface"
+    _screen_daemon_no_reattach "gui" "cd frontend && npm start --prefix paper"
 }
 
 # Launches the core server without compiling first
