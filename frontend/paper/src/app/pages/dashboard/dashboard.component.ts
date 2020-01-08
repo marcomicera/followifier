@@ -25,6 +25,9 @@ export class DashboardComponent implements OnInit {
     constructor(private route: ActivatedRoute, private apiService: ApiService) {
     }
 
+    // Number of boards
+    totalNumberOfBoards: number;
+
     // Number of devices
     totalNumberOfDevices: number;
     private static readonly numberOfDevicesUpdatingFrequency = 2 * 1000;  // low value for testing purposes
@@ -239,6 +242,8 @@ export class DashboardComponent implements OnInit {
                     }));
 
                 });
+
+                document.getElementById("totalNumberOfBoards").innerText = String(data.length);
             });
             this.apiService.getDevices().subscribe(data => {
                 this.radarDataSet[1].data = [];
