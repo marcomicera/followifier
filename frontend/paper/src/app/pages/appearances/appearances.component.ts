@@ -24,28 +24,17 @@ export class AppearancesComponent implements OnInit {
     }
 
     getAppearances(): void {
-        // console.log(`Retrieving appearances over the last ${this.timeValue} ${this.timeWindow}`);
-        if (this.timeWindow === 'minutes') {
-            this.apiService.getDevicesHistorical(String(this.timeValue)).subscribe(devices => {
+        let minutesInWindow = new Map([
+            ['minutes', 1],
+            ['hours', 60],
+            ['days', 60 * 24]
+        ]);
+        this.apiService.getDevicesHistorical(String(this.timeValue * minutesInWindow.get(this.timeWindow)))
+            .subscribe(devices => {
                 this.devicesHistorical = devices;
                 // console.log(this.devicesHistorical);
                 this.changeDetectorRefs.detectChanges();
             });
-        }
-        if (this.timeWindow === 'hours') {
-            this.apiService.getDevicesHistorical(String((this.timeValue * 60))).subscribe(devices => {
-                this.devicesHistorical = devices;
-                // console.log(this.devicesHistorical);
-                this.changeDetectorRefs.detectChanges();
-            });
-        }
-        if (this.timeWindow === 'days') {
-            this.apiService.getDevicesHistorical(String((this.timeValue * 60 * 24))).subscribe(devices => {
-                this.devicesHistorical = devices;
-                // console.log(this.devicesHistorical);
-                this.changeDetectorRefs.detectChanges();
-            });
-        }
     }
 
     ngOnInit(): void {
