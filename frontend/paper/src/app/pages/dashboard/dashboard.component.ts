@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import Chart, {ChartDataSets, ChartPoint, ChartTooltipItem} from 'chart.js';
+import {Chart, ChartDataSets, ChartPoint, ChartTooltipItem} from 'chart.js';
 import {interval, Subscription} from 'rxjs';
 import {ApiService} from '../../service/api/api.service';
 import {ActivatedRoute} from "@angular/router";
