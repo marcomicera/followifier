@@ -16,7 +16,7 @@ export class AppearancesComponent implements OnInit {
 
     public macList: string[];
     public timeValue: number = 1;
-    timeWindowValues = ['minutes', 'hours', 'days', 'months']
+    timeWindowValues = ['minutes', 'hours', 'days']
     public timeWindow: string = "hours";
     public devicesHistorical: DeviceHistorical[];
 
@@ -24,34 +24,31 @@ export class AppearancesComponent implements OnInit {
     }
 
     getAppearances(): void {
-        console.log(`Retrieving appearances over the last ${this.timeValue} ${this.timeWindow}`);
+        // console.log(`Retrieving appearances over the last ${this.timeValue} ${this.timeWindow}`);
+        if (this.timeWindow === 'minutes') {
+            this.apiService.getDevicesHistorical(String(this.timeValue)).subscribe(devices => {
+                this.devicesHistorical = devices;
+                // console.log(this.devicesHistorical);
+                this.changeDetectorRefs.detectChanges();
+            });
+        }
         if (this.timeWindow === 'hours') {
             this.apiService.getDevicesHistorical(String((this.timeValue * 60))).subscribe(devices => {
                 this.devicesHistorical = devices;
-                console.log(this.devicesHistorical);
+                // console.log(this.devicesHistorical);
                 this.changeDetectorRefs.detectChanges();
             });
         }
         if (this.timeWindow === 'days') {
             this.apiService.getDevicesHistorical(String((this.timeValue * 60 * 24))).subscribe(devices => {
                 this.devicesHistorical = devices;
-                console.log(this.devicesHistorical);
-                this.changeDetectorRefs.detectChanges();
-            });
-        }
-        if (this.timeWindow === 'minutes') {
-            this.apiService.getDevicesHistorical(String(this.timeValue)).subscribe(devices => {
-                this.devicesHistorical = devices;
-                console.log(this.devicesHistorical);
+                // console.log(this.devicesHistorical);
                 this.changeDetectorRefs.detectChanges();
             });
         }
     }
 
     ngOnInit(): void {
-        this.apiService.getAllMacDevices().subscribe( mac => {
-            this.macList = [];
-            mac.forEach( m => { console.log(m._id); this.macList.push(m._id); });
-        });
+        this.getAppearances();
     }
 }
