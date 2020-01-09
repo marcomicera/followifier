@@ -222,6 +222,14 @@ export class DashboardComponent implements OnInit {
                 legend: {
                     display: false,
                     position: 'top'
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            const label = data.labels[tooltipItem.index];
+                            return((data.datasets[tooltipItem[0].datasetIndex].data[tooltipItem[0].index] as ChartPoint).t as string);
+                        }
+                    }
                 }
             }
         });
