@@ -145,8 +145,7 @@ app.route('/api/devices/position').get((req, res)  => {
     var coll = db.collection("messages");
     coll.aggregate([
       {$match: {mac: {$eq: req.query.mac}}},
-      {$unwind: "$mac"},
-      {$group: {_id: "$mac",  x: {$addToSet: '$x'}, y: {$addToSet: '$y'}}},
+      {$unwind: "$mac"}
     ]).toArray(function (err, result) {
       if (err) {
         res.send(err);
@@ -154,7 +153,6 @@ app.route('/api/devices/position').get((req, res)  => {
         console.log('devices: ' + JSON.stringify(result));
         res.send(JSON.stringify(result));
       }
-
     })
   });
 });

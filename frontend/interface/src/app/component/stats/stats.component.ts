@@ -105,11 +105,11 @@ export class StatsComponent implements OnInit {
   }
   buttonMac(): void {
     this.apiService.getAllMacPosition(this.macSelected).subscribe(position => {
+      console.log(`Device ${this.deviceMac} positions: `);
       position.forEach(p => {
       (this.scatterChartDataSet[0].data as ChartPoint[]).push({x: p.x ,y: p.y, t: p._id});
-      })
-
-      console.log('position: ' + position);
+        console.log(`(x: ${p.x}, y: ${p.y}, t: ${p._id}), `);
+      });
     });
   }
 }
