@@ -2,6 +2,9 @@
 ### Misc
 #
 
+# ESPressif framework
+esp-idf
+
 # Replayer batch files
 batch__*
 
