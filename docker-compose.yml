@@ -1,9 +1,7 @@
 version: '3'
 services:
     db:
-        build:
-            context: .
-            dockerfile: mongo.dockerfile
+        image: mongo:latest
         expose:
             - "27017"
         ports:
@@ -32,10 +30,23 @@ services:
         depends_on:
             - reader
         ports:
-            - 4200:80
+            - 80:4200
         networks:
             - pds-network
- 
+    backend:
+        restart: always
+        container_name: backend
+        build:
+            context: ./core/server
+            dockerfile: Dockerfile
+        depends_on:
+            - db
+        expose:
+            - "12345"
+        ports:
+            - 12345:12345
+        networks:
+            - pds-network
 networks:
     pds-network:
         driver: bridge
