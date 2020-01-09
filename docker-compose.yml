@@ -31,6 +31,8 @@ services:
             - reader
         ports:
             - 80:4200
+        volumes:
+            - .:/app
         networks:
             - pds-network
     backend:
