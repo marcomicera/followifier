@@ -8,7 +8,6 @@ services:
             - 27017:27017
         networks:
             - pds-network
-
     reader:
         restart: always
         container_name: reader
@@ -35,20 +34,6 @@ services:
             - 80:4200
         volumes:
             - .:/app
-        networks:
-            - pds-network
-    backend:
-        restart: always
-        container_name: backend
-        build:
-            context: ./core/server
-            dockerfile: Dockerfile
-        depends_on:
-            - db
-        expose:
-            - "12345"
-        ports:
-            - 12345:12345
         networks:
             - pds-network
 networks:
