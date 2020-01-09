@@ -81,7 +81,7 @@ app.route('/api/devices').get((req, res) => {
     coll.aggregate([
                     {$match:{timestamp:{$gt:date-devicesRadarTimeWindows}}},
                     {$group:{_id:"$mac",   x: {$avg: '$x'}, y: {$avg: '$y'}}},
-                    {$sort: {total: -1}},
+                    {$sort: {_id: 1}},
                     ]).toArray(function (err, result) {
       if (err) {
         res.send(err);
