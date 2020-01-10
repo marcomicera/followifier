@@ -73,8 +73,8 @@ export class TimelineComponent {
             mac.forEach(m => {
                 this.macList.push(m._id);
             });
-            // this.deviceMac = this.macList[2]; // FIXME put it to 0
-            // document.getElementById("timelineSelector").
+            this.deviceMac = this.macList[0]; // FIXME put it to 0
+            this.getTimeline();
         });
 
         this.canvas = document.getElementById("timelineChart");
@@ -86,7 +86,5 @@ export class TimelineComponent {
             },
             options: this.scatterChartOptions
         });
-
-        this.getTimeline();
     }
 }
