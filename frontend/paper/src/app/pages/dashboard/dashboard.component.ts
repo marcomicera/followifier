@@ -1,10 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {Chart, ChartDataSets, ChartPoint, ChartTooltipItem} from 'chart.js';
-import {interval, Subscription} from 'rxjs';
-import {ApiService} from '../../service/api/api.service';
+import {interval, Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-
-// import {Label} from "ng2-charts";
+import {ApiService} from "../../service/api/api.service";
 
 
 @Component({
@@ -74,6 +72,7 @@ export class DashboardComponent implements OnInit {
             data: {
                 labels: ["5 mins ago", "4 mins ago", "3 mins ago", "2 mins ago", "1 min ago"],
                 datasets: [{
+                    barPercentage: 1.6,
                     label: 'Devices',
                     borderColor: "#6bd098",
                     backgroundColor: "#6bd098",
@@ -107,7 +106,6 @@ export class DashboardComponent implements OnInit {
                         }
                     }],
                     xAxes: [{
-                        barPercentage: 1.6,
                         gridLines: {
                             drawBorder: false,
                             color: 'rgba(255,255,255,0.1)',
@@ -145,8 +143,9 @@ export class DashboardComponent implements OnInit {
         this.emailChart = new Chart(this.ctx, {
             type: 'pie',
             data: {
-                labels: [1, 2, 3],
+                labels: ["1", "2", "3"],
                 datasets: [{
+                    barPercentage: 1.6,
                     label: "Emails",
                     pointRadius: 0,
                     pointHoverRadius: 0,
@@ -167,11 +166,11 @@ export class DashboardComponent implements OnInit {
                     display: false
                 },
 
-                pieceLabel: {
-                    render: 'percentage',
-                    fontColor: ['white'],
-                    precision: 2
-                },
+                // pieceLabel: {
+                //     render: 'percentage',
+                //     fontColor: ['white'],
+                //     precision: 2
+                // },
 
                 tooltips: {
                     enabled: false
@@ -192,7 +191,6 @@ export class DashboardComponent implements OnInit {
                     }],
 
                     xAxes: [{
-                        barPercentage: 1.6,
                         gridLines: {
                             drawBorder: false,
                             color: 'rgba(255,255,255,0.1)',
@@ -208,12 +206,13 @@ export class DashboardComponent implements OnInit {
 
 
         // Radar
-        var radarCanvas = document.getElementById("radar");
+        this.canvas = document.getElementById("radar");
+        this.ctx = this.canvas.getContext("2d");
         document.getElementById('radarUpdatingFrequency')
             .insertAdjacentText('afterend', DashboardComponent.radarUpdatingFrequencyLabel);
-        this.radar = new Chart(radarCanvas, {
+        this.radar = new Chart(this.ctx, {
             type: 'scatter',
-            hover: false,
+            // hover: false,
             data: {
                 labels: [],
                 datasets: this.radarDataSet
@@ -224,12 +223,12 @@ export class DashboardComponent implements OnInit {
                     position: 'top'
                 },
                 tooltips: {
-                    callbacks: {
-                        title: function(tooltipItem, data) {
-                            const label = data.labels[tooltipItem.index];
-                            return((data.datasets[tooltipItem[0].datasetIndex].data[tooltipItem[0].index] as ChartPoint).t as string);
-                        }
-                    }
+                    // callbacks: {
+                    //     title: function(tooltipItem, data) {
+                    //         const label = data.labels[tooltipItem.index];
+                    //         return((data.datasets[tooltipItem[0].datasetIndex].data[tooltipItem[0].index] as ChartPoint).t as string);
+                    //     }
+                    // }
                 }
             }
         });
