@@ -145,7 +145,11 @@ app.route('/api/devices/position').get((req, res)  => {
     var coll = db.collection("messages");
     coll.aggregate([
       {$match: {mac: {$eq: req.query.mac}}},
-      {$unwind: "$mac"}
+      {$group:{
+        _id:"$timestamp",
+        x: {$avg: '$x'}, y: {$avg: '$y'}
+      }},
+      {$sort: {_id: 1}},
     ]).toArray(function (err, result) {
       if (err) {
         res.send(err);
