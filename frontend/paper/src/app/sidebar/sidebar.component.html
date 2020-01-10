@@ -1,15 +1,9 @@
-
 <div class="sidebar-wrapper">
-  <div class="logo">
-    <a href="http://www.creative-tim.com" class="simple-text logo-mini">
-      <div class="logo-image-small">
-        <img src="assets/img/angular2-logo.png">
-      </div>
-    </a>
-    <a href="https://www.creative-tim.com" class="simple-text logo-normal">
-      Creative Tim
-    </a>
-  </div>
+    <div class="logo"><a class="simple-text" href="http://www.creative-tim.com">
+        <div class="logo-image-small">
+            <img src="https://github.com/marcomicera/followifier/raw/master/media/logo.png">
+        </div>
+    </a></div>
     <ul class="nav">
         <li *ngFor="let menuItem of menuItems" routerLinkActive="active" class="{{menuItem.class}}">
             <a [routerLink]="[menuItem.path]">

@@ -6,12 +6,8 @@ import {FormsModule} from '@angular/forms';
 import {AdminLayoutRoutes} from './admin-layout.routing';
 
 import {DashboardComponent} from '../../pages/dashboard/dashboard.component';
-import {UserComponent} from '../../pages/user/user.component';
 import {AppearancesComponent} from '../../pages/appearances/appearances.component';
 import {TimelineComponent} from '../../pages/timeline/timeline.component';
-import {IconsComponent} from '../../pages/icons/icons.component';
-import {NotificationsComponent} from '../../pages/notifications/notifications.component';
-import {UpgradeComponent} from '../../pages/upgrade/upgrade.component';
 import {ChartsModule} from 'ng2-charts';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -26,12 +22,8 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     ],
     declarations: [
         DashboardComponent,
-        UserComponent,
         AppearancesComponent,
-        UpgradeComponent,
         TimelineComponent,
-        IconsComponent,
-        NotificationsComponent,
     ]
 })
 
