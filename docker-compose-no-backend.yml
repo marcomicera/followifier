@@ -1,0 +1,41 @@
+version: '3'
+services:
+    db:
+        image: mongo:latest
+        expose:
+            - "27017"
+        ports:
+            - 27017:27017
+        networks:
+            - pds-network
+    reader:
+        restart: always
+        container_name: reader
+        build:
+            context: ./frontend/reader
+            dockerfile: Dockerfile
+        depends_on:
+            - db
+        expose:
+            - "8000"
+        ports:
+            - 8000:8000
+        networks:
+            - pds-network
+    gui:
+        restart: always
+        container_name: gui
+        build:
+            context: ./frontend/paper
+            dockerfile: Dockerfile
+        depends_on:
+            - reader
+        ports:
+            - 80:4200
+        volumes:
+            - .:/app
+        networks:
+            - pds-network
+networks:
+    pds-network:
+        driver: bridge
