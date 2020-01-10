@@ -223,12 +223,15 @@ export class DashboardComponent implements OnInit {
                     position: 'top'
                 },
                 tooltips: {
-                    // callbacks: {
-                    //     title: function(tooltipItem, data) {
-                    //         const label = data.labels[tooltipItem.index];
-                    //         return((data.datasets[tooltipItem[0].datasetIndex].data[tooltipItem[0].index] as ChartPoint).t as string);
-                    //     }
-                    // }
+                     callbacks: {
+                        title(item: Chart.ChartTooltipItem[], data: Chart.ChartData): string | string[] {
+                            let ts = [] as string[];
+                            item.forEach(i => {
+                                ts.push((data.datasets[item[0].datasetIndex].data[item[0].index] as ChartPoint).t as string);
+                            });
+                            return ts;
+                        }
+                    }
                 }
             }
         });
@@ -239,7 +242,7 @@ export class DashboardComponent implements OnInit {
                 this.radarDataSet[0].data = [];
 
                 data.forEach(d => {
-                    console.log('board: ' + d.mac);
+                   console.log('board: ' + d.mac);
 
                     (this.radarDataSet[0].data as ChartPoint[]).push({x: d.x, y: d.y, t: d.mac});
                     (this.radarToolTipItem.push({

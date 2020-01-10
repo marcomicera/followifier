@@ -9,6 +9,7 @@ import {
     ChartType
 } from "chart.js";
 import {ApiService} from '../../service/api/api.service';
+import * as moment from 'moment'
 
 @Component({
     selector: 'timeline-cmp',
@@ -35,7 +36,12 @@ export class TimelineComponent {
     }];
     public scatterCallback: ChartTooltipCallback = {
         title(item: Chart.ChartTooltipItem[], data: Chart.ChartData): string | string[] {
-            return ((data.datasets[item[0].datasetIndex].data[item[0].index] as ChartPoint).t as string);
+            let ts = [] as string[];
+            item.forEach(i => {
+                const unixtime = ((data.datasets[i.datasetIndex].data[i.index] as ChartPoint).t) as number;
+                ts.push(moment.unix(unixtime).format('DD/MM/YY HH:mm:ss'));
+            });
+            return ts;
         }
     };
     public scatterToolTipOptions: ChartTooltipOptions = {
