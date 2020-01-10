@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="media/logo.png" width="60%" alt="followifier logo">
+  <img src="frontend/paper/src/assets/img/followifier-logo.png" width="60%" alt="followifier logo">
 </p>
 
 Tracking people by exploiting WiFi Probe Request frames.

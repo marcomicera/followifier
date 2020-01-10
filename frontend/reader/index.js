@@ -81,7 +81,7 @@ app.route('/api/devices').get((req, res) => {
     coll.aggregate([
                     {$match:{timestamp:{$gt:date-devicesRadarTimeWindows}}},
                     {$group:{_id:"$mac",   x: {$avg: '$x'}, y: {$avg: '$y'}}},
-                    {$sort: {total: -1}},
+                    {$sort: {_id: 1}},
                     ]).toArray(function (err, result) {
       if (err) {
         res.send(err);
@@ -145,8 +145,11 @@ app.route('/api/devices/position').get((req, res)  => {
     var coll = db.collection("messages");
     coll.aggregate([
       {$match: {mac: {$eq: req.query.mac}}},
-      {$unwind: "$mac"},
-      {$group: {_id: "$mac",  x: {$addToSet: '$x'}, y: {$addToSet: '$y'}}},
+      {$group:{
+        _id:"$timestamp",
+        x: {$avg: '$x'}, y: {$avg: '$y'}
+      }},
+      {$sort: {_id: 1}},
     ]).toArray(function (err, result) {
       if (err) {
         res.send(err);
@@ -154,7 +157,6 @@ app.route('/api/devices/position').get((req, res)  => {
         console.log('devices: ' + JSON.stringify(result));
         res.send(JSON.stringify(result));
       }
-
     })
   });
 });
