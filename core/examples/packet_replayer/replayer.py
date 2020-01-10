@@ -30,7 +30,7 @@ def service_replay(port, prefix, num_timeslots, trace_dir):
             else:
                 print("File {} does not exist: please make sure you specify the trace directory "
                       "with the --trace-dir flag.".format(filename))
-        time.sleep(60)
+        time.sleep(1)
     for t in threads:
         t.join()
 
