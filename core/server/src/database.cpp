@@ -9,8 +9,6 @@
 database::database(){
     mongoc_init ();
     client = mongoc_client_new ("mongodb://localhost:27017/?appname=insert-example");
-
-
 }
 
 
@@ -18,6 +16,28 @@ void database::dropBoards(){
     bson_error_t error;
     collection = mongoc_client_get_collection (client, "followifier", "boards");
     mongoc_collection_drop (collection, &error);
+}
+
+void database::drop_room_collection(){
+    bson_error_t error;
+    collection = mongoc_client_get_collection (client, "followifier", "room");
+    mongoc_collection_drop (collection, &error);
+}
+
+void database::insert_room_coordinate(Point p){
+    collection = mongoc_client_get_collection (client, "followifier", "room");
+    bson_t *doc;
+    bson_error_t error;
+    doc = bson_new ();
+
+    BSON_APPEND_DOUBLE(doc, "x", p.getX());
+    BSON_APPEND_DOUBLE(doc, "y", p.getY());
+
+    if (!mongoc_collection_insert_one (collection, doc, NULL, NULL, &error))
+        std::cerr <<  error.message << std::endl;
+
+    bson_destroy (doc);
+
 }
 
 void database::insert_message(followifier::ESP32Message message, Point position){
@@ -54,9 +74,11 @@ void database::insert_board(std::string mac, int x, int y){
     bson_destroy (doc);
 
 }
+
 void database::destroy_database_connection(){
 
     mongoc_collection_destroy (collection);
     mongoc_client_destroy (client);
     mongoc_cleanup ();
 }
+

@@ -22,8 +22,13 @@ void Settings::load(const std::string &filename) {
     if (room_coordinates.size() != 4) {
         throw std::invalid_argument("Missing room coordinate");
     }
-     configuration.room_coordinates = Room(room_coordinates[0], room_coordinates[1], room_coordinates[2], room_coordinates[3]);
+    configuration.room_coordinates = Room(room_coordinates[0], room_coordinates[1], room_coordinates[2], room_coordinates[3]);
 
+    db.drop_room_collection();
+    db.insert_room_coordinate(room_coordinates[0]);
+    db.insert_room_coordinate(room_coordinates[1]);
+    db.insert_room_coordinate(room_coordinates[2]);
+    db.insert_room_coordinate(room_coordinates[3]);
 
     // Use get_child to find the node containing the modules, and iterate over
     // its children. If the path cannot be resolved, get_child throws.

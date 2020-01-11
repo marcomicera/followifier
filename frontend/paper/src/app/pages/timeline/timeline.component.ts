@@ -57,14 +57,14 @@ export class TimelineComponent {
         scales: {
             xAxes: [{
                 ticks: {
-                    suggestedMin: 0,
-                    suggestedMax: 600 // FIXME room dimension
+                    min: 0,
+                    max: 600 // FIXME room dimension
                 }
             }],
             yAxes: [{
                 ticks: {
-                    suggestedMin: 0,
-                    suggestedMax: 600  // FIXME room dimension
+                    min: 0,
+                    max: 600  // FIXME room dimension
                 }
             }]
         },

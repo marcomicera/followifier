@@ -19,6 +19,12 @@ export class DashboardComponent implements OnInit {
     public numberOfDevices;
     public radar;
     private updateSubscription: Subscription;
+    public xMin;
+    public yMin;
+    public xMax;
+    public yMax;
+
+
 
     constructor(private route: ActivatedRoute, private apiService: ApiService) {
     }
@@ -232,9 +238,42 @@ export class DashboardComponent implements OnInit {
                             return ts;
                         }
                     }
-                }
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            min: this.xMin,
+                            max: this.xMax  // FIXME room dimension
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            min: this.yMin,
+                            max: this.yMax // FIXME room dimension
+                        }
+                    }]
+                },
             }
         });
+        this.apiService.getRoomCoordinate().subscribe(data => {
+            this.yMax = 0;
+            this.yMin = 600;
+            this.xMin = 600;
+            this.xMax = 0;
+
+            data.forEach(d => {
+                if ( +d.y > this.yMax) { this.yMax = +d.y}
+                if ( +d.y < this.yMin) { this.yMin = +d.y}
+                if ( +d.x < this.xMin) { this.xMin = +d.x}
+                if ( +d.x > this.xMax) { this.xMax = +d.x}
+            });
+            this.radar.config.options.scales.yAxes[0].ticks.max = this.yMax;
+            this.radar.config.options.scales.yAxes[0].ticks.min = this.yMin;
+            this.radar.config.options.scales.xAxes[0].ticks.max = this.xMax;
+            this.radar.config.options.scales.xAxes[0].ticks.min = this.xMin;
+            this.radar.update();
+        });
+
         this.updateSubscription = interval(DashboardComponent.radarUpdatingFrequency).subscribe((val) => {
             console.log('Updating radar');
             this.radarToolTipItem = [];

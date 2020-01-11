@@ -17,6 +17,8 @@ public:
      void dropBoards();
      void destroy_database_connection();
      void insert_board(std::string mac, int x, int y);
+     void insert_room_coordinate(Point p);
+     void drop_room_collection();
 };
 
 #endif //CORE_DATABASE_H

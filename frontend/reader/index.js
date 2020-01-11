@@ -176,4 +176,21 @@ app.route('/api/boards').get((req, res) => {
       }
     })
   });
-})
+});
+
+app.route('/api/room').get((req, res) => {
+  client.connect(function(err) {
+    assert.equal(null, err);
+    console.log("Connected successfully to server db");
+    const db = client.db(dbName);
+    var coll = db.collection("room")
+    coll.find({}).toArray(function (err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        console.log('ROOM: ' + JSON.stringify(result));
+        res.send(JSON.stringify(result));
+      }
+    })
+  });
+});

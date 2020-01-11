@@ -19,6 +19,11 @@ export interface DeviceHistorical {
 export interface DeviceMac {
   _id: string;
 }
+export interface Point {
+  _id: string;
+  x: string;
+  y: string;
+}
 @Injectable()
 export class ApiService {
 
@@ -32,7 +37,6 @@ export class ApiService {
   getDevicesNumber(): Observable<string> {
     return this.http.get<string>('http://localhost:8000/api/device/number');
   }
-
   getAllDevicesNumber(): Observable<Device[]> {
     return this.http.get<Device[]>('http://localhost:8000/api/devices/all');
   }
@@ -48,5 +52,8 @@ export class ApiService {
   }
   getAllMacPosition(mac: string): Observable<Device[]> {
     return this.http.get<Device[]>('http://localhost:8000/api/devices/position?' + 'mac=' + mac);
+  }
+  getRoomCoordinate(): Observable<Point[]> {
+    return this.http.get<Point[]>('http://localhost:8000/api/room');
   }
 }
