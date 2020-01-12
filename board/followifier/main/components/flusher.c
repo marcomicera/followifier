@@ -123,6 +123,14 @@ void flush(void) {
                 "setsockopt failed\n",
                 reactivate_sniffer);
 
+        struct linger sl;
+        sl.l_onoff = 1;		/* non-zero value enables linger option in kernel */
+        sl.l_linger = 3;	/* timeout interval in seconds */
+        ESP_ERROR_CHECK_JUMP_LABEL (
+                setsockopt(tcp_socket, SOL_SOCKET, SO_LINGER, &sl, sizeof(sl)) >= 0, 
+                "setsockopt failed\n",
+                reactivate_sniffer);
+
         ESP_LOGI(BOARD_TAG, "Socket created, connecting to %s:%d...", SERVER_ADDRESS, SERVER_PORT);
 
         // Creating connection to the server
@@ -133,26 +141,14 @@ void flush(void) {
 
         // Flushing the message buffer in slices of equal length.
         u_int32_t total_len = batch_length + sizeof(DELIMITER);
-        u_int16_t needed_packets = (total_len / (FLUSH_MODULUS + 1)) + 1;
-        u_int16_t offset = 0;
-        u_int32_t bytes_to_send = 0;
 
-        ESP_LOGI(BOARD_TAG, "Sending batch of %d bytes in %d packets.", total_len, needed_packets);
-        for (int i = 0; i < needed_packets ; i++) {
-            if (((total_len - offset) / FLUSH_MODULUS)) {
-                bytes_to_send = FLUSH_MODULUS;
-            }
-            else {
-                bytes_to_send = (total_len - offset) % FLUSH_MODULUS;
-            }
-            int32_t sent_bytes = send(tcp_socket, (char *) buffer + offset, bytes_to_send, SO_LINGER);
-            ESP_ERROR_CHECK_JUMP_LABEL(sent_bytes >= 0, 
-                                    "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
-                                    closing_socket);
-            offset += bytes_to_send;
-            ESP_LOGI(BOARD_TAG, "Sent #%d packet, %d bytes.", i + 1, sent_bytes);
-        }
-    
+        ESP_LOGI(BOARD_TAG, "Sending batch of %d bytes.", total_len);
+        int32_t sent_bytes = send(tcp_socket, (char *) buffer, total_len, 0);
+        ESP_ERROR_CHECK_JUMP_LABEL(sent_bytes >= 0, 
+                                  "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
+                                  closing_socket);
+        ESP_LOGI(BOARD_TAG, "Waiting 2 seconds before closing...");
+        vTaskDelay(2 * 10); // in deci-seconds (0.1 seconds) 
         // Skipping until here in case connection towards the server was unsuccessful
         closing_socket:
 
