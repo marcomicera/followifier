@@ -130,13 +130,29 @@ void flush(void) {
                                    "Error while connecting to the server: discarding local packets, re-enabling sniffing mode...",
                                    closing_socket);
 
-        // Flushing the message buffer
-        ESP_LOGI(BOARD_TAG, "Sending batch");
-        ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length + sizeof("\n\r\n\r"), 0) >= 0,
-                                   "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
-                                   closing_socket);
-        ESP_LOGI(BOARD_TAG, "Sending delimiter...");
 
+        // Flushing the message buffer in slices of equal length.
+        u_int32_t total_len = batch_length + sizeof(DELIMITER);
+        u_int16_t needed_packets = (total_len % FLUSH_MODULUS) + 1;
+        u_int16_t offset = 0;
+        u_int32_t bytes_to_send = 0;
+
+        ESP_LOGI(BOARD_TAG, "Sending batch of %d bytes in %d packets.", total_len, needed_packets);
+        for (int i = 0; i < needed_packets ; i++) {
+            if (((total_len - offset) / FLUSH_MODULUS)) {
+                bytes_to_send = FLUSH_MODULUS;
+            }
+            else {
+                bytes_to_send = (total_len - offset) % FLUSH_MODULUS;
+            }
+
+            ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer + offset, bytes_to_send, 0) >= 0, 
+                                    "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
+                                    closing_socket);
+            offset += bytes_to_send;
+            ESP_LOGI(BOARD_TAG, "Sent #%d packet.", i + 1);
+        }
+    
         // Skipping until here in case connection towards the server was unsuccessful
         closing_socket:
 

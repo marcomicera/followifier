@@ -13,7 +13,8 @@
  */
 // FIXME Implement timer + messages threshold flushing conditions (#43)
 #define FLUSH_THRESHOLD 3 // number of messages to be saved before flushing
-
+#define FLUSH_MODULUS 1440
+#define DELIMITER "\n\r\n\r"
 /**
  * Stores a message and eventually flushes all stored ones.
  */
