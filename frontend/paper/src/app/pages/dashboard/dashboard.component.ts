@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
     totalNumberOfDevices: number;
     private static readonly numberOfDevicesUpdatingFrequency = 2 * 1000;  // low value for testing purposes
     private static readonly numberOfDevicesUpdatingFrequencyLabel: string =
-        ` Updated every ${DashboardComponent.numberOfDevicesUpdatingFrequency / 1000} seconds`
+        ` Updated every ${DashboardComponent.numberOfDevicesUpdatingFrequency / 1000} seconds`;
     private static readonly maxNumberOfDevicesDataPoints = 10;
 
     // Radar
@@ -62,6 +62,32 @@ export class DashboardComponent implements OnInit {
         }];
 
     ngOnInit() {
+
+        // Room
+        this.apiService.getRoomCoordinate().subscribe(data => {
+            this.yMax = 0;
+            this.yMin = 600;
+            this.xMin = 600;
+            this.xMax = 0;
+
+            console.dir(data);
+
+            data.forEach(d => {
+                if ( +d.y > this.yMax) { this.yMax = +d.y}
+                if ( +d.y < this.yMin) { this.yMin = +d.y}
+                if ( +d.x < this.xMin) { this.xMin = +d.x}
+                if ( +d.x > this.xMax) { this.xMax = +d.x}
+            });
+            this.radar.config.options.scales.yAxes[0].ticks.max = this.yMax;
+            this.radar.config.options.scales.yAxes[0].ticks.min = this.yMin;
+            this.radar.config.options.scales.xAxes[0].ticks.max = this.xMax;
+            this.radar.config.options.scales.xAxes[0].ticks.min = this.xMin;
+            document.getElementById('roomDimensions')
+                .insertAdjacentText('afterend', `${this.xMax}x${this.yMax}`);
+            document.getElementById('squareMeters')
+                .insertAdjacentText('afterend', `${this.xMax * this.yMax / 10000}`);
+            this.radar.update();
+        });
 
         // Number of devices updating frequency
         document.getElementById('totalNumberOfDevicesUpdatingFrequency')
@@ -185,24 +211,6 @@ export class DashboardComponent implements OnInit {
                     }]
                 },
             }
-        });
-        this.apiService.getRoomCoordinate().subscribe(data => {
-            this.yMax = 0;
-            this.yMin = 600;
-            this.xMin = 600;
-            this.xMax = 0;
-
-            data.forEach(d => {
-                if ( +d.y > this.yMax) { this.yMax = +d.y}
-                if ( +d.y < this.yMin) { this.yMin = +d.y}
-                if ( +d.x < this.xMin) { this.xMin = +d.x}
-                if ( +d.x > this.xMax) { this.xMax = +d.x}
-            });
-            this.radar.config.options.scales.yAxes[0].ticks.max = this.yMax;
-            this.radar.config.options.scales.yAxes[0].ticks.min = this.yMin;
-            this.radar.config.options.scales.xAxes[0].ticks.max = this.xMax;
-            this.radar.config.options.scales.xAxes[0].ticks.min = this.xMin;
-            this.radar.update();
         });
 
         this.updateSubscription = interval(DashboardComponent.radarUpdatingFrequency).subscribe((val) => {

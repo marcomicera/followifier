@@ -54,20 +54,20 @@ export class TimelineComponent {
         legend: {
             display: false
         },
-        scales: {
-            xAxes: [{
-                ticks: {
-                    min: 0,
-                    max: 600 // FIXME room dimension
-                }
-            }],
-            yAxes: [{
-                ticks: {
-                    min: 0,
-                    max: 600  // FIXME room dimension
-                }
-            }]
-        },
+        // scales: {
+        //     xAxes: [{
+        //         ticks: {
+        //             min: 0,
+        //             max: 600 // FIXME room dimension
+        //         }
+        //     }],
+        //     yAxes: [{
+        //         ticks: {
+        //             min: 0,
+        //             max: 600  // FIXME room dimension
+        //         }
+        //     }]
+        // },
         tooltips: this.scatterToolTipOptions,
     };
 
