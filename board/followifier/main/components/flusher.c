@@ -145,12 +145,12 @@ void flush(void) {
             else {
                 bytes_to_send = (total_len - offset) % FLUSH_MODULUS;
             }
-
-            ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer + offset, bytes_to_send, 0) >= 0, 
+            int32_t sent_bytes = send(tcp_socket, (char *) buffer + offset, bytes_to_send, 0);
+            ESP_ERROR_CHECK_JUMP_LABEL(sent_bytes >= 0, 
                                     "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
                                     closing_socket);
             offset += bytes_to_send;
-            ESP_LOGI(BOARD_TAG, "Sent #%d packet.", i + 1);
+            ESP_LOGI(BOARD_TAG, "Sent #%d packet, %d bytes.", i + 1, sent_bytes);
         }
     
         // Skipping until here in case connection towards the server was unsuccessful
