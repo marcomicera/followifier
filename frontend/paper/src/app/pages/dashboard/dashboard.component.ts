@@ -15,7 +15,6 @@ export class DashboardComponent implements OnInit {
 
     public canvas: any;
     public ctx;
-    public emailChart;
     public numberOfDevices;
     public radar;
     private updateSubscription: Subscription;
@@ -140,74 +139,6 @@ export class DashboardComponent implements OnInit {
                     document.getElementById("totalNumberOfDevices").innerText = String(this.totalNumberOfDevices);
                 }
             );
-        });
-
-
-        // Email statistics
-        this.canvas = document.getElementById("chartEmail");
-        this.ctx = this.canvas.getContext("2d");
-        this.emailChart = new Chart(this.ctx, {
-            type: 'pie',
-            data: {
-                labels: ["1", "2", "3"],
-                datasets: [{
-                    barPercentage: 1.6,
-                    label: "Emails",
-                    pointRadius: 0,
-                    pointHoverRadius: 0,
-                    backgroundColor: [
-                        '#e3e3e3',
-                        '#4acccd',
-                        '#fcc468',
-                        '#ef8157'
-                    ],
-                    borderWidth: 0,
-                    data: [342, 480, 530, 120]
-                }]
-            },
-
-            options: {
-
-                legend: {
-                    display: false
-                },
-
-                // pieceLabel: {
-                //     render: 'percentage',
-                //     fontColor: ['white'],
-                //     precision: 2
-                // },
-
-                tooltips: {
-                    enabled: false
-                },
-
-                scales: {
-                    yAxes: [{
-
-                        ticks: {
-                            display: false
-                        },
-                        gridLines: {
-                            drawBorder: false,
-                            zeroLineColor: "transparent",
-                            color: 'rgba(255,255,255,0.05)'
-                        }
-
-                    }],
-
-                    xAxes: [{
-                        gridLines: {
-                            drawBorder: false,
-                            color: 'rgba(255,255,255,0.1)',
-                            zeroLineColor: "transparent"
-                        },
-                        ticks: {
-                            display: false,
-                        }
-                    }]
-                },
-            }
         });
 
 
