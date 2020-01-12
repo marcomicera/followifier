@@ -133,7 +133,7 @@ void flush(void) {
 
         // Flushing the message buffer in slices of equal length.
         u_int32_t total_len = batch_length + sizeof(DELIMITER);
-        u_int16_t needed_packets = (total_len % FLUSH_MODULUS) + 1;
+        u_int16_t needed_packets = (total_len / FLUSH_MODULUS + 1) + 1;
         u_int16_t offset = 0;
         u_int32_t bytes_to_send = 0;
 
