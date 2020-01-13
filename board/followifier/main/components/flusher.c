@@ -6,7 +6,6 @@
 #include <sys/socket.h>
 #include <tcpip_adapter.h>
 #include <esp_log.h>
-#include <esp_wifi.h>
 #include "gen/message.pb-c.h"
 #include "flusher.h"
 #include "util/misc.h"
