@@ -6,7 +6,6 @@
 #include <sys/socket.h>
 #include <tcpip_adapter.h>
 #include <esp_log.h>
-#include <esp_wifi.h>
 #include "gen/message.pb-c.h"
 #include "flusher.h"
 #include "util/misc.h"
@@ -123,6 +122,14 @@ void flush(void) {
                 "setsockopt failed\n",
                 reactivate_sniffer);
 
+        struct linger sl;
+        sl.l_onoff = 1;		/* non-zero value enables linger option in kernel */
+        sl.l_linger = 3;	/* timeout interval in seconds */
+        ESP_ERROR_CHECK_JUMP_LABEL (
+                setsockopt(tcp_socket, SOL_SOCKET, SO_LINGER, &sl, sizeof(sl)) >= 0, 
+                "setsockopt failed\n",
+                reactivate_sniffer);
+
         ESP_LOGI(BOARD_TAG, "Socket created, connecting to %s:%d...", SERVER_ADDRESS, SERVER_PORT);
 
         // Creating connection to the server
@@ -130,13 +137,17 @@ void flush(void) {
                                    "Error while connecting to the server: discarding local packets, re-enabling sniffing mode...",
                                    closing_socket);
 
-        // Flushing the message buffer
-        ESP_LOGI(BOARD_TAG, "Sending batch");
-        ESP_ERROR_CHECK_JUMP_LABEL(send(tcp_socket, (char *) buffer, batch_length + sizeof("\n\r\n\r"), 0) >= 0,
-                                   "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
-                                   closing_socket);
-        ESP_LOGI(BOARD_TAG, "Sending delimiter...");
 
+        // Flushing the message buffer in slices of equal length.
+        u_int32_t total_len = batch_length + sizeof(DELIMITER);
+
+        ESP_LOGI(BOARD_TAG, "Sending batch of %d bytes.", total_len);
+        int32_t sent_bytes = send(tcp_socket, (char *) buffer, total_len, 0);
+        ESP_ERROR_CHECK_JUMP_LABEL(sent_bytes >= 0, 
+                                  "Error while sending batch: discarding local packets, re-enabling sniffing mode...",
+                                  closing_socket);
+        ESP_LOGI(BOARD_TAG, "Waiting 2 seconds before closing...");
+        vTaskDelay(2 * 10); // in deci-seconds (0.1 seconds) 
         // Skipping until here in case connection towards the server was unsuccessful
         closing_socket:
 

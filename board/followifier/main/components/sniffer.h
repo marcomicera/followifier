@@ -52,6 +52,8 @@ extern signed max_rrsi_in_measure_period;
 
 extern const char *SNIFFER_TAG;
 
+extern uint64_t RECEIVED_WIFI_PACKETS;
+
 /**
  * @brief Supported Sniffer Interface
  *

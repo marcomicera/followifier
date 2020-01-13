@@ -7,4 +7,5 @@ idf_component_register(SRCS "followifier.c"
         "util/misc.c"
         "util/conf.h"
         "components/sync.c"
+        "components/watchdog.c"
         INCLUDE_DIRS ".")

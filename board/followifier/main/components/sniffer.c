@@ -41,6 +41,8 @@ pthread_t measurement_timer_thread_id;
 
 #endif
 
+uint64_t RECEIVED_WIFI_PACKETS;
+
 typedef struct {
     unsigned frame_ctrl:16;
     unsigned duration_id:16;
@@ -197,6 +199,8 @@ void hexDump(char *desc, void *addr, int len) {
  * @param type
  */
 void sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type) {
+
+    ++RECEIVED_WIFI_PACKETS;
 
     // Not necessary after calling `esp_wifi_set_promiscuous_filter()`
     if (type != WIFI_PKT_MGMT)

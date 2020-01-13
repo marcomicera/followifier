@@ -20,6 +20,7 @@
 #include "components/sync.h"
 #include "util/misc.h"
 #include "util/conf.h"
+#include "components/watchdog.c"
 
 /**
  * Board event handler.
@@ -110,6 +111,9 @@ void app_main(void) {
 
     // Initialize board
     init_all();
+
+    // Start watchdog
+    start_watchdog();
 
     // Turn the Wi-Fi on
     ESP_ERROR_CHECK(start_wifi());
