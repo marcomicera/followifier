@@ -33,10 +33,10 @@ export class AppearancesComponent implements OnInit {
             .subscribe(devices => {
                 this.devicesHistorical = devices.sort((e1, e2) => {
                     if (e1.n > e2.n) {
-                        return 1;
+                        return -1;
                     }
                     if (e1.n < e2.n) {
-                        return -1;
+                        return 1;
                     }
                     return 0;
                 });
