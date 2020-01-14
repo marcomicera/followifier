@@ -125,6 +125,8 @@ export class DashboardComponent implements OnInit {
                 scales: {
                     yAxes: [{
                         ticks: {
+                            min: 0,
+                            stepSize: 1,
                             fontColor: "#9f9f9f",
                             beginAtZero: false,
                             maxTicksLimit: 5,
@@ -161,7 +163,7 @@ export class DashboardComponent implements OnInit {
                         this.numberOfDevices.data.datasets[0].data.shift();
                         // this.lineChartLabels.shift();
                     }
-                    this.numberOfDevices.update();
+                    this.numberOfDevices.chart.update();
                     document.getElementById("totalNumberOfDevices").innerText = String(this.totalNumberOfDevices);
                 }
             );
@@ -205,6 +207,7 @@ export class DashboardComponent implements OnInit {
                     }],
                     yAxes: [{
                         ticks: {
+                            stepSize: 100,
                             min: this.yMin,
                             max: this.yMax // FIXME room dimension
                         }
