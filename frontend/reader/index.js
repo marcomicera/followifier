@@ -122,16 +122,19 @@ app.route('/api/devices/historical').get((req, res)  => {
       {$match: {timestamp: {$gt: date - req.query.minutes*60}}},
       {$unwind: "$mac"
       },
-      {$group: {_id: "$mac",  n: { $sum: 1}}},
+      {$group: {
+        _id: {
+          "mac": "$mac",
+          "timestamp": "$timestamp"
+        }
+      }},
+      {$group: {_id: "$_id.mac",  n: { $sum: 1}}}
     ]).toArray(function (err, result) {
       if (err) {
         res.send(err);
       } else {
-        console.log('minutes:' + req.query.minutes);
-        console.log('devices: ' + JSON.stringify(result));
         res.send(JSON.stringify(result));
       }
-
     })
   });
 });

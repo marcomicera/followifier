@@ -31,6 +31,7 @@ export class AppearancesComponent implements OnInit {
         ]);
         this.apiService.getDevicesHistorical(String(this.timeValue * minutesInWindow.get(this.timeWindow)))
             .subscribe(devices => {
+                console.dir(devices);
                 this.devicesHistorical = devices.sort((e1, e2) => {
                     if (e1.n > e2.n) {
                         return -1;
