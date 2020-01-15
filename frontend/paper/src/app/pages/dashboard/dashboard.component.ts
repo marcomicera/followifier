@@ -82,10 +82,8 @@ export class DashboardComponent implements OnInit {
             this.radar.config.options.scales.yAxes[0].ticks.min = this.yMin;
             this.radar.config.options.scales.xAxes[0].ticks.max = this.xMax;
             this.radar.config.options.scales.xAxes[0].ticks.min = this.xMin;
-            document.getElementById('roomDimensions')
-                .insertAdjacentText('afterend', `${this.xMax}x${this.yMax}`);
-            document.getElementById('squareMeters')
-                .insertAdjacentText('afterend', `${this.xMax * this.yMax / 10000}`);
+            document.getElementById('roomDimensions').innerText = `${this.xMax}x${this.yMax}`;
+            document.getElementById('squareMeters').innerText= `${this.xMax * this.yMax / 10000}`;
             this.radar.update();
         });
 
