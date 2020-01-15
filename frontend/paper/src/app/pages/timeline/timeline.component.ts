@@ -47,7 +47,7 @@ export class TimelineComponent implements OnInit {
             let ts = [] as string[];
             item.forEach(i => {
                 const unixtime = ((data.datasets[i.datasetIndex].data[i.index] as ChartPoint).t) as number;
-                ts.push(moment.unix(unixtime).format('DD/MM/YY HH:mm:ss'));
+                ts.push(moment.unix(unixtime).format(this.dateFormat));
             });
             return ts;
         }
@@ -78,6 +78,7 @@ export class TimelineComponent implements OnInit {
         // },
         tooltips: this.scatterToolTipOptions,
     };
+    private readonly dateFormat: string = 'DD/MM/YY HH:mm:ss';
 
     constructor(private apiService: ApiService, private changeDetectorRefs: ChangeDetectorRef) {
     }
@@ -90,7 +91,7 @@ export class TimelineComponent implements OnInit {
             this.scatterChartDataSet[0].data = [];
             this.positionDevice = positions;
             this.max = this.positionDevice.length - 1;
-            this.data = moment.unix(+this.positionDevice[0]._id).format('DD/MM/YY HH:mm:ss');
+            this.data = moment.unix(+this.positionDevice[0]._id).format(this.dateFormat);
             (this.scatterChartDataSet[0].data as ChartPoint[]).push({x: this.positionDevice[0].x ,y: this.positionDevice[0].y, t: this.positionDevice[0]._id});
         });
     }
@@ -124,7 +125,7 @@ export class TimelineComponent implements OnInit {
     }
     doSomething(event) {
       this.scatterChartDataSet[0].data = [];
-      this.data = moment.unix(+this.positionDevice[event]._id).format('DD/MM/YY HH:mm:ss');
+      this.data = moment.unix(+this.positionDevice[event]._id).format(this.dateFormat);
 
       (this.scatterChartDataSet[0].data as ChartPoint[]).push({x: this.positionDevice[event].x , y: this.positionDevice[event].y, t: this.positionDevice[event]._id});
     }
