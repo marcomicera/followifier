@@ -126,7 +126,8 @@ app.route('/api/devices/historical').get((req, res)  => {
           "timestamp": "$timestamp"
         }
       }},
-      {$group: {_id: "$_id.mac",  n: { $sum: 1}}}
+      {$group: {_id: "$_id.mac",  n: { $sum: 1}}},
+      {$sort: {n: -1, _id: 1}},
     ]).toArray(function (err, result) {
       if (err) {
         res.send(err);
