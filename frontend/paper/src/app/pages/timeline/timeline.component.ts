@@ -1,6 +1,4 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import { IgxSliderModule } from 'igniteui-angular';
-import {MatSlider} from '@angular/material/slider';
 
 import {
     Chart,
@@ -18,7 +16,7 @@ import * as moment from 'moment'
     selector: 'timeline-cmp',
     moduleId: module.id,
     templateUrl: 'timeline.component.html',
-    styleUrls:['timeline.component.css']
+    styleUrls: ['timeline.component.css']
 })
 
 export class TimelineComponent implements OnInit {
@@ -92,22 +90,26 @@ export class TimelineComponent implements OnInit {
             this.positionDevice = positions;
             this.max = this.positionDevice.length - 1;
             this.data = moment.unix(+this.positionDevice[0]._id).format(this.dateFormat);
-            (this.scatterChartDataSet[0].data as ChartPoint[]).push({x: this.positionDevice[0].x ,y: this.positionDevice[0].y, t: this.positionDevice[0]._id});
+            (this.scatterChartDataSet[0].data as ChartPoint[]).push({
+                x: this.positionDevice[0].x,
+                y: this.positionDevice[0].y,
+                t: this.positionDevice[0]._id
+            });
         });
     }
 
     ngOnInit() {
-     this.min = 0;
-     this.max = 0;
+        this.min = 0;
+        this.max = 0;
         // Retrieving all devices
         this.apiService.getAllMacDevices().subscribe(mac => {
-          this.macList = [];
+            this.macList = [];
             mac.forEach(m => {
                 this.macList.push(m._id);
             });
             this.deviceMac = this.macList[0]; // FIXME put it to 0
 
-          this.getTimeline();
+            this.getTimeline();
         });
 
 
@@ -123,11 +125,17 @@ export class TimelineComponent implements OnInit {
 
 
     }
-    doSomething(event) {
-      this.scatterChartDataSet[0].data = [];
-      this.data = moment.unix(+this.positionDevice[event]._id).format(this.dateFormat);
 
-      (this.scatterChartDataSet[0].data as ChartPoint[]).push({x: this.positionDevice[event].x , y: this.positionDevice[event].y, t: this.positionDevice[event]._id});
+    doSomething(event) {
+        const sliderIndex = event.value;
+        this.scatterChartDataSet[0].data = [];
+        this.data = moment.unix(+this.positionDevice[sliderIndex]._id).format(this.dateFormat);
+
+        (this.scatterChartDataSet[0].data as ChartPoint[]).push({
+            x: this.positionDevice[sliderIndex].x,
+            y: this.positionDevice[sliderIndex].y,
+            t: this.positionDevice[sliderIndex]._id
+        });
     }
 
 }
