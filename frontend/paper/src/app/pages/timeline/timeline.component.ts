@@ -1,4 +1,7 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import { IgxSliderModule } from 'igniteui-angular';
+import {MatSlider} from '@angular/material/slider';
+
 import {
     Chart,
     ChartDataSets,
@@ -8,23 +11,27 @@ import {
     ChartTooltipOptions,
     ChartType
 } from "chart.js";
-import {ApiService} from '../../service/api/api.service';
+import {ApiService, Device} from '../../service/api/api.service';
 import * as moment from 'moment'
 
 @Component({
     selector: 'timeline-cmp',
     moduleId: module.id,
-    templateUrl: 'timeline.component.html'
+    templateUrl: 'timeline.component.html',
+    styleUrls:['timeline.component.css']
 })
 
-export class TimelineComponent {
+export class TimelineComponent implements OnInit {
 
     public canvas: any;
+    public data: string;
     public ctx;
-
+    public index: number;
+    public min: number;
+    public max: number;
     public macList: string[];
     private deviceMac: string;
-
+    private positionDevice: Device[];
     public timelineChart;
     public scatterChartDataSet: ChartDataSets[] = [{
         label: 'Devices',
@@ -34,6 +41,7 @@ export class TimelineComponent {
         hoverBackgroundColor: 'red',
         data: []
     }];
+
     public scatterCallback: ChartTooltipCallback = {
         title(item: Chart.ChartTooltipItem[], data: Chart.ChartData): string | string[] {
             let ts = [] as string[];
@@ -78,24 +86,29 @@ export class TimelineComponent {
         this.apiService.getAllMacPosition(this.deviceMac).subscribe(positions => {
             console.log(`Device ${this.deviceMac} positions:`);
             console.dir(positions);
+            console.log(positions.length);
             this.scatterChartDataSet[0].data = [];
-            positions.forEach(p => {
-                (this.scatterChartDataSet[0].data as ChartPoint[]).push({x: p.x ,y: p.y, t: p._id});
-            });
+            this.positionDevice = positions;
+            this.max = this.positionDevice.length - 1;
+            this.data = moment.unix(+this.positionDevice[0]._id).format('DD/MM/YY HH:mm:ss');
+            (this.scatterChartDataSet[0].data as ChartPoint[]).push({x: this.positionDevice[0].x ,y: this.positionDevice[0].y, t: this.positionDevice[0]._id});
         });
     }
 
     ngOnInit() {
-
+     this.min = 0;
+     this.max = 0;
         // Retrieving all devices
         this.apiService.getAllMacDevices().subscribe(mac => {
-            this.macList = [];
+          this.macList = [];
             mac.forEach(m => {
                 this.macList.push(m._id);
             });
             this.deviceMac = this.macList[0]; // FIXME put it to 0
-            this.getTimeline();
+
+          this.getTimeline();
         });
+
 
         this.canvas = document.getElementById("timelineChart");
         this.ctx = this.canvas.getContext("2d");
@@ -106,5 +119,14 @@ export class TimelineComponent {
             },
             options: this.scatterChartOptions
         });
+
+
     }
+    doSomething(event) {
+      this.scatterChartDataSet[0].data = [];
+      this.data = moment.unix(+this.positionDevice[event]._id).format('DD/MM/YY HH:mm:ss');
+
+      (this.scatterChartDataSet[0].data as ChartPoint[]).push({x: this.positionDevice[event].x , y: this.positionDevice[event].y, t: this.positionDevice[event]._id});
+    }
+
 }

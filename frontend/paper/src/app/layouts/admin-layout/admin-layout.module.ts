@@ -11,15 +11,19 @@ import {TimelineComponent} from '../../pages/timeline/timeline.component';
 import {ChartsModule} from 'ng2-charts';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 @NgModule({
-    imports: [
-        ChartsModule,
-        CommonModule,
-        RouterModule.forChild(AdminLayoutRoutes),
-        FormsModule,
-        NgbModule
-    ],
+  imports: [
+    ChartsModule,
+    CommonModule,
+    RouterModule.forChild(AdminLayoutRoutes),
+    FormsModule,
+    NgbModule,
+    MatSliderModule,
+    MatFormFieldModule
+  ],
     declarations: [
         DashboardComponent,
         AppearancesComponent,
