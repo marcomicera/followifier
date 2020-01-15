@@ -7,14 +7,14 @@
                     <select required
                             class="form-control"
                             id="timelineSelector"
-                            style="display:inline!important; width:162px;"
+                            style="display:inline!important; width:167px;"
                             (change)="getTimeline();"
                             [(ngModel)]="deviceMac">
                         <option *ngFor="let mac of macList">
                             {{mac}}
                         </option>
                     </select>
-                     movements
+                    movements
                 </p>
             </div>
             <div class="card-body">
@@ -28,6 +28,26 @@
                         </canvas>
                     </div>
                 </div>
+            </div>
+
+            <div class="card-footer">
+                <p class="card-category">Timelapse: use this slider to go back in time</p>
+
+                <div class="text-center">
+                    <mat-slider id="slider"
+                                step="1"
+                                [(ngModel)]="index"
+                                [min]=min
+                                [max]=max
+                                (ngModelChange)="doSomething($event)"
+                                style="min-width: 90%;"
+                    ></mat-slider>
+                </div>
+
+                <p class="card-category" id='date' style="margin-top: 16px;">
+                    <i class="fa fa-history" id="radarUpdatingFrequency"></i>
+                     Showing location of {{data}}
+                </p>
             </div>
         </div>
     </div>

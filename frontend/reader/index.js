@@ -86,14 +86,12 @@ app.route('/api/devices').get((req, res) => {
       if (err) {
         res.send(err);
       } else {
-        console.log('devices: ' + JSON.stringify(result));
         res.send(JSON.stringify(result));
       }
     })
   });
 });
 app.route('/api/devices/all').get((req, res) => {
-  console.log('ALL');
   client.connect(function (err) {
     assert.equal(null, err);
     const db = client.db(dbName);
