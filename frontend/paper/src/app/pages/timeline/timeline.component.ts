@@ -11,6 +11,7 @@ import {
 } from "chart.js";
 import {ApiService, Device} from '../../service/api/api.service';
 import * as moment from 'moment'
+import {FollowifierColors} from "../../model/colors";
 
 @Component({
     selector: 'timeline-cmp',
@@ -34,9 +35,9 @@ export class TimelineComponent implements OnInit {
     public scatterChartDataSet: ChartDataSets[] = [{
         label: 'Devices',
         pointRadius: 10,
-        pointBackgroundColor: 'red',
-        backgroundColor: 'red',
-        hoverBackgroundColor: 'red',
+        pointBackgroundColor: FollowifierColors.devicesColor,
+        backgroundColor: FollowifierColors.devicesColor,
+        hoverBackgroundColor: FollowifierColors.devicesColor,
         data: []
     }];
 

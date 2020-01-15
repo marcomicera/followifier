@@ -3,6 +3,7 @@ import {Chart, ChartDataSets, ChartPoint, ChartTooltipItem} from 'chart.js';
 import {interval, Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 import {ApiService} from "../../service/api/api.service";
+import {FollowifierColors} from "../../model/colors";
 
 
 @Component({
@@ -46,18 +47,18 @@ export class DashboardComponent implements OnInit {
     private radarDataSet: ChartDataSets[] = [{
         label: 'Boards',
         pointRadius: 10,
-        pointBackgroundColor: '#51bcd9',
-        backgroundColor: '#51bcd9',
-        hoverBackgroundColor: '#51bcd9',
+        pointBackgroundColor: FollowifierColors.boardsColor,
+        backgroundColor: FollowifierColors.boardsColor,
+        hoverBackgroundColor: FollowifierColors.boardsColor,
         data: [],
         hideInLegendAndTooltip: false,
     },
         {
             label: 'Devices',
             pointRadius: 10,
-            pointBackgroundColor: '#fbc658',
-            backgroundColor: '#fbc658',
-            hoverBackgroundColor: '#fbc658',
+            pointBackgroundColor: FollowifierColors.devicesColor,
+            backgroundColor: FollowifierColors.devicesColor,
+            hoverBackgroundColor: FollowifierColors.devicesColor,
             data: []
         }];
 
@@ -103,8 +104,8 @@ export class DashboardComponent implements OnInit {
                 datasets: [{
                     barPercentage: 1.6,
                     label: 'Devices',
-                    borderColor: "#6bd098",
-                    backgroundColor: "#6bd098",
+                    borderColor: FollowifierColors.devicesColor,
+                    backgroundColor: FollowifierColors.devicesColor,
                     pointRadius: 0,
                     pointHoverRadius: 0,
                     borderWidth: 3,
@@ -125,7 +126,7 @@ export class DashboardComponent implements OnInit {
                         ticks: {
                             min: 0,
                             stepSize: 1,
-                            fontColor: "#9f9f9f",
+                            fontColor: FollowifierColors.ticksColor,
                             beginAtZero: false,
                             maxTicksLimit: 5,
                             //padding: 20
@@ -145,7 +146,7 @@ export class DashboardComponent implements OnInit {
                         },
                         ticks: {
                             padding: 20,
-                            fontColor: "#9f9f9f"
+                            fontColor: FollowifierColors.ticksColor
                         }
                     }]
                 },
