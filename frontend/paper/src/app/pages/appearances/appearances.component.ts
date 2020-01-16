@@ -51,6 +51,13 @@ export class AppearancesComponent implements OnInit {
            this.changeDetectorRefs.detectChanges();
        });
   }
+  findInterval(mac): void {
+      console.log('sjsjkjs');
+      console.log(mac);
+       this.apiService.getDevicesHistoricalIntervalls(this.startDate, this.endDate, mac).subscribe(devices => {
+        console.dir(devices);
+      });
+  }
     ngOnInit(): void {
         this.getAppearances();
     }
