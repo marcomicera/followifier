@@ -32,6 +32,10 @@ export class TimelineComponent implements OnInit {
     private deviceMac: string;
     private positionDevice: Device[];
     public timelineChart;
+    public xMin;
+    public yMin;
+    public xMax;
+    public yMax;
     public scatterChartDataSet: ChartDataSets[] = [{
         label: 'Devices',
         pointRadius: 10,
@@ -61,20 +65,21 @@ export class TimelineComponent implements OnInit {
         legend: {
             display: false
         },
-        // scales: {
-        //     xAxes: [{
-        //         ticks: {
-        //             min: 0,
-        //             max: 600 // FIXME room dimension
-        //         }
-        //     }],
-        //     yAxes: [{
-        //         ticks: {
-        //             min: 0,
-        //             max: 600  // FIXME room dimension
-        //         }
-        //     }]
-        // },
+        scales: {
+            xAxes: [{
+                ticks: {
+                    min: this.xMin,
+                    max: this.xMax
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    stepSize: 100,
+                    min: this.yMin,
+                    max: this.yMax
+                }
+            }]
+        },
         tooltips: this.scatterToolTipOptions,
     };
     private readonly dateFormat: string = 'DD/MM/YY HH:mm:ss';
@@ -96,10 +101,34 @@ export class TimelineComponent implements OnInit {
                 y: this.positionDevice[0].y,
                 t: this.positionDevice[0]._id
             });
+            this.updateTimelineWithIndex(0);
         });
     }
 
     ngOnInit() {
+
+        // Room size
+        this.apiService.getRoomCoordinate().subscribe(data => {
+            this.yMax = 0;
+            this.yMin = 600;
+            this.xMin = 600;
+            this.xMax = 0;
+
+            console.dir(data);
+
+            data.forEach(d => {
+                if ( +d.y > this.yMax) { this.yMax = +d.y}
+                if ( +d.y < this.yMin) { this.yMin = +d.y}
+                if ( +d.x < this.xMin) { this.xMin = +d.x}
+                if ( +d.x > this.xMax) { this.xMax = +d.x}
+            });
+            this.timelineChart.config.options.scales.yAxes[0].ticks.max = this.yMax;
+            this.timelineChart.config.options.scales.yAxes[0].ticks.min = this.yMin;
+            this.timelineChart.config.options.scales.xAxes[0].ticks.max = this.xMax;
+            this.timelineChart.config.options.scales.xAxes[0].ticks.min = this.xMin;
+            this.timelineChart.update();
+        });
+
         this.min = 0;
         this.max = 0;
         // Retrieving all devices
@@ -108,7 +137,7 @@ export class TimelineComponent implements OnInit {
             mac.forEach(m => {
                 this.macList.push(m._id);
             });
-            this.deviceMac = this.macList[0]; // FIXME put it to 0
+            this.deviceMac = this.macList[0];
 
             this.getTimeline();
         });
@@ -123,12 +152,9 @@ export class TimelineComponent implements OnInit {
             },
             options: this.scatterChartOptions
         });
-
-
     }
 
-    doSomething(event) {
-        const sliderIndex = event.value;
+    updateTimelineWithIndex(sliderIndex) {
         this.scatterChartDataSet[0].data = [];
         this.data = moment.unix(+this.positionDevice[sliderIndex]._id).format(this.dateFormat);
 
@@ -137,6 +163,10 @@ export class TimelineComponent implements OnInit {
             y: this.positionDevice[sliderIndex].y,
             t: this.positionDevice[sliderIndex]._id
         });
+        this.timelineChart.update();
     }
 
+    updateTimeline(event) {
+        this.updateTimelineWithIndex(event.value);
+    }
 }

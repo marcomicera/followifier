@@ -201,14 +201,14 @@ export class DashboardComponent implements OnInit {
                     xAxes: [{
                         ticks: {
                             min: this.xMin,
-                            max: this.xMax  // FIXME room dimension
+                            max: this.xMax
                         }
                     }],
                     yAxes: [{
                         ticks: {
                             stepSize: 100,
                             min: this.yMin,
-                            max: this.yMax // FIXME room dimension
+                            max: this.yMax
                         }
                     }]
                 },

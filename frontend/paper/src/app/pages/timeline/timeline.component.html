@@ -20,12 +20,7 @@
             <div class="card-body">
                 <div class="container">
                     <div class="wrap">
-                        <canvas baseChart
-                                id="timelineChart"
-                                [datasets]="scatterChartDataSet"
-                                [options]="scatterChartOptions"
-                                [chartType]="scatterChartType">
-                        </canvas>
+                        <canvas id="timelineChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -39,7 +34,7 @@
                                 [(ngModel)]="index"
                                 [min]=min
                                 [max]=max
-                                (input)="doSomething($event)"
+                                (input)="updateTimeline($event)"
                                 style="min-width: 90%;"
                     ></mat-slider>
                 </div>
