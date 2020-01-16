@@ -23,6 +23,7 @@ export class AppearancesComponent implements OnInit {
     public devicesHistorical: DeviceHistorical[];
     private startDate: string;
     private  endDate: string;
+    date: string;
 
     constructor(private apiService: ApiService, private changeDetectorRefs: ChangeDetectorRef) {
     }
@@ -35,26 +36,20 @@ export class AppearancesComponent implements OnInit {
         ]);
 
     }
-    startDateEvent(event): void {
-      console.log(event['value']);
-      console.log('------------------------');
-      this.startDate = Date.parse(event['value']).toString().substring(0, 10);
-
-      console.log(this.startDate );
-    }
-    endDateEvent(event): void {
-    console.log(event['value']);
-    console.log('------------------------');
-    this.endDate = Date.parse(event['value']).toString().substring(0, 10);
-    console.log(this.endDate);
-  }
   fillTable(): void {
+      console.log('Datee')
+      console.log(this.date[0]);
+      console.log(this.date[1]);
+    this.startDate = Date.parse(this.date[0]).toString().substring(0, 10);
+    this.endDate = Date.parse(this.date[1]).toString().substring(0, 10);
+    console.log(this.startDate);
+    console.log(this.endDate);
     this.apiService.getDevicesHistorical(this.startDate, this.endDate)
-        .subscribe(devices => {
-            console.dir(devices);
-            this.devicesHistorical = devices;
-            this.changeDetectorRefs.detectChanges();
-        });
+       .subscribe(devices => {
+           console.dir(devices);
+           this.devicesHistorical = devices;
+           this.changeDetectorRefs.detectChanges();
+       });
   }
     ngOnInit(): void {
         this.getAppearances();

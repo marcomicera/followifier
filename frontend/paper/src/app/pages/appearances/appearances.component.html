@@ -3,15 +3,14 @@
     <div class="col-md-12">
         <div class="card">
             <p class="card-header">
-                <h4 class="card-title">Device appearances</h4>
+                <h4 class="card-title">  Device appearances</h4>
 
-              <label>
+          <p class="card-category">How many times devices appeared over the range
                 Date Time Range:
                 <input [owlDateTimeTrigger]="dt10" [owlDateTime]="dt10"
-                       [selectMode]="'range'">
-                <owl-date-time #dt10></owl-date-time>
-              </label>
-              <button mat-button (click)="fillTable()" >Click me!</button>
+                       [selectMode]="'range'" [(ngModel)]="date">
+                <owl-date-time #dt10  (afterPickerClosed)="fillTable()"></owl-date-time>
+              </p>
 
             <div class="card-body">
                 <div class="table-responsive">
