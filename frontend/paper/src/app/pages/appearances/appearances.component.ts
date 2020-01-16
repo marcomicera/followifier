@@ -1,5 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ApiService, DeviceHistorical} from '../../service/api/api.service';
+import * as moment from 'moment';
 
 declare interface TableData {
     headerRow: string[];
@@ -24,7 +25,8 @@ export class AppearancesComponent implements OnInit {
     private startDate: string;
     private  endDate: string;
     date: string;
-
+    private readonly dateFormat: string = 'DD/MM/YY HH:mm:ss';
+    public pag: string[] = [];
     constructor(private apiService: ApiService, private changeDetectorRefs: ChangeDetectorRef) {
     }
 
@@ -52,10 +54,13 @@ export class AppearancesComponent implements OnInit {
        });
   }
   findInterval(mac): void {
-      console.log('sjsjkjs');
-      console.log(mac);
-       this.apiService.getDevicesHistoricalIntervalls(this.startDate, this.endDate, mac).subscribe(devices => {
-        console.dir(devices);
+    this.pag = [];
+    this.apiService.getDevicesHistoricalIntervalls(this.startDate, this.endDate, mac).subscribe(devices => {
+        devices.forEach(d => {
+            console.log(moment.unix(+(d._id['timestamp'])).format(this.dateFormat));
+            console.log(d._id['timestamp']);
+             this.pag.push(moment.unix(+(d._id['timestamp'])).format(this.dateFormat));
+        })
       });
   }
     ngOnInit(): void {

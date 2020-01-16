@@ -3,10 +3,7 @@
     <div class="col-md-12">
         <div class="card">
             <p class="card-header">
-                <h4 class="card-title">  Device appearances</h4>
-
-          <p class="card-category">How many times devices appeared over the range
-                Date Time Range:
+          <p class="card-category">How many times devices appeared over the range:
                 <input [owlDateTimeTrigger]="dt10" [owlDateTime]="dt10"
                        [selectMode]="'range'" [(ngModel)]="date">
                 <owl-date-time #dt10  (afterPickerClosed)="fillTable()"></owl-date-time>
@@ -28,6 +25,20 @@
                     </table>
                 </div>
             </div>
+        </div>
+      <div class="col-md-12">
+        <div class="card">
+          <p class="card-header">
+          <h4 class="card-title">  Device appearances</h4>
+          <div class="card-body">
+            <div class="table-responsive">
+              <p class="card-category">
+                <tr  *ngFor="let p of pag">
+                <td  class="text-right">{{p}}</td>
+              </tr>
+              </p>
+            </div>
+          </div>
         </div>
     </div>
     <!--    <div class="col-md-12">-->
