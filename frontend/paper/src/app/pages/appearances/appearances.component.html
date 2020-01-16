@@ -1,29 +1,18 @@
+<link href="https://cdn.syncfusion.com/ej2/ej2-base/styles/material.css" rel="stylesheet" />
+<link href="https://cdn.syncfusion.com/ej2/ej2-buttons/styles/material.css" rel="stylesheet" />
+<link href="https://cdn.syncfusion.com/ej2/ej2-inputs/styles/material.css" rel="stylesheet" />
+<link href="https://cdn.syncfusion.com/ej2/ej2-popups/styles/material.css" rel="stylesheet" />
+<link href="https://cdn.syncfusion.com/ej2/ej2-lists/styles/material.css" rel="stylesheet" />
+<link href="https://cdn.syncfusion.com/ej2/ej2-calendars/styles/material.css" rel="stylesheet" />
 <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title">Device appearances</h4>
-                <p class="card-category">How many times devices appeared over the last
-                    <input type="number"
-                           min="1"
-                           max="99"
-                           style="display:inline!important; width:62px;"
-                           placeholder="Number"
-                           value="1"
-                           class="form-control appearancesTimeWindowSelector"
-                           [(ngModel)]="timeValue"
-                           (input)="getAppearances();">
-                    <select required
-                            class="form-control appearancesTimeWindowSelector"
-                            style="display:inline!important; width:108px;"
-                            (change)="getAppearances();"
-                            [(ngModel)]="timeWindow">
-                        <option [value]="timeWindowValue"
-                                *ngFor="let timeWindowValue of timeWindowValues">
-                            {{timeWindowValue}}
-                        </option>
-                    </select>
-                </p>
+                  <p class="card-category">How many times devices appeared over the last</p>
+                  <p> From: </p><ejs-datetimepicker id='datetimepicker' placeholder='Select a date'  (change)="startDateEvent($event)"></ejs-datetimepicker>
+                  <p> To: </p><ejs-datetimepicker id='datetimepicker2' placeholder='Select a date' (change)="endDateEvent($event)" [timeFormat]=""></ejs-datetimepicker>
+              <button mat-button (click)="fillTable()" >Click me!</button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

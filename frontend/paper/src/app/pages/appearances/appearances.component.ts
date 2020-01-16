@@ -4,6 +4,7 @@ import {ApiService, DeviceHistorical} from '../../service/api/api.service';
 declare interface TableData {
     headerRow: string[];
     dataRows: string[][];
+
 }
 
 @Component({
@@ -19,6 +20,8 @@ export class AppearancesComponent implements OnInit {
     timeWindowValues = ['minutes', 'hours', 'days']
     public timeWindow: string = "hours";
     public devicesHistorical: DeviceHistorical[];
+    private startDate: string;
+    private  endDate: string;
 
     constructor(private apiService: ApiService, private changeDetectorRefs: ChangeDetectorRef) {
     }
@@ -29,14 +32,29 @@ export class AppearancesComponent implements OnInit {
             ['hours', 60],
             ['days', 60 * 24]
         ]);
-        this.apiService.getDevicesHistorical(String(this.timeValue * minutesInWindow.get(this.timeWindow)))
-            .subscribe(devices => {
-                console.dir(devices);
-                this.devicesHistorical = devices;
-                this.changeDetectorRefs.detectChanges();
-            });
-    }
 
+    }
+    startDateEvent(event): void {
+      console.log(event['value']);
+      console.log('------------------------');
+      this.startDate = Date.parse(event['value']).toString().substring(0, 10);
+
+      console.log(this.startDate );
+    }
+    endDateEvent(event): void {
+    console.log(event['value']);
+    console.log('------------------------');
+    this.endDate = Date.parse(event['value']).toString().substring(0, 10);
+    console.log(this.endDate);
+  }
+  fillTable(): void {
+    this.apiService.getDevicesHistorical(this.startDate, this.endDate)
+        .subscribe(devices => {
+            console.dir(devices);
+            this.devicesHistorical = devices;
+            this.changeDetectorRefs.detectChanges();
+        });
+  }
     ngOnInit(): void {
         this.getAppearances();
     }

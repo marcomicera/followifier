@@ -15,7 +15,6 @@ import { ApiService } from './service/api/api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSliderModule } from '@angular/material';
 
-
 @NgModule({
   declarations: [
     AppComponent,

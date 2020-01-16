@@ -13,6 +13,7 @@ import {ChartsModule} from 'ng2-charts';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {DateTimePickerModule} from '@syncfusion/ej2-angular-calendars';
 
 @NgModule({
   imports: [
@@ -22,7 +23,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     FormsModule,
     NgbModule,
     MatSliderModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    DateTimePickerModule
   ],
     declarations: [
         DashboardComponent,
