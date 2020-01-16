@@ -10,7 +10,8 @@ declare interface TableData {
 @Component({
     selector: 'table-cmp',
     moduleId: module.id,
-    templateUrl: 'appearances.component.html'
+    templateUrl: 'appearances.component.html',
+    styleUrls: ['./appearances.component.css']
 })
 
 export class AppearancesComponent implements OnInit {

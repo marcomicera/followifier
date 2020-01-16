@@ -1,19 +1,18 @@
-<link href="https://cdn.syncfusion.com/ej2/ej2-base/styles/material.css" rel="stylesheet" />
-<link href="https://cdn.syncfusion.com/ej2/ej2-buttons/styles/material.css" rel="stylesheet" />
-<link href="https://cdn.syncfusion.com/ej2/ej2-inputs/styles/material.css" rel="stylesheet" />
-<link href="https://cdn.syncfusion.com/ej2/ej2-popups/styles/material.css" rel="stylesheet" />
-<link href="https://cdn.syncfusion.com/ej2/ej2-lists/styles/material.css" rel="stylesheet" />
-<link href="https://cdn.syncfusion.com/ej2/ej2-calendars/styles/material.css" rel="stylesheet" />
+
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
+            <p class="card-header">
                 <h4 class="card-title">Device appearances</h4>
-                  <p class="card-category">How many times devices appeared over the last</p>
-                  <p> From: </p><ejs-datetimepicker id='datetimepicker' placeholder='Select a date'  (change)="startDateEvent($event)"></ejs-datetimepicker>
-                  <p> To: </p><ejs-datetimepicker id='datetimepicker2' placeholder='Select a date' (change)="endDateEvent($event)" [timeFormat]=""></ejs-datetimepicker>
+
+              <label>
+                Date Time Range:
+                <input [owlDateTimeTrigger]="dt10" [owlDateTime]="dt10"
+                       [selectMode]="'range'">
+                <owl-date-time #dt10></owl-date-time>
+              </label>
               <button mat-button (click)="fillTable()" >Click me!</button>
-            </div>
+
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
