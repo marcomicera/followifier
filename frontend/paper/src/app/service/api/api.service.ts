@@ -37,9 +37,6 @@ export class ApiService {
   getDevicesNumber(): Observable<string> {
     return this.http.get<string>('http://localhost:8000/api/device/number');
   }
-  getAllDevicesNumber(): Observable<Device[]> {
-    return this.http.get<Device[]>('http://localhost:8000/api/devices/all');
-  }
   getDevices(): Observable<Device[]> {
     return this.http.get<Device[]>('http://localhost:8000/api/devices');
   }
