@@ -55,6 +55,8 @@ export class AppearancesComponent implements OnInit {
             this.changeDetectorRefs.detectChanges();
          } else {
            this.noDeviceFound = true;
+           this.showAppearances = false;
+           this.pag = [];
 
 
          }
