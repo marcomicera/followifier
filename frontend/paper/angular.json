@@ -26,7 +26,9 @@
               "node_modules/bootstrap/scss/bootstrap.scss",
               "src/assets/scss/paper-dashboard.scss",
               "node_modules/ngx-toastr/toastr.css",
-              "node_modules/igniteui-angular/styles/igniteui-angular.css"
+              "node_modules/igniteui-angular/styles/igniteui-angular.css",
+               "./src/styles.css"
+
             ],
             "scripts": []
           },

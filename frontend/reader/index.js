@@ -96,8 +96,9 @@ app.route('/api/devices/historical').get((req, res)  => {
     date = parseInt(date);
     const db = client.db(dbName);
     var coll = db.collection("messages");
+    console.log(req.query.start)
     coll.aggregate([
-      {$match: {timestamp: {$gt: date - req.query.minutes*60}}},
+      {$match: {timestamp: {$gt:  parseInt(req.query.start),$lt: parseInt(req.query.end)}}},
       {$unwind: "$mac"
       },
       {$group: {
@@ -113,6 +114,37 @@ app.route('/api/devices/historical').get((req, res)  => {
         res.send(err);
       } else {
         res.send(JSON.stringify(result));
+        console.log('de')
+        console.log(result);
+      }
+    })
+  });
+});
+app.route('/api/device/intervalls').get((req, res)  => {
+  client.connect(function (err) {
+    assert.equal(null, err);
+    
+    const db = client.db(dbName);
+    var coll = db.collection("messages");
+    console.log(req.query.start)
+    coll.aggregate([
+      {$match: {timestamp: {$gt:  parseInt(req.query.start),$lt: parseInt(req.query.end)}, mac: {$eq: req.query.mac}}},
+      {$unwind: "$mac"
+      },
+      {$group: {
+          _id: {
+            "mac": "$mac",
+            "timestamp": "$timestamp"
+          }
+        }},
+      
+    ]).toArray(function (err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(JSON.stringify(result));
+        console.log('de')
+        console.log(result);
       }
     })
   });

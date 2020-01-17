@@ -40,9 +40,11 @@ export class ApiService {
   getDevices(): Observable<Device[]> {
     return this.http.get<Device[]>('http://localhost:8000/api/devices');
   }
-  getDevicesHistorical(minutes: string): Observable<DeviceHistorical[]> {
-    console.log('Minute: ' + minutes);
-    return this.http.get<DeviceHistorical[]>('http://localhost:8000/api/devices/historical?' + 'minutes=' + minutes);
+  getDevicesHistorical(start: string, end: string): Observable<DeviceHistorical[]> {
+    return this.http.get<DeviceHistorical[]>('http://localhost:8000/api/devices/historical?' + 'start=' + start + '&end=' + end);
+  }
+  getDevicesHistoricalIntervalls(start: string, end: string, mac: string): Observable<DeviceHistorical[]> {
+    return this.http.get<DeviceHistorical[]>('http://localhost:8000/api/device/intervalls/?' + 'start=' + start + '&end=' + end + '&mac=' + mac);
   }
   getAllMacDevices(): Observable<DeviceMac[]> {
     return this.http.get<DeviceMac[]>('http://localhost:8000/api/devices/all');

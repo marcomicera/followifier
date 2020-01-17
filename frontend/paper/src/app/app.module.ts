@@ -14,7 +14,7 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { ApiService } from './service/api/api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSliderModule } from '@angular/material';
-
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
 @NgModule({
   declarations: [
@@ -31,7 +31,9 @@ import { MatSliderModule } from '@angular/material';
     MatSliderModule,
     ToastrModule.forRoot(),
     FooterModule,
-    HttpClientModule
+    HttpClientModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule
   ],
   providers: [ApiService],
   bootstrap: [AppComponent],

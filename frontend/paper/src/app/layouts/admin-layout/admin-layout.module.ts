@@ -13,6 +13,9 @@ import {ChartsModule} from 'ng2-charts';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {DateTimePickerModule} from '@syncfusion/ej2-angular-calendars';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import {MatButtonModule} from '@angular/material/button';
 
 @NgModule({
   imports: [
@@ -22,7 +25,11 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     FormsModule,
     NgbModule,
     MatSliderModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    DateTimePickerModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule,
+    MatButtonModule
   ],
     declarations: [
         DashboardComponent,

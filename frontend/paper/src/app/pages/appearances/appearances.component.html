@@ -1,31 +1,17 @@
+
 <div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title">Device appearances</h4>
-                <p class="card-category">How many times devices appeared over the last
-                    <input type="number"
-                           min="1"
-                           max="99"
-                           style="display:inline!important; width:62px;"
-                           placeholder="Number"
-                           value="1"
-                           class="form-control appearancesTimeWindowSelector"
-                           [(ngModel)]="timeValue"
-                           (input)="getAppearances();">
-                    <select required
-                            class="form-control appearancesTimeWindowSelector"
-                            style="display:inline!important; width:108px;"
-                            (change)="getAppearances();"
-                            [(ngModel)]="timeWindow">
-                        <option [value]="timeWindowValue"
-                                *ngFor="let timeWindowValue of timeWindowValues">
-                            {{timeWindowValue}}
-                        </option>
-                    </select>
-                </p>
-            </div>
-            <div class="card-body">
+    <div class="col-lg-6 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <p class="card-header">
+          <h4  class="card-title">  Select Interval Time</h4>
+
+          <p class="card-category">How many times devices appeared over the range:
+                <input id = "dateSelector" [owlDateTimeTrigger]="dt10" [owlDateTime]="dt10"
+                       [selectMode]="'range'" [(ngModel)]="date">
+                <owl-date-time #dt10  (afterPickerClosed)="fillTable()"></owl-date-time>
+              </p>
+
+            <div *ngIf="showTable" class="card-body">
                 <div class="table-responsive">
                     <table class="table">
                         <thead class="text-primary">
@@ -33,14 +19,35 @@
                         <th class="text-right">Appearances</th>
                         </thead>
                         <tbody>
-                        <tr *ngFor="let deviceHistorical of devicesHistorical">
-                            <td>{{deviceHistorical._id}}</td>
-                            <td class="text-right">{{deviceHistorical.n}}</td>
+                        <tr  *ngFor="let deviceHistorical of devicesHistorical">
+                            <td><button mat-stroked-button (click)="findInterval(deviceHistorical._id)">{{deviceHistorical._id}}</button></td>
+                          <td  class="text-right">{{deviceHistorical.n}}</td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+          <div *ngIf="noDeviceFound" class="card-body">
+            <p class="card-category"> No device </p>
+          </div>
+
+        </div>
+    </div>
+      <div *ngIf="showAppearances" class="col-lg-6 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <p class="card-header">
+          <h4 id="DevAppTitle" class="card-title">Device appearances</h4>
+            <p class="card-category">At what times {{mac}} has been detected.
+            </p>
+          <div class="card-body">
+            <div class="table-responsive">
+              <p class="card-category">
+                <tr  *ngFor="let p of pag">
+                <td class="text-left">{{p}}</td>
+              </tr>
+              </p>
+            </div>
+          </div>
         </div>
     </div>
     <!--    <div class="col-md-12">-->
