@@ -1,1 +1,9 @@
-@import "~ng-pick-datetime/assets/style/picker.min.css";
+input{
+  width: 300px;
+}
+h4{
+  padding-left:20px;
+}
+p{
+  padding-left: 20px ;
+}

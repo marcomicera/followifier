@@ -1,15 +1,17 @@
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="card">
+    <div class="col-lg-6 col-md-6 col-sm-6">
+        <div class="card card-stats">
             <p class="card-header">
+          <h4  class="card-title">  Select Interval Time</h4>
+
           <p class="card-category">How many times devices appeared over the range:
-                <input [owlDateTimeTrigger]="dt10" [owlDateTime]="dt10"
+                <input id = "dateSelector" [owlDateTimeTrigger]="dt10" [owlDateTime]="dt10"
                        [selectMode]="'range'" [(ngModel)]="date">
                 <owl-date-time #dt10  (afterPickerClosed)="fillTable()"></owl-date-time>
               </p>
 
-            <div class="card-body">
+            <div *ngIf="showTable" class="card-body">
                 <div class="table-responsive">
                     <table class="table">
                         <thead class="text-primary">
@@ -18,18 +20,23 @@
                         </thead>
                         <tbody>
                         <tr  *ngFor="let deviceHistorical of devicesHistorical">
-                            <td><button mat-button (click)="findInterval(deviceHistorical._id)">{{deviceHistorical._id}}</button></td>
+                            <td><button mat-stroked-button (click)="findInterval(deviceHistorical._id)">{{deviceHistorical._id}}</button></td>
                           <td  class="text-right">{{deviceHistorical.n}}</td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+          <div *ngIf="noDeviceFound" class="card-body">
+            <p class="card-category"> No device </p>
+          </div>
+
         </div>
-      <div class="col-md-12">
-        <div class="card">
+    </div>
+      <div *ngIf="showAppearances" class="col-lg-6 col-md-6 col-sm-6">
+        <div class="card card-stats">
           <p class="card-header">
-          <h4 class="card-title">  Device appearances</h4>
+          <h4 id="DevAppTitle" class="card-title">  Device appearances</h4>
           <div class="card-body">
             <div class="table-responsive">
               <p class="card-category">

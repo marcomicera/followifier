@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ApiService, DeviceHistorical} from '../../service/api/api.service';
 import * as moment from 'moment';
-
 declare interface TableData {
     headerRow: string[];
     dataRows: string[][];
@@ -12,7 +11,7 @@ declare interface TableData {
     selector: 'table-cmp',
     moduleId: module.id,
     templateUrl: 'appearances.component.html',
-    styleUrls: ['./appearances.component.css']
+    styleUrls: ['appearances.component.css']
 })
 
 export class AppearancesComponent implements OnInit {
@@ -27,6 +26,9 @@ export class AppearancesComponent implements OnInit {
     date: string;
     private readonly dateFormat: string = 'DD/MM/YY HH:mm:ss';
     public pag: string[] = [];
+    public showTable: boolean;
+    public showAppearances: boolean;
+    public noDeviceFound: boolean;
     constructor(private apiService: ApiService, private changeDetectorRefs: ChangeDetectorRef) {
     }
 
@@ -39,31 +41,38 @@ export class AppearancesComponent implements OnInit {
 
     }
   fillTable(): void {
-      console.log('Datee')
-      console.log(this.date[0]);
-      console.log(this.date[1]);
+    this.showTable = false;
+    this.devicesHistorical = [];
     this.startDate = Date.parse(this.date[0]).toString().substring(0, 10);
     this.endDate = Date.parse(this.date[1]).toString().substring(0, 10);
     console.log(this.startDate);
     console.log(this.endDate);
-    this.apiService.getDevicesHistorical(this.startDate, this.endDate)
-       .subscribe(devices => {
-           console.dir(devices);
+    this.apiService.getDevicesHistorical(this.startDate, this.endDate).subscribe(devices => {
+         if (devices.length > 0) {
+           this.showTable = true;
+           this.noDeviceFound = false;
            this.devicesHistorical = devices;
-           this.changeDetectorRefs.detectChanges();
+            this.changeDetectorRefs.detectChanges();
+         } else {
+           this.noDeviceFound = true;
+
+
+         }
        });
   }
   findInterval(mac): void {
     this.pag = [];
+    this.showAppearances = true;
     this.apiService.getDevicesHistoricalIntervalls(this.startDate, this.endDate, mac).subscribe(devices => {
+      devices.sort((one, two) => (one._id['timestamp'] > two._id['timestamp'] ? -1 : 1));
         devices.forEach(d => {
-            console.log(moment.unix(+(d._id['timestamp'])).format(this.dateFormat));
-            console.log(d._id['timestamp']);
              this.pag.push(moment.unix(+(d._id['timestamp'])).format(this.dateFormat));
         })
       });
   }
     ngOnInit(): void {
+        this.showTable = false;
+        this.showAppearances = false;
         this.getAppearances();
     }
 }
