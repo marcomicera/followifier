@@ -29,6 +29,7 @@ export class AppearancesComponent implements OnInit {
     public showTable: boolean;
     public showAppearances: boolean;
     public noDeviceFound: boolean;
+    public mac: string;
     constructor(private apiService: ApiService, private changeDetectorRefs: ChangeDetectorRef) {
     }
 
@@ -63,6 +64,7 @@ export class AppearancesComponent implements OnInit {
        });
   }
   findInterval(mac): void {
+    this.mac = mac;
     this.pag = [];
     this.showAppearances = true;
     this.apiService.getDevicesHistoricalIntervalls(this.startDate, this.endDate, mac).subscribe(devices => {
