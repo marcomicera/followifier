@@ -9,9 +9,9 @@ const url = 'mongodb://localhost:27017';
 const dbName = 'followifier';
 
 // Number of devices time interval (in seconds)
-const numDevicesTimeInterval = 1 * 60 * 5;
+const numDevicesTimeInterval = 1 * 60;
 
-// Time window within which devices must be shown in the radar (scatter chart)
+// Time window within which devices must be shown in the radar (scatter chart) (in seconds)
 const devicesRadarTimeWindows = 1 * 60;
 
 const app = express();
