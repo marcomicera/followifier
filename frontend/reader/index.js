@@ -39,16 +39,40 @@ app.route('/api/device/number').get((req, res) => {
     date = parseInt(date);
     const db = client.db(dbName);
     var coll = db.collection("messages");
-    coll.distinct('mac', {timestamp:{$gt:date-numDevicesTimeInterval}},function(err, result) {
-      if (err) {
-        res.send(err);
-      } else {
-
-        res.send(JSON.stringify(result.length));
-      }
-    })
+    //I first aggregate by mac and time window of 10 seconds and then I aggregate by mac and count the number of windows it appeared in
+    coll.aggregate([
+      {$match:{timestamp:{$gte:date-numDevicesTimeInterval*5}}},
+      {$group:{_id:{
+        "interval":
+          {
+            "$subtract":[
+              { "$toLong": {"$toDate": "$timestamp"} },
+              { "$mod": [{"$toLong": {"$toDate": "$timestamp"}}, numDevicesTimeInterval] }
+            ]
+          },
+        "mac": "$mac"
+      }}},
+      {$group:{
+        _id:{
+          "mac": "$_id.mac"
+        },
+        count: {"$sum": 1}
+      }}]).toArray(function (err, result) {
+  if (err) {
+    res.send(err);
+  } else {
+    let count = 0;
+    result.forEach(r=> {
+      if(r.count==5)
+        count++;
+    });
+    console.log(result);
+    res.send(JSON.stringify({number: count}))
+  }
+  })
   });
 });
+
 app.route('/api/devices').get((req, res) => {
   var resultArray = [];
   client.connect(function (err) {
