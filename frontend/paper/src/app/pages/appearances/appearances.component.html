@@ -3,9 +3,9 @@
     <div class="col-lg-6 col-md-6 col-sm-6">
         <div class="card card-stats">
             <p class="card-header">
-          <h4  class="card-title">  Select Interval Time</h4>
+          <h4  class="card-title">Appearances</h4>
 
-          <p class="card-category">How many times devices appeared over the range:
+          <p class="card-category">Select a time window:
                 <input id = "dateSelector" [owlDateTimeTrigger]="dt10" [owlDateTime]="dt10"
                        [selectMode]="'range'" [(ngModel)]="date">
                 <owl-date-time #dt10  (afterPickerClosed)="fillTable()"></owl-date-time>
@@ -28,7 +28,7 @@
                 </div>
             </div>
           <div *ngIf="noDeviceFound" class="card-body">
-            <p class="card-category"> No device </p>
+            <p class="card-category">Zero devices appeared in this time window.</p>
           </div>
 
         </div>
@@ -37,7 +37,7 @@
         <div class="card card-stats">
           <p class="card-header">
           <h4 id="DevAppTitle" class="card-title">Device appearances</h4>
-            <p class="card-category">At what times {{mac}} has been detected.
+            <p class="card-category">At what times {{mac}} has been detected:
             </p>
           <div class="card-body">
             <div class="table-responsive">
