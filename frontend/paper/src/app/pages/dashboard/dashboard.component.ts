@@ -105,7 +105,7 @@ export class DashboardComponent implements OnInit {
     updateNumberOfDevices() {
         console.log('Updating devices number line chart');
         this.apiService.getDevicesNumber().subscribe(data => {
-                this.totalNumberOfDevices = +data;
+                this.totalNumberOfDevices = data["number"]
                 // this.numberOfDevices.data.datasets[0].data.push(this.totalNumberOfDevices);
                 // if (this.numberOfDevices.data.datasets[0].data.length > DashboardComponent.maxNumberOfDevicesDataPoints) {
                 //     this.numberOfDevices.data.datasets[0].data.shift();
