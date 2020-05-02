@@ -7,6 +7,10 @@
 
 `followifier` is a tracking system that exploits Wi-Fi Probe Request frames sent by ESP32 boards placed in the corners of a room to detect and monitor devices.
 
+<center>
+  <img alt="followifier's dashboard" src="media/dashboard.png" width="100%"/>
+</center>
+
 ### How to run it
 1. Create a [server configuration file](core/server/README.md#configuration-file)
 1. Start the server:
