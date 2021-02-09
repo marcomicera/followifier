@@ -38,24 +38,40 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
     /* Insert it into the set of boards that have sent a message during the last round */
     lastRoundBoardMacs.insert(newBatch.boardmac());
-#endif
 
-    /* Printing received messages */
-    if (newBatch.messages_size() > 0) { // if there is at least one message in it
-        int messageCounter = 1;
-        for (const auto &newMessage : newBatch.messages()) { // print all messages
-            cout << messageCounter++ << ")\t" << logMessage(newMessage) << endl;
-        }
-    }
-    cout << endl << endl;
-
-#ifndef ROUNDLESS_MODE
     /* True when all boards have sent the same frame, hence it's time for a new round */
     bool aFrameHasBeenSentByAllBoards = false;
 #endif
 
+    /* Average RSSI value for each bursts: Probe Request frames belonging to the same burst are considered
+     * to be received subsequently.
+     * Every average RSSI value is paired to the number of contributions needed to compute the average.
+     */
+    typedef std::pair<double, unsigned int> avg_t; // RSSI average value and number of contributions
+    std::unordered_map<burst, avg_t, burst::burst_hasher> burstAverages;
+
+    /* For printing purposes */
+    unsigned short messageCounter = 1;
+
     /* For each message in the batch */
     for (const followifier::ESP32Message &newMessage: newBatch.messages()) {
+
+        /* Burst to which this message belongs to */
+        burst currentBurst = burst(newMessage);
+
+        /* Retrieving corresponding burst */
+        if (burstAverages.find(currentBurst) == burstAverages.end()) {
+
+            /* New burst */
+            burstAverages.insert(std::pair<burst, avg_t>(currentBurst,
+                                                         std::pair<double, unsigned int>(newMessage.metadata().rssi(),
+                                                                                         1)));
+        } else {
+
+            /* Updating average of the existing burst */
+            burstAverages[currentBurst].first += (newMessage.metadata().rssi() - burstAverages[currentBurst].first) /
+                                                 (burstAverages[currentBurst].second++);
+        }
 
         /* If this frame has been sent already */
         if (messagesBuffer.find(newMessage.frame_hash()) !=
@@ -88,6 +104,12 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
             messagesAge.insert(std::make_pair(newMessage.frame_hash(), 0));
         }
 
+        /* Metadata alteration: inserting the burst average RSSI value */
+        messagesBuffer.find(newMessage.frame_hash())->second[newBatch.boardmac()].set_rssi(
+                burstAverages[currentBurst].first);
+
+        /* Print message to screen */
+        cout << messageCounter++ << ")\t" << logMessage(newMessage, burstAverages[currentBurst].first) << endl;
 
         /* If this message has been sent by all other boards */
         if (messagesBuffer.find(newMessage.frame_hash())->second.size() == NUMBER_BOARDS) {
@@ -123,6 +145,12 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
         }
     }
 
+    // Printing bursts average values
+//    for (auto &burstAverage: burstAverages) {
+//        cout << "Burst " << std::string(burstAverage.first) << " has an average RSSI value of "
+//             << burstAverage.second.first << "." << endl;
+//    }
+
 #ifndef ROUNDLESS_MODE
     /* Number of boards seen during this round assertion */
     if (aFrameHasBeenSentByAllBoards && (lastRoundBoardMacs.size() != NUMBER_BOARDS)) {
@@ -143,6 +171,8 @@ void receiver::addBatch(const followifier::Batch &newBatch, database &database) 
 
     /* Delete old and unused messages */
     cleanMessagesBuffer();
+
+    cout << endl << endl;
 }
 
 void receiver::cleanMessagesBuffer() {
